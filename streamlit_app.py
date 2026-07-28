@@ -48,36 +48,35 @@ T = {
     "en": {
         "eyebrow": "Research demo · EN / PT",
         "title": "Bilingual Hate-Speech Detection",
-        "tag": "A reproducible study comparing classical models with transformers under one "
-               "leakage-safe protocol — and the live, calibrated classifier you can try below.",
+        "tag": "A study compares classical models with transformers under one leakage-safe "
+               "protocol. Below runs the classifier it produced. Try it.",
         "find_label": "The finding",
-        "find_main": "Transformers win — and it's <b>statistically significant</b>",
-        "find_sub": "XLM-R reaches macro-F1 0.750 vs 0.709 for the best classical baseline "
-                    "(paired McNemar + Holm). This demo serves the 3.6 MB classical MVP — within "
-                    "~4 points, no GPU.",
+        "find_main": "Transformers win. The gap is <b>statistically significant</b>.",
+        "find_sub": "XLM-R reaches macro-F1 0.750. The best classical baseline reaches 0.709 "
+                    "(paired McNemar, Holm). This demo runs the classical model, 3.6 MB. It stays "
+                    "four points behind and needs no GPU.",
         "find_num": "0.750", "find_cap": "best macro-F1",
         "how": "How it was built",
         "steps": [
-            ("Harmonize", "Four datasets — EN tweets, EN memes (OCR), PT comments — into one binary "
-                          "schema, strict &amp; broad policies."),
-            ("De-leak", "Exact + near-duplicate (MinHash/LSH) dedup, then a frozen group split so no "
-                        "paraphrase crosses train/test."),
-            ("Train", "TF-IDF &amp; SBERT → LogReg/SVM/LightGBM (CPU); XLM-R, BERTimbau, BERTweet "
-                      "fine-tuned on Colab."),
-            ("Evaluate", "Macro-F1, paired McNemar + Holm, calibration (ECE), an identity-term bias "
-                         "probe, cross-lingual transfer."),
-            ("Ship", "Pareto pick: <b>tfidf_logreg</b> — 3.6 MB, ~1.6 ms on CPU. The model answering "
-                     "you below."),
+            ("Harmonize", "Four sources become one binary schema. Tweets and memes in English, "
+                          "comments in Portuguese. Labels follow two policies, strict and broad."),
+            ("De-leak", "Exact and near-duplicate removal (MinHash/LSH) runs first. The group split "
+                        "is frozen. No paraphrase crosses train and test."),
+            ("Train", "TF-IDF and SBERT feed LogReg, SVM and LightGBM on CPU. XLM-R, BERTimbau and "
+                      "BERTweet are fine-tuned on Colab."),
+            ("Evaluate", "Macro-F1, paired McNemar with Holm, calibration (ECE), an identity-term "
+                         "bias probe, cross-lingual transfer."),
+            ("Ship", "Pareto picks tfidf_logreg. 3.6 MB, 1.6 ms on CPU. It answers you below."),
         ],
         "reads_label": "How it reads text",
         "read1_title": "Word by word", "read1_sub": "bag-of-words",
-        "read1_body": "Counts words and character patterns (TF-IDF, word + char n-grams). No real "
-                      "context beyond short windows — but fast, 3.6 MB, runs on any CPU.",
+        "read1_body": "It counts words and character patterns (TF-IDF). It sees no context beyond "
+                      "short windows. In return it is fast, 3.6 MB, and runs on any CPU.",
         "read1_models": ["Logistic Regression", "Linear SVM", "LightGBM"],
         "read2_title": "The whole sentence", "read2_sub": "contextual",
-        "read2_body": "Reads the full sentence in context (multilingual embeddings and fine-tuned "
-                      "transformers). Heavier, but grasps meaning and transfers across languages — "
-                      "where the accuracy comes from.",
+        "read2_body": "It reads the full sentence in context, through multilingual embeddings and "
+                      "fine-tuned transformers. It costs more. It grasps meaning and transfers "
+                      "across languages. The accuracy comes from here.",
         "read2_models": ["multilingual SBERT", "XLM-RoBERTa", "BERTimbau", "BERTweet"],
         "results": "Results",
         "num1_v": "0.750", "num1_k": "best transformer<br>(XLM-R, macro-F1)",
@@ -87,52 +86,52 @@ T = {
         "cta": "Try it live",
         "panel_brow": "EN / PT · research demo",
         "panel_title": "Bilingual Hate-Speech Classifier",
-        "panel_hint": "Type or pick an example on the right, then Classify. The verdict and its "
-                      "probability appear here.",
+        "panel_hint": "Type or pick an example on the right. Click Classify. The verdict and its "
+                      "probability show here.",
         "state_hate": "Hate", "state_nothate": "Not hate",
         "meta_prob": "hate probability", "meta_thr": "threshold",
         "your_text": "Your text",
         "placeholder": "Type English or Portuguese text...",
         "classify": "Classify",
-        "disc": "<b>Responsible use.</b> This is not a moderation oracle. It reflects the biases of "
-                "its training data (the study measures over-flagging of some identity terms) and "
-                "should support, never replace, human review. Implicit hate with no slurs is its main "
-                "blind spot. Research and educational use only.",
+        "disc": "<b>Responsible use.</b> This is not a moderation oracle. It carries the biases of "
+                "its training data; the study measures over-flagging of some identity terms. It "
+                "should support human review, not replace it. Implicit hate without slurs is where "
+                "it fails most. Research and educational use only.",
         "disc_code": "Code", "disc_docs": "Docs",
     },
     "pt": {
         "eyebrow": "Demo de pesquisa · EN / PT",
         "title": "Detecção Bilíngue de Discurso de Ódio",
-        "tag": "Um estudo reprodutível comparando modelos clássicos e transformers sob um protocolo "
-               "à prova de vazamento — e o classificador calibrado que você pode testar abaixo.",
+        "tag": "Um estudo compara modelos clássicos e transformers sob um protocolo à prova de "
+               "vazamento. Abaixo roda o classificador que ele produziu. Teste.",
         "find_label": "O achado",
-        "find_main": "Os transformers vencem — e é <b>estatisticamente significativo</b>",
-        "find_sub": "O XLM-R atinge macro-F1 0,750 contra 0,709 do melhor baseline clássico (McNemar "
-                    "pareado + Holm). Este demo serve o MVP clássico de 3,6 MB — a ~4 pontos, sem GPU.",
+        "find_main": "Os transformers vencem. A diferença é <b>estatisticamente significativa</b>.",
+        "find_sub": "O XLM-R chega a macro-F1 0,750. O melhor clássico chega a 0,709 (McNemar "
+                    "pareado, Holm). Este demo roda o clássico, 3,6 MB. Fica quatro pontos atrás e "
+                    "dispensa GPU.",
         "find_num": "0,750", "find_cap": "melhor macro-F1",
         "how": "Como foi construído",
         "steps": [
-            ("Harmonizar", "Quatro datasets — tweets EN, memes EN (OCR), comentários PT — num só "
-                           "esquema binário, políticas strict e broad."),
-            ("Anti-vazamento", "Dedup exata + quase-duplicatas (MinHash/LSH), depois um split por "
-                               "grupo congelado pra nenhuma paráfrase cruzar treino/teste."),
-            ("Treinar", "TF-IDF e SBERT → LogReg/SVM/LightGBM (CPU); XLM-R, BERTimbau e BERTweet "
-                        "ajustados no Colab."),
-            ("Avaliar", "Macro-F1, McNemar pareado + Holm, calibração (ECE), sonda de viés por termo "
-                        "de identidade, transferência cross-lingual."),
-            ("Publicar", "Escolha de Pareto: <b>tfidf_logreg</b> — 3,6 MB, ~1,6 ms em CPU. O modelo "
-                         "que responde você abaixo."),
+            ("Harmonizar", "Quatro fontes viram um esquema binário. Tweets e memes em inglês, "
+                           "comentários em português. Os rótulos seguem duas políticas, strict e broad."),
+            ("Anti-vazamento", "Primeiro remove duplicatas exatas e quase-duplicatas (MinHash/LSH). "
+                               "O split por grupo é congelado. Nenhuma paráfrase cruza treino e teste."),
+            ("Treinar", "TF-IDF e SBERT alimentam LogReg, SVM e LightGBM na CPU. XLM-R, BERTimbau e "
+                        "BERTweet são ajustados no Colab."),
+            ("Avaliar", "Macro-F1, McNemar pareado com Holm, calibração (ECE), sonda de viés por "
+                        "termo de identidade, transferência entre idiomas."),
+            ("Publicar", "Pareto escolhe o tfidf_logreg. 3,6 MB, 1,6 ms na CPU. É ele que responde "
+                         "abaixo."),
         ],
         "reads_label": "Como ela lê o texto",
         "read1_title": "Palavra por palavra", "read1_sub": "saco de palavras",
-        "read1_body": "Conta palavras e padrões de caracteres (TF-IDF, n-gramas de palavra + "
-                      "caractere). Sem contexto além de janelas curtas — mas rápido, 3,6 MB, roda "
-                      "em qualquer CPU.",
+        "read1_body": "Conta palavras e padrões de caractere (TF-IDF). Não vê contexto além de "
+                      "janelas curtas. Em troca, é rápido, ocupa 3,6 MB e roda em qualquer CPU.",
         "read1_models": ["Logistic Regression", "Linear SVM", "LightGBM"],
         "read2_title": "A frase inteira", "read2_sub": "contextual",
-        "read2_body": "Lê a frase toda em contexto (embeddings multilíngues e transformers "
-                      "ajustados). Mais pesado, mas capta o sentido e transfere entre idiomas — "
-                      "de onde vem a acurácia.",
+        "read2_body": "Lê a frase inteira em contexto, por embeddings multilíngues e transformers "
+                      "ajustados. Custa mais. Capta o sentido e transfere entre idiomas. A acurácia "
+                      "vem daí.",
         "read2_models": ["multilingual SBERT", "XLM-RoBERTa", "BERTimbau", "BERTweet"],
         "results": "Resultados",
         "num1_v": "0,750", "num1_k": "melhor transformer<br>(XLM-R, macro-F1)",
@@ -142,17 +141,17 @@ T = {
         "cta": "Experimente ao vivo",
         "panel_brow": "EN / PT · demo de pesquisa",
         "panel_title": "Classificador Bilíngue de Discurso de Ódio",
-        "panel_hint": "Digite ou escolha um exemplo à direita e clique em Classificar. O veredito e a "
+        "panel_hint": "Digite ou escolha um exemplo à direita. Clique em Classificar. O veredito e a "
                       "probabilidade aparecem aqui.",
         "state_hate": "Ódio", "state_nothate": "Não é ódio",
         "meta_prob": "probabilidade de ódio", "meta_thr": "limiar",
         "your_text": "Seu texto",
         "placeholder": "Digite um texto em inglês ou português...",
         "classify": "Classificar",
-        "disc": "<b>Uso responsável.</b> Isto não é um oráculo de moderação. Reflete os vieses dos "
-                "dados de treino (o estudo mede a super-marcação de alguns termos de identidade) e "
-                "deve apoiar, nunca substituir, a revisão humana. Ódio implícito sem palavrão é seu "
-                "principal ponto cego. Uso apenas para pesquisa e educação.",
+        "disc": "<b>Uso responsável.</b> Isto não é um oráculo de moderação. Carrega os vieses dos "
+                "dados de treino; o estudo mede a super-marcação de alguns termos de identidade. "
+                "Serve para apoiar a revisão humana, não para substituí-la. Falha mais no ódio "
+                "implícito, sem palavrão. Uso apenas para pesquisa e educação.",
         "disc_code": "Código", "disc_docs": "Docs",
     },
 }
