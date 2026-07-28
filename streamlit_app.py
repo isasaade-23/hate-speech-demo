@@ -1,8 +1,8 @@
 """Streamlit demo — bilingual (EN/PT) hate-speech classifier.
 
-A poster / split-canvas design: an editorial landing (how it was built, results, links)
-scrolls into the live tool — a dark verdict panel with a giant probability figure on the
-left, the input on the right, hard edges and solid offset shadows throughout.
+Poster / split-canvas design with an animated landing that scrolls into the live tool.
+The interface language (EN/PT) is switchable at the top; the classifier itself handles
+both languages regardless.
 
 Serves the CPU product model (tfidf_logreg_strict) directly. Self-contained: the `hsc`
 package is vendored under src/, the model bundle and configs travel with the repo.
@@ -24,19 +24,117 @@ from hsc.inference import get_classifier  # noqa: E402
 MODEL_ID = "tfidf_logreg_strict_s42"
 THRESHOLD_PCT = 66.5  # tuned decision threshold, shown on the meter for transparency
 
-EXAMPLES = {
-    "EN friendly": "I love this community, everyone is so welcoming!",
-    "EN implicit hate": "those people are subhuman and should be removed",
-    "PT friendly": "que vídeo incrível, parabéns pelo trabalho de vocês",
-    "PT hostile": "vocês são um bando de idiotas e não deviam existir",
-}
-
 REPO = "https://github.com/isasaade-23/hate-speech-nlp-en-pt"
 DOCS = "https://isasaade-23.github.io/hate-speech-nlp-en-pt/"
 DEMO_REPO = "https://github.com/isasaade-23/hate-speech-demo"
 
 CORAL = "#EE6C4D"
 GREEN = "#1D9E75"
+
+# example texts are content (kept as-is); only the descriptor labels are translated
+EXAMPLES = [
+    {"key": "en_ok", "en": "EN friendly", "pt": "EN amigável",
+     "text": "I love this community, everyone is so welcoming!"},
+    {"key": "en_hate", "en": "EN implicit hate", "pt": "EN ódio implícito",
+     "text": "those people are subhuman and should be removed"},
+    {"key": "pt_ok", "en": "PT friendly", "pt": "PT amigável",
+     "text": "que vídeo incrível, parabéns pelo trabalho de vocês"},
+    {"key": "pt_hate", "en": "PT hostile", "pt": "PT hostil",
+     "text": "vocês são um bando de idiotas e não deviam existir"},
+]
+
+# --------------------------------------------------------------------------- i18n
+T = {
+    "en": {
+        "eyebrow": "Research demo · EN / PT",
+        "title": "Bilingual Hate-Speech Detection",
+        "tag": "A reproducible study comparing classical models with transformers under one "
+               "leakage-safe protocol — and the live, calibrated classifier you can try below.",
+        "find_label": "The finding",
+        "find_main": "Transformers win — and it's <b>statistically significant</b>",
+        "find_sub": "XLM-R reaches macro-F1 0.750 vs 0.709 for the best classical baseline "
+                    "(paired McNemar + Holm). This demo serves the 3.6 MB classical MVP — within "
+                    "~4 points, no GPU.",
+        "find_num": "0.750", "find_cap": "best macro-F1",
+        "how": "How it was built",
+        "steps": [
+            ("Harmonize", "Four datasets — EN tweets, EN memes (OCR), PT comments — into one binary "
+                          "schema, strict &amp; broad policies."),
+            ("De-leak", "Exact + near-duplicate (MinHash/LSH) dedup, then a frozen group split so no "
+                        "paraphrase crosses train/test."),
+            ("Train", "TF-IDF &amp; SBERT → LogReg/SVM/LightGBM (CPU); XLM-R, BERTimbau, BERTweet "
+                      "fine-tuned on Colab."),
+            ("Evaluate", "Macro-F1, paired McNemar + Holm, calibration (ECE), an identity-term bias "
+                         "probe, cross-lingual transfer."),
+            ("Ship", "Pareto pick: <b>tfidf_logreg</b> — 3.6 MB, ~1.6 ms on CPU. The model answering "
+                     "you below."),
+        ],
+        "results": "Results",
+        "num1_v": "0.750", "num1_k": "best transformer<br>(XLM-R, macro-F1)",
+        "num2_v": "0.709", "num2_k": "this demo<br>(classical MVP, macro-F1)",
+        "num3_v": "0.42→0.63", "num3_k": "EN→PT zero-shot transfer<br>(TF-IDF → multilingual SBERT)",
+        "link_code": "Code &amp; study", "link_docs": "Documentation", "link_demo": "Demo source",
+        "cta": "Try it live",
+        "panel_brow": "EN / PT · research demo",
+        "panel_title": "Bilingual Hate-Speech Classifier",
+        "panel_hint": "Type or pick an example on the right, then Classify. The verdict and its "
+                      "probability appear here.",
+        "state_hate": "Hate", "state_nothate": "Not hate",
+        "meta_prob": "hate probability", "meta_thr": "threshold",
+        "your_text": "Your text",
+        "placeholder": "Type English or Portuguese text...",
+        "classify": "Classify",
+        "disc": "<b>Responsible use.</b> This is not a moderation oracle. It reflects the biases of "
+                "its training data (the study measures over-flagging of some identity terms) and "
+                "should support, never replace, human review. Implicit hate with no slurs is its main "
+                "blind spot. Research and educational use only.",
+        "disc_code": "Code", "disc_docs": "Docs",
+    },
+    "pt": {
+        "eyebrow": "Demo de pesquisa · EN / PT",
+        "title": "Detecção Bilíngue de Discurso de Ódio",
+        "tag": "Um estudo reprodutível comparando modelos clássicos e transformers sob um protocolo "
+               "à prova de vazamento — e o classificador calibrado que você pode testar abaixo.",
+        "find_label": "O achado",
+        "find_main": "Os transformers vencem — e é <b>estatisticamente significativo</b>",
+        "find_sub": "O XLM-R atinge macro-F1 0,750 contra 0,709 do melhor baseline clássico (McNemar "
+                    "pareado + Holm). Este demo serve o MVP clássico de 3,6 MB — a ~4 pontos, sem GPU.",
+        "find_num": "0,750", "find_cap": "melhor macro-F1",
+        "how": "Como foi construído",
+        "steps": [
+            ("Harmonizar", "Quatro datasets — tweets EN, memes EN (OCR), comentários PT — num só "
+                           "esquema binário, políticas strict e broad."),
+            ("Anti-vazamento", "Dedup exata + quase-duplicatas (MinHash/LSH), depois um split por "
+                               "grupo congelado pra nenhuma paráfrase cruzar treino/teste."),
+            ("Treinar", "TF-IDF e SBERT → LogReg/SVM/LightGBM (CPU); XLM-R, BERTimbau e BERTweet "
+                        "ajustados no Colab."),
+            ("Avaliar", "Macro-F1, McNemar pareado + Holm, calibração (ECE), sonda de viés por termo "
+                        "de identidade, transferência cross-lingual."),
+            ("Publicar", "Escolha de Pareto: <b>tfidf_logreg</b> — 3,6 MB, ~1,6 ms em CPU. O modelo "
+                         "que responde você abaixo."),
+        ],
+        "results": "Resultados",
+        "num1_v": "0,750", "num1_k": "melhor transformer<br>(XLM-R, macro-F1)",
+        "num2_v": "0,709", "num2_k": "este demo<br>(MVP clássico, macro-F1)",
+        "num3_v": "0,42→0,63", "num3_k": "transferência EN→PT zero-shot<br>(TF-IDF → SBERT multilíngue)",
+        "link_code": "Código &amp; estudo", "link_docs": "Documentação", "link_demo": "Código do demo",
+        "cta": "Experimente ao vivo",
+        "panel_brow": "EN / PT · demo de pesquisa",
+        "panel_title": "Classificador Bilíngue de Discurso de Ódio",
+        "panel_hint": "Digite ou escolha um exemplo à direita e clique em Classificar. O veredito e a "
+                      "probabilidade aparecem aqui.",
+        "state_hate": "Ódio", "state_nothate": "Não é ódio",
+        "meta_prob": "probabilidade de ódio", "meta_thr": "limiar",
+        "your_text": "Seu texto",
+        "placeholder": "Digite um texto em inglês ou português...",
+        "classify": "Classificar",
+        "disc": "<b>Uso responsável.</b> Isto não é um oráculo de moderação. Reflete os vieses dos "
+                "dados de treino (o estudo mede a super-marcação de alguns termos de identidade) e "
+                "deve apoiar, nunca substituir, a revisão humana. Ódio implícito sem palavrão é seu "
+                "principal ponto cego. Uso apenas para pesquisa e educação.",
+        "disc_code": "Código", "disc_docs": "Docs",
+    },
+}
 
 
 @st.cache_resource
@@ -59,13 +157,11 @@ st.markdown(
 
 html, body, [class*="css"], .stApp { font-family:'Lato', sans-serif; }
 .stApp { background:var(--bone); }
-
-/* kill the white Streamlit top bar that overlapped the content */
 header[data-testid="stHeader"]{ display:none; }
 #MainMenu, footer, [data-testid="stToolbar"]{ display:none; }
-.block-container{ padding-top:1.4rem; padding-bottom:2rem; max-width:1050px; }
+.block-container{ padding-top:1rem; padding-bottom:2rem; max-width:1050px; }
 
-/* ================= animations (CSS only, safe fallbacks) ================= */
+/* animations */
 @keyframes fadeUp { from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:none; } }
 @media (prefers-reduced-motion: no-preference){
   .anim{ animation:fadeUp .7s cubic-bezier(.2,.7,.2,1) both; }
@@ -75,8 +171,13 @@ header[data-testid="stHeader"]{ display:none; }
   }
 }
 
-/* ================= landing ================= */
-.land{ margin:6px 0 8px; }
+/* language toggle (compact, no offset shadow) */
+.st-key-lang_en button, .st-key-lang_pt button{
+    box-shadow:none !important; text-transform:uppercase; letter-spacing:1px;
+    font-weight:800 !important; padding:6px 0 !important; min-height:0 !important; }
+
+/* landing */
+.land{ margin:2px 0 8px; }
 .land .brow{ font-size:12px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--coral); }
 .land h1{ font-size:clamp(34px,6vw,60px); font-weight:900; letter-spacing:-1.5px; line-height:.98;
           color:var(--slate-deep); margin:12px 0 0; max-width:16ch; text-wrap:balance; }
@@ -94,8 +195,7 @@ header[data-testid="stHeader"]{ display:none; }
 .hero .kmain b{ color:var(--coral); }
 .hero .ksub{ font-size:14px; color:#B9C6DE; margin:8px 0 0; max-width:46ch; }
 .hero .knum{ margin-left:auto; text-align:right; }
-.hero .knum .big{ font-size:60px; font-weight:900; letter-spacing:-3px; line-height:.9;
-                  font-variant-numeric:tabular-nums;
+.hero .knum .big{ font-size:60px; font-weight:900; letter-spacing:-3px; line-height:.9; font-variant-numeric:tabular-nums;
                   background:linear-gradient(90deg,#F4A261,#EE6C4D); -webkit-background-clip:text;
                   background-clip:text; -webkit-text-fill-color:transparent; }
 .hero .knum .cap{ font-size:11px; color:#9DB0D2; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
@@ -106,8 +206,7 @@ header[data-testid="stHeader"]{ display:none; }
 .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
 @media (max-width:760px){ .steps{ grid-template-columns:repeat(2,1fr); } }
 @media (max-width:460px){ .steps{ grid-template-columns:1fr; } }
-.step{ background:#fff; border:2px solid var(--slate-deep); box-shadow:6px 6px 0 var(--slate);
-       padding:16px 16px 18px; }
+.step{ background:#fff; border:2px solid var(--slate-deep); box-shadow:6px 6px 0 var(--slate); padding:16px 16px 18px; }
 .step .n{ font-family:'Lato'; font-size:13px; font-weight:900; color:#fff; background:var(--slate-deep);
           display:inline-block; padding:2px 9px; letter-spacing:1px; }
 .step h4{ font-size:16px; font-weight:900; color:var(--slate-deep); margin:12px 0 6px; letter-spacing:-.2px; }
@@ -115,17 +214,16 @@ header[data-testid="stHeader"]{ display:none; }
 .step.coral{ box-shadow:6px 6px 0 var(--coral); }
 .step.coral .n{ background:var(--coral); }
 .step.coral h4{ color:var(--coral); }
-/* 05 Ship spans the full width of the four steps above, as a horizontal band */
 .step.ship{ grid-column:1 / -1; display:flex; align-items:center; gap:24px; padding:18px 20px; }
 .step.ship .shiphead{ display:flex; align-items:center; gap:12px; flex:none; }
 .step.ship h4{ margin:0; font-size:19px; }
 .step.ship p{ font-size:14px; }
 @media (max-width:460px){ .step.ship{ flex-direction:column; align-items:flex-start; gap:10px; } }
 
-.nums{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; }
-.numc{ background:var(--slate-deep); color:#fff; border:3px solid var(--slate-deep);
-       box-shadow:8px 8px 0 var(--coral); padding:20px 22px; }
-.numc .v{ font-size:44px; font-weight:900; letter-spacing:-2px; line-height:1; font-variant-numeric:tabular-nums; }
+.nums{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+@media (max-width:620px){ .nums{ grid-template-columns:1fr; } }
+.numc{ background:var(--slate-deep); color:#fff; border:3px solid var(--slate-deep); box-shadow:8px 8px 0 var(--coral); padding:20px 22px; }
+.numc .v{ font-size:40px; font-weight:900; letter-spacing:-2px; line-height:1; font-variant-numeric:tabular-nums; }
 .numc .k{ font-size:12.5px; color:#B9C6DE; font-weight:700; margin-top:8px; line-height:1.4; }
 .numc.alt{ background:#fff; color:var(--slate-deep); box-shadow:8px 8px 0 var(--slate); }
 .numc.alt .k{ color:var(--mute); }
@@ -133,8 +231,7 @@ header[data-testid="stHeader"]{ display:none; }
 .links{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:26px 0 0; }
 @media (max-width:460px){ .links{ grid-template-columns:1fr; } }
 .links a{ text-align:center; text-decoration:none; font-weight:800; font-size:13.5px; letter-spacing:.5px;
-          text-transform:uppercase; padding:14px 22px; border:2px solid var(--slate-deep);
-          color:var(--slate-deep); background:#fff; }
+          text-transform:uppercase; padding:14px 22px; border:2px solid var(--slate-deep); color:var(--slate-deep); background:#fff; }
 .links a:hover{ background:var(--slate-deep); color:#fff; }
 .links a.primary{ background:var(--coral); border-color:var(--coral); color:#fff; box-shadow:4px 4px 0 var(--slate-deep); }
 .links a.primary:hover{ background:var(--slate-deep); border-color:var(--slate-deep); box-shadow:4px 4px 0 var(--coral); }
@@ -144,15 +241,14 @@ header[data-testid="stHeader"]{ display:none; }
 .cta .go{ font-size:13px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--coral); }
 .cta .go .arrow{ display:block; font-size:22px; color:var(--slate); margin-top:4px; }
 
-/* ================= tool: LEFT verdict panel ================= */
+/* tool */
 .panel{ background:linear-gradient(160deg,#243a63,#1F3050 60%,#16223d); color:#fff;
         border:3px solid var(--slate-deep); box-shadow:12px 12px 0 var(--coral);
         padding:30px 28px; min-height:360px; display:flex; flex-direction:column; }
 .panel .brow{ font-size:11px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--amber); }
-.panel .ttl{ font-size:20px; font-weight:800; letter-spacing:-.3px; line-height:1.15; margin:8px 0 auto; max-width:15ch; }
+.panel .ttl{ font-size:20px; font-weight:800; letter-spacing:-.3px; line-height:1.15; margin:8px 0 auto; max-width:16ch; }
 .panel .state{ font-size:14px; font-weight:900; letter-spacing:2px; text-transform:uppercase; }
-.panel .giant{ font-size:94px; font-weight:900; letter-spacing:-5px; line-height:.85; margin:4px 0 0;
-               font-variant-numeric:tabular-nums; }
+.panel .giant{ font-size:94px; font-weight:900; letter-spacing:-5px; line-height:.85; margin:4px 0 0; font-variant-numeric:tabular-nums; }
 .panel .giant .u{ font-size:32px; font-weight:700; letter-spacing:-1px; color:#93A2C0; }
 .panel .meter{ position:relative; height:10px; background:rgba(255,255,255,.14); margin:18px 0 8px; }
 .panel .meter .fill{ height:100%; }
@@ -161,102 +257,35 @@ header[data-testid="stHeader"]{ display:none; }
 .panel.idle .ttl{ margin-bottom:16px; }
 .panel .hint{ font-size:14px; color:#B9C6DE; font-weight:400; margin-top:auto; }
 
-/* tool: RIGHT input column framed as a poster (target the column with the textarea) */
 [data-testid="stColumn"]:has([data-testid="stTextArea"]){
-    background:#fff; border:3px solid var(--slate-deep); box-shadow:10px 10px 0 var(--slate);
-    padding:26px 24px; }
+    background:#fff; border:3px solid var(--slate-deep); box-shadow:10px 10px 0 var(--slate); padding:26px 24px; }
 .rlabel{ font-size:11px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; color:var(--mute); margin-bottom:12px; }
-
 [data-testid="stColumn"] .stButton button[kind="secondary"]{
     border-radius:0; border:2px solid var(--slate-deep); background:#fff; color:var(--slate-deep);
     font-weight:800; font-size:12.5px; padding:6px 10px; box-shadow:none; }
-[data-testid="stColumn"] .stButton button[kind="secondary"]:hover{
-    background:var(--coral); border-color:var(--coral); color:#fff; }
+[data-testid="stColumn"] .stButton button[kind="secondary"]:hover{ background:var(--coral); border-color:var(--coral); color:#fff; }
 .stButton button[kind="primary"]{
     border-radius:0; border:2px solid var(--slate-deep); background:var(--slate-deep); color:#fff;
     font-weight:900; letter-spacing:1px; text-transform:uppercase; box-shadow:4px 4px 0 var(--coral); padding:12px 24px; }
 .stButton button[kind="primary"]:hover{ background:var(--coral); border-color:var(--coral); box-shadow:4px 4px 0 var(--slate-deep); }
-
 .stTextArea textarea{ border-radius:0 !important; border:2px solid var(--slate-deep) !important;
     background:#fff !important; color:var(--ink) !important; font-family:'Lato',sans-serif !important; font-size:15px !important; }
-
 .disc{ border-left:5px solid var(--coral); background:#fff; border:1px solid var(--line);
        padding:16px 18px; font-size:13.5px; color:var(--mute); margin-top:26px; }
-.disc b{ color:var(--slate-deep); }
-.disc a{ color:var(--slate); font-weight:700; }
+.disc b{ color:var(--slate-deep); } .disc a{ color:var(--slate); font-weight:700; }
 </style>
 """,
     unsafe_allow_html=True,
 )
 
-# --------------------------------------------------------------------------- landing
-st.markdown(
-    f"""
-<div class="land">
-  <div class="brow anim d1">Research demo · EN / PT</div>
-  <h1 class="anim d2">Bilingual Hate-Speech Detection <span class="beta">Beta</span></h1>
-  <p class="tag anim d3">A reproducible study comparing classical models with transformers under one
-     leakage-safe protocol — and the live, calibrated classifier you can try below.</p>
-  <div class="tick anim d4"></div>
-
-  <div class="hero anim d4">
-    <div>
-      <div class="klabel">The finding</div>
-      <div class="kmain">Transformers win — and it's <b>statistically significant</b></div>
-      <div class="ksub">XLM-R reaches macro-F1 0.750 vs 0.709 for the best classical baseline
-        (paired McNemar + Holm). This demo serves the 3.6 MB classical MVP — within ~4 points, no GPU.</div>
-    </div>
-    <div class="knum">
-      <div class="big">0.750</div>
-      <div class="cap">best macro-F1</div>
-    </div>
-  </div>
-
-  <div class="seclabel reveal">How it was built</div>
-  <div class="steps">
-    <div class="step reveal"><span class="n">01</span><h4>Harmonize</h4>
-      <p>Four Kaggle datasets — EN tweets, EN memes (OCR), PT comments — folded into one binary
-         schema under strict and broad label policies.</p></div>
-    <div class="step reveal"><span class="n">02</span><h4>De-leak</h4>
-      <p>Exact + near-duplicate (MinHash/LSH) dedup, then a group-stratified frozen split so no
-         paraphrase crosses train and test. Enforced by a CI test.</p></div>
-    <div class="step reveal"><span class="n">03</span><h4>Train</h4>
-      <p>TF-IDF and multilingual SBERT → LogReg / SVM / LightGBM (local, CPU); XLM-R, BERTimbau and
-         BERTweet fine-tuned on Colab GPU.</p></div>
-    <div class="step reveal"><span class="n">04</span><h4>Evaluate</h4>
-      <p>Macro-F1, paired McNemar + Holm, probability calibration (ECE), an identity-term bias probe,
-         and cross-lingual transfer.</p></div>
-    <div class="step ship coral reveal">
-      <div class="shiphead"><span class="n">05</span><h4>Ship</h4></div>
-      <p>Pareto pick for the product: <b>tfidf_logreg</b> — 3.6 MB, ~1.6 ms on CPU. That's the model
-         answering you below.</p></div>
-  </div>
-
-  <div class="seclabel reveal">Results</div>
-  <div class="nums">
-    <div class="numc reveal"><div class="v">0.750</div><div class="k">best transformer<br>(XLM-R, macro-F1)</div></div>
-    <div class="numc alt reveal"><div class="v">0.709</div><div class="k">this demo<br>(classical MVP, macro-F1)</div></div>
-    <div class="numc reveal"><div class="v">0.42→0.63</div><div class="k">EN→PT zero-shot transfer<br>(TF-IDF → multilingual SBERT)</div></div>
-  </div>
-
-  <div class="links reveal">
-    <a class="primary" href="{REPO}" target="_blank">Code &amp; study</a>
-    <a href="{DOCS}" target="_blank">Documentation</a>
-    <a href="{DEMO_REPO}" target="_blank">Demo source</a>
-  </div>
-
-  <div class="cta reveal">
-    <div class="line"></div>
-    <div class="go">Try it live<span class="arrow">&#8595;</span></div>
-  </div>
-</div>
-""",
-    unsafe_allow_html=True,
-)
-
 # --------------------------------------------------------------------------- state
+st.session_state.setdefault("lang", "en")
 st.session_state.setdefault("text", "")
 st.session_state.setdefault("classified", False)
+
+
+def set_lang(value: str):
+    st.session_state.lang = value
 
 
 def use_example(value: str):
@@ -268,40 +297,106 @@ def classify_now():
     st.session_state.classified = True
 
 
+# --------------------------------------------------------------------------- language toggle
+_spacer, toggle = st.columns([0.78, 0.22])
+with toggle:
+    lc = st.columns(2)
+    lc[0].button("EN", key="lang_en", on_click=set_lang, args=("en",), use_container_width=True,
+                 type="primary" if st.session_state.lang == "en" else "secondary")
+    lc[1].button("PT", key="lang_pt", on_click=set_lang, args=("pt",), use_container_width=True,
+                 type="primary" if st.session_state.lang == "pt" else "secondary")
+
+lang = st.session_state.lang
+t = T[lang]
+
+# --------------------------------------------------------------------------- landing
+_steps_html = ""
+for i, (title, body) in enumerate(t["steps"]):
+    if i == 4:
+        _steps_html += (
+            f'<div class="step ship coral reveal"><div class="shiphead"><span class="n">05</span>'
+            f'<h4>{title}</h4></div><p>{body}</p></div>'
+        )
+    else:
+        _steps_html += (
+            f'<div class="step reveal"><span class="n">0{i + 1}</span><h4>{title}</h4><p>{body}</p></div>'
+        )
+
+st.markdown(
+    f"""
+<div class="land">
+  <div class="brow anim d1">{t["eyebrow"]}</div>
+  <h1 class="anim d2">{t["title"]} <span class="beta">Beta</span></h1>
+  <p class="tag anim d3">{t["tag"]}</p>
+  <div class="tick anim d4"></div>
+
+  <div class="hero anim d4">
+    <div>
+      <div class="klabel">{t["find_label"]}</div>
+      <div class="kmain">{t["find_main"]}</div>
+      <div class="ksub">{t["find_sub"]}</div>
+    </div>
+    <div class="knum"><div class="big">{t["find_num"]}</div><div class="cap">{t["find_cap"]}</div></div>
+  </div>
+
+  <div class="seclabel reveal">{t["how"]}</div>
+  <div class="steps">{_steps_html}</div>
+
+  <div class="seclabel reveal">{t["results"]}</div>
+  <div class="nums">
+    <div class="numc reveal"><div class="v">{t["num1_v"]}</div><div class="k">{t["num1_k"]}</div></div>
+    <div class="numc alt reveal"><div class="v">{t["num2_v"]}</div><div class="k">{t["num2_k"]}</div></div>
+    <div class="numc reveal"><div class="v">{t["num3_v"]}</div><div class="k">{t["num3_k"]}</div></div>
+  </div>
+
+  <div class="links reveal">
+    <a class="primary" href="{REPO}" target="_blank">{t["link_code"]}</a>
+    <a href="{DOCS}" target="_blank">{t["link_docs"]}</a>
+    <a href="{DEMO_REPO}" target="_blank">{t["link_demo"]}</a>
+  </div>
+
+  <div class="cta reveal">
+    <div class="line"></div>
+    <div class="go">{t["cta"]}<span class="arrow">&#8595;</span></div>
+  </div>
+</div>
+""",
+    unsafe_allow_html=True,
+)
+
 # --------------------------------------------------------------------------- compute
 text = st.session_state.text
 show = st.session_state.classified and bool(text.strip())
 result = clf.predict(text) if show else None
 
 
-def left_panel_html(res) -> str:
+def left_panel_html(res, tr) -> str:
     if not res:
         return (
             '<div class="panel idle">'
-            '<div class="brow">EN / PT · research demo</div>'
-            '<div class="ttl">Bilingual Hate-Speech Classifier</div>'
-            '<div class="hint">Type or pick an example on the right, then Classify. '
-            "The verdict and its probability appear here.</div>"
+            f'<div class="brow">{tr["panel_brow"]}</div>'
+            f'<div class="ttl">{tr["panel_title"]}</div>'
+            f'<div class="hint">{tr["panel_hint"]}</div>'
             "</div>"
         )
     score = float(res["score"])
     pct = score * 100
     is_hate = res["label"] == "hate"
     color = CORAL if is_hate else GREEN
-    state = "Hate" if is_hate else "Not hate"
-    lang = res["language"]
+    state = tr["state_hate"] if is_hate else tr["state_nothate"]
+    lg = res["language"]
     return (
         '<div class="panel">'
-        '<div class="brow">EN / PT · research demo</div>'
-        '<div class="ttl">Bilingual Hate-Speech Classifier</div>'
+        f'<div class="brow">{tr["panel_brow"]}</div>'
+        f'<div class="ttl">{tr["panel_title"]}</div>'
         f'<div class="state" style="color:{color}">{state}</div>'
         f'<div class="giant">{pct:.0f}<span class="u">%</span></div>'
         '<div class="meter">'
         f'<div class="fill" style="width:{pct:.1f}%; background:{color}"></div>'
         f'<div class="thr" style="left:{THRESHOLD_PCT}%"></div>'
         "</div>"
-        f'<div class="meta">hate probability · threshold {THRESHOLD_PCT}% · '
-        f'{lang["detected"]} ({lang["confidence"]}) · {res["model_version"].replace("_s42","")}</div>'
+        f'<div class="meta">{tr["meta_prob"]} · {tr["meta_thr"]} {THRESHOLD_PCT}% · '
+        f'{lg["detected"]} ({lg["confidence"]}) · {res["model_version"].replace("_s42","")}</div>'
         "</div>"
     )
 
@@ -310,29 +405,24 @@ def left_panel_html(res) -> str:
 left, right = st.columns([0.92, 1.08], gap="large")
 
 with left:
-    st.markdown(left_panel_html(result), unsafe_allow_html=True)
+    st.markdown(left_panel_html(result, t), unsafe_allow_html=True)
 
 with right:
-    st.markdown('<div class="rlabel">Your text</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="rlabel">{t["your_text"]}</div>', unsafe_allow_html=True)
     chip_cols = st.columns(2)
-    labels = list(EXAMPLES)
-    for i, label in enumerate(labels):
+    for i, ex in enumerate(EXAMPLES):
         chip_cols[i % 2].button(
-            label, key=f"ex_{i}", on_click=use_example, args=(EXAMPLES[label],),
+            ex[lang], key=f"ex_{ex['key']}", on_click=use_example, args=(ex["text"],),
             use_container_width=True,
         )
     st.text_area(
-        "Text", key="text", height=150, label_visibility="collapsed",
-        placeholder="Type English or Portuguese text...",
+        "Text", key="text", height=150, label_visibility="collapsed", placeholder=t["placeholder"],
     )
-    st.button("Classify", type="primary", on_click=classify_now, use_container_width=True)
+    st.button(t["classify"], type="primary", on_click=classify_now, use_container_width=True)
 
 # --------------------------------------------------------------------------- disclaimer
 st.markdown(
-    '<div class="disc"><b>Responsible use.</b> This is not a moderation oracle. It reflects the '
-    "biases of its training data (the study measures over-flagging of some identity terms) and "
-    "should support, never replace, human review. Implicit hate with no slurs is its main blind "
-    "spot. Research and educational use only. "
-    f'<a href="{REPO}">Code</a> · <a href="{DOCS}">Docs</a>.</div>',
+    f'<div class="disc">{t["disc"]} '
+    f'<a href="{REPO}">{t["disc_code"]}</a> · <a href="{DOCS}">{t["disc_docs"]}</a>.</div>',
     unsafe_allow_html=True,
 )
