@@ -46,7 +46,7 @@ def load_classifier():
 
 clf = load_classifier()
 
-st.set_page_config(page_title="Bilingual Hate-Speech Classifier (EN/PT)", layout="wide")
+st.set_page_config(page_title="Bilingual Hate-Speech Classifier (EN/PT) · beta", layout="wide")
 
 # --------------------------------------------------------------------------- CSS
 st.markdown(
@@ -80,6 +80,9 @@ header[data-testid="stHeader"]{ display:none; }
 .land .brow{ font-size:12px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--coral); }
 .land h1{ font-size:clamp(34px,6vw,60px); font-weight:900; letter-spacing:-1.5px; line-height:.98;
           color:var(--slate-deep); margin:12px 0 0; max-width:16ch; text-wrap:balance; }
+.beta{ display:inline-block; vertical-align:top; margin-left:14px; font-size:15px; font-weight:900;
+       letter-spacing:2px; text-transform:uppercase; color:#fff; background:var(--coral);
+       border:2px solid var(--slate-deep); box-shadow:3px 3px 0 var(--slate-deep); padding:3px 10px; }
 .land .tag{ font-size:17px; color:var(--mute); font-weight:400; max-width:52ch; margin:16px 0 0; }
 .land .tick{ width:64px; height:6px; background:var(--coral); border-radius:2px; margin:22px 0 0; }
 
@@ -191,7 +194,7 @@ st.markdown(
     f"""
 <div class="land">
   <div class="brow anim d1">Research demo · EN / PT</div>
-  <h1 class="anim d2">Bilingual Hate-Speech Detection</h1>
+  <h1 class="anim d2">Bilingual Hate-Speech Detection <span class="beta">Beta</span></h1>
   <p class="tag anim d3">A reproducible study comparing classical models with transformers under one
      leakage-safe protocol — and the live, calibrated classifier you can try below.</p>
   <div class="tick anim d4"></div>
