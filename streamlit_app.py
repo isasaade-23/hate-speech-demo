@@ -69,6 +69,16 @@ T = {
             ("Ship", "Pareto pick: <b>tfidf_logreg</b> — 3.6 MB, ~1.6 ms on CPU. The model answering "
                      "you below."),
         ],
+        "reads_label": "How it reads text",
+        "read1_title": "Word by word", "read1_sub": "bag-of-words",
+        "read1_body": "Counts words and character patterns (TF-IDF, word + char n-grams). No real "
+                      "context beyond short windows — but fast, 3.6 MB, runs on any CPU.",
+        "read1_models": ["Logistic Regression", "Linear SVM", "LightGBM"],
+        "read2_title": "The whole sentence", "read2_sub": "contextual",
+        "read2_body": "Reads the full sentence in context (multilingual embeddings and fine-tuned "
+                      "transformers). Heavier, but grasps meaning and transfers across languages — "
+                      "where the accuracy comes from.",
+        "read2_models": ["multilingual SBERT", "XLM-RoBERTa", "BERTimbau", "BERTweet"],
         "results": "Results",
         "num1_v": "0.750", "num1_k": "best transformer<br>(XLM-R, macro-F1)",
         "num2_v": "0.709", "num2_k": "this demo<br>(classical MVP, macro-F1)",
@@ -113,6 +123,17 @@ T = {
             ("Publicar", "Escolha de Pareto: <b>tfidf_logreg</b> — 3,6 MB, ~1,6 ms em CPU. O modelo "
                          "que responde você abaixo."),
         ],
+        "reads_label": "Como ela lê o texto",
+        "read1_title": "Palavra por palavra", "read1_sub": "saco de palavras",
+        "read1_body": "Conta palavras e padrões de caracteres (TF-IDF, n-gramas de palavra + "
+                      "caractere). Sem contexto além de janelas curtas — mas rápido, 3,6 MB, roda "
+                      "em qualquer CPU.",
+        "read1_models": ["Logistic Regression", "Linear SVM", "LightGBM"],
+        "read2_title": "A frase inteira", "read2_sub": "contextual",
+        "read2_body": "Lê a frase toda em contexto (embeddings multilíngues e transformers "
+                      "ajustados). Mais pesado, mas capta o sentido e transfere entre idiomas — "
+                      "de onde vem a acurácia.",
+        "read2_models": ["multilingual SBERT", "XLM-RoBERTa", "BERTimbau", "BERTweet"],
         "results": "Resultados",
         "num1_v": "0,750", "num1_k": "melhor transformer<br>(XLM-R, macro-F1)",
         "num2_v": "0,709", "num2_k": "este demo<br>(MVP clássico, macro-F1)",
@@ -220,6 +241,19 @@ header[data-testid="stHeader"]{ display:none; }
 .step.ship p{ font-size:14px; }
 @media (max-width:460px){ .step.ship{ flex-direction:column; align-items:flex-start; gap:10px; } }
 
+/* how it reads text — two contrasting cards */
+.reads{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media (max-width:620px){ .reads{ grid-template-columns:1fr; } }
+.readc{ background:#fff; border:3px solid var(--slate-deep); box-shadow:8px 8px 0 var(--slate); padding:22px; }
+.readc.alt{ box-shadow:8px 8px 0 var(--coral); }
+.readc .rlab{ font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--slate); }
+.readc.alt .rlab{ color:var(--coral); }
+.readc h3{ font-size:23px; font-weight:900; color:var(--slate-deep); margin:5px 0 0; letter-spacing:-.5px; }
+.readc p{ font-size:13.5px; color:var(--ink); line-height:1.55; margin:12px 0 14px; }
+.readc .ms{ display:flex; gap:7px; flex-wrap:wrap; }
+.readc .ms span{ font-size:12px; font-weight:800; color:var(--slate-deep); border:2px solid var(--slate-deep); padding:4px 9px; }
+.readc.alt .ms span{ border-color:var(--coral); color:var(--coral); }
+
 .nums{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
 @media (max-width:620px){ .nums{ grid-template-columns:1fr; } }
 .numc{ background:var(--slate-deep); color:#fff; border:3px solid var(--slate-deep); box-shadow:8px 8px 0 var(--coral); padding:20px 22px; }
@@ -322,6 +356,9 @@ for i, (title, body) in enumerate(t["steps"]):
             f'<div class="step reveal"><span class="n">0{i + 1}</span><h4>{title}</h4><p>{body}</p></div>'
         )
 
+_r1 = "".join(f"<span>{m}</span>" for m in t["read1_models"])
+_r2 = "".join(f"<span>{m}</span>" for m in t["read2_models"])
+
 st.markdown(
     f"""
 <div class="land">
@@ -341,6 +378,14 @@ st.markdown(
 
   <div class="seclabel reveal">{t["how"]}</div>
   <div class="steps">{_steps_html}</div>
+
+  <div class="seclabel reveal">{t["reads_label"]}</div>
+  <div class="reads">
+    <div class="readc reveal"><div class="rlab">{t["read1_sub"]}</div><h3>{t["read1_title"]}</h3>
+      <p>{t["read1_body"]}</p><div class="ms">{_r1}</div></div>
+    <div class="readc alt reveal"><div class="rlab">{t["read2_sub"]}</div><h3>{t["read2_title"]}</h3>
+      <p>{t["read2_body"]}</p><div class="ms">{_r2}</div></div>
+  </div>
 
   <div class="seclabel reveal">{t["results"]}</div>
   <div class="nums">
