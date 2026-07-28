@@ -127,9 +127,11 @@ header[data-testid="stHeader"]{ display:none; }
 .numc.alt{ background:#fff; color:var(--slate-deep); box-shadow:8px 8px 0 var(--slate); }
 .numc.alt .k{ color:var(--mute); }
 
-.links{ display:flex; gap:12px; flex-wrap:wrap; margin:26px 0 0; }
-.links a{ text-decoration:none; font-weight:800; font-size:13.5px; letter-spacing:.5px; text-transform:uppercase;
-          padding:11px 22px; border:2px solid var(--slate-deep); color:var(--slate-deep); background:#fff; }
+.links{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:26px 0 0; }
+@media (max-width:460px){ .links{ grid-template-columns:1fr; } }
+.links a{ text-align:center; text-decoration:none; font-weight:800; font-size:13.5px; letter-spacing:.5px;
+          text-transform:uppercase; padding:14px 22px; border:2px solid var(--slate-deep);
+          color:var(--slate-deep); background:#fff; }
 .links a:hover{ background:var(--slate-deep); color:#fff; }
 .links a.primary{ background:var(--coral); border-color:var(--coral); color:#fff; box-shadow:4px 4px 0 var(--slate-deep); }
 .links a.primary:hover{ background:var(--slate-deep); border-color:var(--slate-deep); box-shadow:4px 4px 0 var(--coral); }
