@@ -100,7 +100,9 @@ header[data-testid="stHeader"]{ display:none; }
 .seclabel{ font-size:12px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--slate);
            border-bottom:2px solid var(--line); padding-bottom:8px; margin:46px 0 22px; }
 
-.steps{ display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:16px; }
+.steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+@media (max-width:760px){ .steps{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:460px){ .steps{ grid-template-columns:1fr; } }
 .step{ background:#fff; border:2px solid var(--slate-deep); box-shadow:6px 6px 0 var(--slate);
        padding:16px 16px 18px; }
 .step .n{ font-family:'Lato'; font-size:13px; font-weight:900; color:#fff; background:var(--slate-deep);
@@ -110,6 +112,12 @@ header[data-testid="stHeader"]{ display:none; }
 .step.coral{ box-shadow:6px 6px 0 var(--coral); }
 .step.coral .n{ background:var(--coral); }
 .step.coral h4{ color:var(--coral); }
+/* 05 Ship spans the full width of the four steps above, as a horizontal band */
+.step.ship{ grid-column:1 / -1; display:flex; align-items:center; gap:24px; padding:18px 20px; }
+.step.ship .shiphead{ display:flex; align-items:center; gap:12px; flex:none; }
+.step.ship h4{ margin:0; font-size:19px; }
+.step.ship p{ font-size:14px; }
+@media (max-width:460px){ .step.ship{ flex-direction:column; align-items:flex-start; gap:10px; } }
 
 .nums{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; }
 .numc{ background:var(--slate-deep); color:#fff; border:3px solid var(--slate-deep);
@@ -213,7 +221,8 @@ st.markdown(
     <div class="step reveal"><span class="n">04</span><h4>Evaluate</h4>
       <p>Macro-F1, paired McNemar + Holm, probability calibration (ECE), an identity-term bias probe,
          and cross-lingual transfer.</p></div>
-    <div class="step reveal coral"><span class="n">05</span><h4>Ship</h4>
+    <div class="step ship coral reveal">
+      <div class="shiphead"><span class="n">05</span><h4>Ship</h4></div>
       <p>Pareto pick for the product: <b>tfidf_logreg</b> — 3.6 MB, ~1.6 ms on CPU. That's the model
          answering you below.</p></div>
   </div>
