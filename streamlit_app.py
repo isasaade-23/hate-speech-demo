@@ -120,6 +120,7 @@ T = {
                 "should support human review, not replace it. Implicit hate without slurs is where "
                 "it fails most. Research and educational use only.",
         "disc_code": "Code", "disc_docs": "Docs",
+        "theme_dark": "Dark", "theme_light": "Light",
         "abl_label": "Stop words",
         "abl_sub": "We removed prepositions, pronouns and articles from the word features and "
                    "retrained every classical model. Negations stayed. Hover a cell for the exact numbers.",
@@ -181,6 +182,7 @@ T = {
                 "Serve para apoiar a revisão humana, não para substituí-la. Falha mais no ódio "
                 "implícito, sem palavrão. Uso apenas para pesquisa e educação.",
         "disc_code": "Código", "disc_docs": "Docs",
+        "theme_dark": "Escuro", "theme_light": "Claro",
         "abl_label": "Palavras vazias",
         "abl_sub": "Removemos preposições, pronomes e artigos das features de palavra e retreinamos "
                    "cada modelo clássico. As negações ficaram. Passe o mouse numa célula para ver os números.",
@@ -564,6 +566,9 @@ def classify_now():
 
 
 # --------------------------------------------------------------------------- header
+lang = st.session_state.lang
+t = T[lang]
+
 brand, controls = st.columns([0.58, 0.42], vertical_alignment="center")
 with brand:
     st.markdown(
@@ -576,16 +581,13 @@ with brand:
 with controls:
     cc = st.columns([1, 1, 1.3])
     cc[0].button("EN", key="lang_en", on_click=set_lang, args=("en",), use_container_width=True,
-                 type="primary" if st.session_state.lang == "en" else "secondary")
+                 type="primary" if lang == "en" else "secondary")
     cc[1].button("PT", key="lang_pt", on_click=set_lang, args=("pt",), use_container_width=True,
-                 type="primary" if st.session_state.lang == "pt" else "secondary")
-    cc[2].button("🌙 Escuro" if not st.session_state.dark else "☀ Claro",
+                 type="primary" if lang == "pt" else "secondary")
+    cc[2].button(t["theme_light"] if st.session_state.dark else t["theme_dark"],
                  key="dark_toggle", on_click=toggle_dark, use_container_width=True)
 
 st.markdown('<div class="headrule"></div>', unsafe_allow_html=True)
-
-lang = st.session_state.lang
-t = T[lang]
 
 # --------------------------------------------------------------------------- landing
 _steps_html = ""
