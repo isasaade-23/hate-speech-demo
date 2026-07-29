@@ -18,6 +18,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 
 import streamlit as st  # noqa: E402
+import streamlit.components.v1 as components  # noqa: E402
 
 from hsc.inference import get_classifier  # noqa: E402
 
@@ -98,6 +99,12 @@ T = {
                 "should support human review, not replace it. Implicit hate without slurs is where "
                 "it fails most. Research and educational use only.",
         "disc_code": "Code", "disc_docs": "Docs",
+        "abl_label": "Stop words",
+        "abl_sub": "We removed prepositions, pronouns and articles from the word features and "
+                   "retrained every classical model. Negations stayed. Hover a cell for the exact numbers.",
+        "abl_foot": "Color is scaled within each metric so small gaps still show. Character n-grams "
+                    "and IDF already down-weight function words. Removing stop words moves almost "
+                    "nothing. Frozen group split, seed 42. Stop list in src/hsc/features/stopwords.py.",
     },
     "pt": {
         "eyebrow": "Demo de pesquisa · EN / PT",
@@ -153,8 +160,171 @@ T = {
                 "Serve para apoiar a revisão humana, não para substituí-la. Falha mais no ódio "
                 "implícito, sem palavrão. Uso apenas para pesquisa e educação.",
         "disc_code": "Código", "disc_docs": "Docs",
+        "abl_label": "Palavras vazias",
+        "abl_sub": "Removemos preposições, pronomes e artigos das features de palavra e retreinamos "
+                   "cada modelo clássico. As negações ficaram. Passe o mouse numa célula para ver os números.",
+        "abl_foot": "A cor é escalada dentro de cada métrica para que diferenças pequenas apareçam. "
+                    "Os n-gramas de caractere e o IDF já reduzem o peso das palavras funcionais. "
+                    "Remover palavras vazias quase não muda nada. Split por grupo congelado, seed 42. "
+                    "Lista em src/hsc/features/stopwords.py.",
     },
 }
+
+
+# --------------------------------------------------------------- ablation heatmap
+HEATMAP_TMPL = r"""<!doctype html><html><head><meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+*{box-sizing:border-box}
+html,body{margin:0;background:transparent;font-family:'Lato',system-ui,sans-serif;color:#1F3050}
+.wrap{padding:2px 16px 14px 4px}
+.seg{display:inline-flex;border:2px solid #1F3050;margin:0 0 16px}
+.seg button{font-family:inherit;font-size:12.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:8px 15px;border:none;border-right:2px solid #1F3050;background:#fff;color:#1F3050;cursor:pointer;transition:background .2s,color .2s}
+.seg button:last-child{border-right:none}
+.seg button[aria-pressed="true"]{background:#1F3050;color:#fff}
+.card{background:#fff;border:3px solid #1F3050;box-shadow:8px 8px 0 #3D5A80;padding:14px 16px 12px;max-width:100%;overflow-x:auto}
+.grid{display:grid;grid-template-columns:minmax(150px,1.5fr) repeat(3,1fr);gap:6px;min-width:470px}
+.hcell{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#6B7280;padding:2px 6px 6px;align-self:end;text-align:center}
+.hcell.corner{text-align:left}
+.rlab{font-size:13.5px;font-weight:900;color:#1F3050;padding:6px 8px;display:flex;flex-direction:column;justify-content:center;transition:color .2s}
+.rlab .pol{font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#3D5A80;margin-top:2px}
+.cell{height:46px;display:flex;align-items:center;justify-content:center;font-family:'SFMono-Regular',Consolas,monospace;font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer;border:2px solid transparent;transition:background-color .4s ease,color .4s ease;animation:cellin .45s both}
+.cell:hover{border-color:#1F3050}
+@keyframes cellin{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.cell{animation:none}}
+.legend{display:flex;align-items:center;gap:10px;margin:12px 2px 0;font-size:11.5px;font-weight:700;color:#6B7280}
+.legbar{height:12px;width:130px;border:1px solid rgba(0,0,0,.15)}
+.take{margin:13px 2px 0;font-size:13px;color:#1F3050;line-height:1.5;max-width:66ch}
+.take b{color:#EE6C4D}
+.tip{position:fixed;pointer-events:none;opacity:0;transform:translate(-50%,-100%);background:#1F3050;color:#fff;border:2px solid #fff;box-shadow:3px 3px 0 #EE6C4D;padding:9px 12px;font-size:12.5px;z-index:30;min-width:180px;transition:opacity .08s}
+.tip .tt{font-weight:900;font-size:12.5px;margin-bottom:5px}
+.tip .tr{display:flex;justify-content:space-between;gap:16px;font-variant-numeric:tabular-nums;margin-top:3px}
+.tip .k{color:#9DB0D2}
+.tip .pos{color:#7FE0B0}.tip .neg{color:#FFA98C}.tip .z{color:#B9C6DE}
+</style></head><body>
+<div class="wrap">
+  <div class="seg" role="group" aria-label="view">
+    <button data-mode="base" aria-pressed="true">__T_BASE__</button>
+    <button data-mode="nostop" aria-pressed="false">__T_NOSTOP__</button>
+    <button data-mode="delta" aria-pressed="false">__T_DELTA__</button>
+  </div>
+  <div class="card"><div class="grid" id="grid"></div></div>
+  <div class="legend" id="legend"></div>
+  <div class="take" id="take"></div>
+</div>
+<div class="tip" id="tip" aria-hidden="true"></div>
+<script>
+const DATA=[
+ {model:"LogReg",policy:"strict",f1:[0.7094,0.7139],auc:[0.8413,0.8404],rec:[0.4631,0.5437]},
+ {model:"LogReg",policy:"broad",f1:[0.6976,0.6936],auc:[0.7684,0.7678],rec:[0.5475,0.5456]},
+ {model:"LightGBM",policy:"strict",f1:[0.7065,0.7012],auc:[0.8200,0.8181],rec:[0.5575,0.5403]},
+ {model:"LightGBM",policy:"broad",f1:[0.6983,0.6978],auc:[0.7679,0.7690],rec:[0.5513,0.5206]},
+ {model:"SVM",policy:"strict",f1:[0.6716,0.6641],auc:[0.7722,0.7727],rec:[0.4974,0.5214]},
+ {model:"SVM",policy:"broad",f1:[0.6734,0.6647],auc:[0.7363,0.7344],rec:[0.5250,0.4675]}
+];
+const METRICS=[{k:"f1",label:"macro-F1"},{k:"auc",label:"ROC-AUC"},{k:"rec",label:"__REC_LABEL__"}];
+const LB={base:"__TT_BASE__",nostop:"__TT_NOSTOP__",delta:"__TT_DELTA__"};
+const DELTA_FULL=0.04;
+const RANGE={};
+METRICS.forEach(function(m){var v=[];DATA.forEach(function(d){v.push(d[m.k][0],d[m.k][1])});RANGE[m.k]=[Math.min.apply(null,v),Math.max.apply(null,v)];});
+var mode="base";
+function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+function lp(a,b,t){return [Math.round(a[0]+(b[0]-a[0])*t),Math.round(a[1]+(b[1]-a[1])*t),Math.round(a[2]+(b[2]-a[2])*t)]}
+function seq(v,k){var r=RANGE[k];var t=r[1]>r[0]?(v-r[0])/(r[1]-r[0]):.5;return lp([233,239,246],[31,48,80],clamp(t,0,1))}
+function dv(d){var t=clamp(d/DELTA_FULL,-1,1);return t>=0?lp([246,242,238],[29,158,117],t):lp([246,242,238],[238,108,77],-t)}
+function css(c){return "rgb("+c[0]+","+c[1]+","+c[2]+")"}
+function lum(c){return (0.2126*c[0]+0.7152*c[1]+0.0722*c[2])/255}
+function fmt(v){return v.toFixed(3)}
+function fmtD(d){return (d>=0?"+":"−")+Math.abs(d).toFixed(3)}
+var grid=document.getElementById("grid"),tip=document.getElementById("tip");
+function mkd(cls,txt){var d=document.createElement("div");d.className=cls;if(txt!=null)d.textContent=txt;return d}
+grid.appendChild(mkd("hcell corner",""));
+METRICS.forEach(function(m){grid.appendChild(mkd("hcell",m.label))});
+var refs=[];
+DATA.forEach(function(d,ri){
+  var lab=mkd("rlab");lab.innerHTML='<span>'+d.model+'</span><span class="pol">'+d.policy+'</span>';lab.dataset.row=ri;grid.appendChild(lab);
+  var rc=[];
+  METRICS.forEach(function(m,ci){
+    var c=mkd("cell");c.style.animationDelay=((ri*3+ci)*0.035)+"s";c.dataset.row=ri;
+    c.addEventListener("mousemove",function(ev){showTip(ev,ri,m.k)});
+    c.addEventListener("mouseenter",function(){setHi(ri,true)});
+    c.addEventListener("mouseleave",function(){setHi(ri,false);hideTip()});
+    grid.appendChild(c);rc.push(c);
+  });
+  refs.push(rc);
+});
+function setHi(ri,on){var ls=document.querySelectorAll(".rlab");for(var i=0;i<ls.length;i++){if(ls[i].dataset.row==ri)ls[i].style.color=on?"#EE6C4D":""}}
+function paint(){
+  DATA.forEach(function(d,ri){METRICS.forEach(function(m,ci){
+    var c=refs[ri][ci],vs=d[m.k],col,txt,val;
+    if(mode==="delta"){val=vs[1]-vs[0];col=dv(val);txt=fmtD(val)}
+    else{val=mode==="base"?vs[0]:vs[1];col=seq(val,m.k);txt=fmt(val)}
+    c.style.background=css(col);c.style.color=lum(col)<0.55?"#fff":"#1F3050";c.textContent=txt;
+  })});
+  var L=document.getElementById("legend");
+  if(mode==="delta"){L.innerHTML='<span>__LEG_WORSE__</span><span class="legbar" style="background:linear-gradient(90deg,#EE6C4D,#F6F2EE,#1D9E75)"></span><span>__LEG_BETTER__</span>'}
+  else{L.innerHTML='<span>__LEG_LO__</span><span class="legbar" style="background:linear-gradient(90deg,#E9EFF6,#1F3050)"></span><span>__LEG_HI__</span>'}
+  document.getElementById("take").innerHTML=mode==="delta"?"__TAKE_DELTA__":"__TAKE_VAL__";
+}
+function showTip(ev,ri,mk2){
+  var d=DATA[ri],vs=d[mk2],delta=vs[1]-vs[0];
+  var dc=Math.abs(delta)<0.001?"z":(delta>0?"pos":"neg");
+  var ml=METRICS.filter(function(m){return m.k===mk2})[0].label;
+  tip.innerHTML='<div class="tt">'+d.model+' · '+d.policy+' · '+ml+'</div>'+
+    '<div class="tr"><span class="k">'+LB.base+'</span><span>'+fmt(vs[0])+'</span></div>'+
+    '<div class="tr"><span class="k">'+LB.nostop+'</span><span>'+fmt(vs[1])+'</span></div>'+
+    '<div class="tr"><span class="k">'+LB.delta+'</span><span class="'+dc+'">'+fmtD(delta)+'</span></div>';
+  tip.style.opacity=1;tip.setAttribute("aria-hidden","false");
+  tip.style.left=ev.clientX+"px";tip.style.top=(ev.clientY-14)+"px";
+}
+function hideTip(){tip.style.opacity=0;tip.setAttribute("aria-hidden","true")}
+var btns=document.querySelectorAll(".seg button");
+for(var bi=0;bi<btns.length;bi++){btns[bi].addEventListener("click",function(){
+  mode=this.dataset.mode;
+  for(var j=0;j<btns.length;j++){btns[j].setAttribute("aria-pressed",btns[j]===this?"true":"false")}
+  paint();
+})}
+paint();
+</script></body></html>"""
+
+HM = {
+    "en": {
+        "T_BASE": "Baseline", "T_NOSTOP": "No stop words", "T_DELTA": "Difference",
+        "TT_BASE": "Baseline", "TT_NOSTOP": "No stop words", "TT_DELTA": "Δ vs baseline",
+        "REC_LABEL": "Recall (hate)",
+        "LEG_LO": "lower", "LEG_HI": "higher", "LEG_WORSE": "worse", "LEG_BETTER": "better",
+        "TAKE_VAL": "Deeper is a higher score. Switch between Baseline and No stop words. "
+                    "<b>The colors barely move.</b>",
+        "TAKE_DELTA": "Green is a gain, coral a loss, pale is no change. "
+                      "<b>Almost every cell is pale.</b> Removing stop words does not move the models.",
+    },
+    "pt": {
+        "T_BASE": "Base", "T_NOSTOP": "Sem stopwords", "T_DELTA": "Diferença",
+        "TT_BASE": "Com stopwords", "TT_NOSTOP": "Sem stopwords", "TT_DELTA": "Δ vs base",
+        "REC_LABEL": "Recall (ódio)",
+        "LEG_LO": "menor", "LEG_HI": "maior", "LEG_WORSE": "pior", "LEG_BETTER": "melhor",
+        "TAKE_VAL": "Mais escuro é nota mais alta. Alterne entre Base e Sem stopwords. "
+                    "<b>As cores quase não mudam.</b>",
+        "TAKE_DELTA": "Verde é ganho, coral é perda, claro é sem mudança. "
+                      "<b>Quase toda célula está clara.</b> Remover palavras vazias não move os modelos.",
+    },
+}
+
+
+def heatmap_html(language: str) -> str:
+    html = HEATMAP_TMPL
+    for key, val in HM[language].items():
+        html = html.replace("__" + key + "__", val)
+    return html
+
+
+def render_iframe(html: str, height: int) -> None:
+    """Embed self-contained HTML+JS. Prefer st.iframe (current API); fall back to
+    the deprecated components.html on older Streamlit."""
+    if hasattr(st, "iframe"):
+        st.iframe(html, height=height)
+    else:
+        components.html(html, height=height, scrolling=False)
 
 
 @st.cache_resource
@@ -268,6 +438,8 @@ header[data-testid="stHeader"]{ display:none; }
 .links a:hover{ background:var(--slate-deep); color:#fff; }
 .links a.primary{ background:var(--coral); border-color:var(--coral); color:#fff; box-shadow:4px 4px 0 var(--slate-deep); }
 .links a.primary:hover{ background:var(--slate-deep); border-color:var(--slate-deep); box-shadow:4px 4px 0 var(--coral); }
+
+.anote{ font-size:12.5px; color:var(--mute); line-height:1.6; margin:22px 0 2px; max-width:82ch; }
 
 .cta{ margin:52px 0 6px; text-align:center; }
 .cta .line{ height:2px; background:var(--line); margin-bottom:18px; }
@@ -392,6 +564,21 @@ st.markdown(
     <div class="numc alt reveal"><div class="v">{t["num2_v"]}</div><div class="k">{t["num2_k"]}</div></div>
     <div class="numc reveal"><div class="v">{t["num3_v"]}</div><div class="k">{t["num3_k"]}</div></div>
   </div>
+
+  <div class="seclabel reveal">{t["abl_label"]}</div>
+  <p class="tag reveal">{t["abl_sub"]}</p>
+</div>
+""",
+    unsafe_allow_html=True,
+)
+
+# --------------------------------------------------------------- ablation heatmap (interactive)
+render_iframe(heatmap_html(lang), height=620)
+
+st.markdown(
+    f"""
+<div class="land">
+  <div class="anote reveal">{t["abl_foot"]}</div>
 
   <div class="links reveal">
     <a class="primary" href="{REPO}" target="_blank">{t["link_code"]}</a>
