@@ -109,6 +109,13 @@ T = {
         "ens_sub": "The classical model reads slurs, the transformer reads meaning. Averaging the two "
                    "raises hate recall from 0.55 to 0.63 at the same macro-F1.",
         "ens_num": "0.63", "ens_cap": "hate recall (was 0.55)",
+        "diag_label": "Why the simple model holds up",
+        "diag_body": "Hate detection here is largely lexical. The model's strongest cues are explicit "
+                     "slurs and identity attacks in both languages, plus character patterns that catch "
+                     "misspellings. That is why this small linear model stays within four points of the "
+                     "transformer. It is also why removing stop words or swapping in a tabular foundation "
+                     "model (TabPFN) does not move the score: the bottleneck is the representation, not "
+                     "the classifier.",
         "link_code": "Code &amp; study", "link_docs": "Documentation", "link_demo": "Demo source",
         "cta": "Try it live",
         "panel_brow": "EN / PT · research demo",
@@ -176,6 +183,12 @@ T = {
         "ens_sub": "O clássico lê o palavrão, o transformer lê o sentido. A média dos dois sobe o "
                    "recall de ódio de 0,55 para 0,63 com o mesmo macro-F1.",
         "ens_num": "0,63", "ens_cap": "recall de ódio (era 0,55)",
+        "diag_label": "Por que o modelo simples se segura",
+        "diag_body": "Detectar ódio aqui é, em boa parte, léxico. As pistas mais fortes do modelo são "
+                     "palavrão e ataque de identidade nos dois idiomas, além de padrões de caractere que "
+                     "pegam erros de escrita. Por isso este modelo linear pequeno fica a quatro pontos do "
+                     "transformer. E por isso remover palavras vazias ou trocar por um modelo tabular de "
+                     "fundação (TabPFN) não muda a nota: o gargalo é a representação, não o classificador.",
         "link_code": "Código &amp; estudo", "link_docs": "Documentação", "link_demo": "Código do demo",
         "cta": "Experimente ao vivo",
         "panel_brow": "EN / PT · demo de pesquisa",
@@ -658,6 +671,9 @@ st.markdown(
     </div>
     <div class="knum"><div class="big">{t["ens_num"]}</div><div class="cap">{t["ens_cap"]}</div></div>
   </div>
+
+  <div class="seclabel reveal">{t["diag_label"]}</div>
+  <p class="tag reveal">{t["diag_body"]}</p>
 
   <div class="seclabel reveal">{t["abl_label"]}</div>
   <p class="tag reveal">{t["abl_sub"]}</p>
