@@ -12,8 +12,10 @@ Research demo. Not a moderation verdict.
 
 from __future__ import annotations
 
+import base64
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 
@@ -31,6 +33,14 @@ DEMO_REPO = "https://github.com/isasaade-23/hate-speech-demo"
 
 CORAL = "#EE6C4D"
 GREEN = "#1D9E75"
+
+# brand mark embedded as a data URI (Streamlit sanitizes inline <svg>; a CSS background survives)
+_MARK_PATH = Path(__file__).parent / "assets" / "luciola-mark.svg"
+MARK_URI = (
+    "data:image/svg+xml;base64," + base64.b64encode(_MARK_PATH.read_bytes()).decode()
+    if _MARK_PATH.exists()
+    else ""
+)
 
 # example texts are content (kept as-is); only the descriptor labels are translated
 EXAMPLES = [
@@ -334,7 +344,8 @@ def load_classifier():
 
 clf = load_classifier()
 
-st.set_page_config(page_title="Bilingual Hate-Speech Classifier (EN/PT) · beta", layout="wide")
+st.set_page_config(page_title="Luciola · Bilingual Hate-Speech Classifier (EN/PT)",
+                   page_icon="🔆", layout="wide")
 
 # --------------------------------------------------------------------------- CSS
 st.markdown(
@@ -360,6 +371,12 @@ header[data-testid="stHeader"]{ display:none; }
     .reveal{ animation:fadeUp both; animation-timeline:view(); animation-range:entry 4% cover 26%; }
   }
 }
+
+/* brand masthead */
+.masthead{ display:flex; align-items:center; gap:12px; }
+.brandmark{ width:46px; height:46px; background-position:center; background-size:contain; background-repeat:no-repeat; flex:none; }
+.brandname{ font-family:'Century Gothic','Questrial','Josefin Sans','Futura','Trebuchet MS',sans-serif;
+            font-weight:300; font-size:30px; letter-spacing:1.5px; color:var(--slate-deep); line-height:1; }
 
 /* language toggle (compact, no offset shadow) */
 .st-key-lang_en button, .st-key-lang_pt button{
@@ -502,8 +519,15 @@ def classify_now():
     st.session_state.classified = True
 
 
-# --------------------------------------------------------------------------- language toggle
-_spacer, toggle = st.columns([0.78, 0.22])
+# --------------------------------------------------------------------------- masthead + language toggle
+brand, toggle = st.columns([0.78, 0.22], vertical_alignment="center")
+with brand:
+    st.markdown(
+        f'<style>.brandmark{{background-image:url("{MARK_URI}")}}</style>'
+        '<div class="masthead"><div class="brandmark"></div>'
+        '<div class="brandname">Luciola</div></div>',
+        unsafe_allow_html=True,
+    )
 with toggle:
     lc = st.columns(2)
     lc[0].button("EN", key="lang_en", on_click=set_lang, args=("en",), use_container_width=True,

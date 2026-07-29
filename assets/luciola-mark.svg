@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 210" width="240" height="210" role="img" aria-label="Luciola símbolo">
+  <defs>
+    <radialGradient id="coreGlow" cx="0.5" cy="0.5" r="0.55">
+      <stop offset="0" stop-color="#FFF7EA"/>
+      <stop offset="0.22" stop-color="#FDE6C0" stop-opacity="0.95"/>
+      <stop offset="0.5" stop-color="#F4A261" stop-opacity="0.78"/>
+      <stop offset="0.75" stop-color="#EE6C4D" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#EE6C4D" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="haloGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#F4A261" stop-opacity="0.40"/>
+      <stop offset="0.55" stop-color="#EE6C4D" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#EE6C4D" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="tailGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F4A261"/>
+      <stop offset="1" stop-color="#EE6C4D"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="120" cy="120" rx="62" ry="66" fill="url(#haloGlow)"/>
+  <circle cx="120" cy="88" r="46" fill="#EE6C4D" opacity="0.10"/>
+  <circle cx="96" cy="118" r="46" fill="#EE6C4D" opacity="0.14"/>
+  <circle cx="144" cy="118" r="46" fill="#EE6C4D" opacity="0.14"/>
+  <path d="M117 148 Q108 168 102 183 Q112 164 116 153 Z" fill="url(#tailGrad)" opacity="0.8"/>
+  <path d="M123 148 Q132 168 138 183 Q128 164 124 153 Z" fill="url(#tailGrad)" opacity="0.8"/>
+  <path d="M120 78.8 A46 46 0 0 1 120 157.2 A46 46 0 0 1 120 78.8 Z" fill="url(#coreGlow)"/>
+  <ellipse cx="120" cy="116" rx="9" ry="13" fill="#FFF6E8" opacity="0.85"/>
+  <circle cx="120" cy="88" r="46" fill="none" stroke="#EE6C4D" stroke-opacity="0.32" stroke-width="1.2"/>
+  <circle cx="96" cy="118" r="46" fill="none" stroke="#EE6C4D" stroke-opacity="0.40" stroke-width="1.2"/>
+  <circle cx="144" cy="118" r="46" fill="none" stroke="#EE6C4D" stroke-opacity="0.40" stroke-width="1.2"/>
+</svg>
