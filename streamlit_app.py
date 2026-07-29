@@ -104,6 +104,11 @@ T = {
         "num1_v": "0.750", "num1_k": "best transformer<br>(XLM-R, macro-F1)",
         "num2_v": "0.709", "num2_k": "this demo<br>(classical MVP, macro-F1)",
         "num3_v": "0.42→0.63", "num3_k": "EN→PT zero-shot transfer<br>(TF-IDF → multilingual SBERT)",
+        "ens_label": "Surface + semantic",
+        "ens_main": "Together they catch more hate.",
+        "ens_sub": "The classical model reads slurs, the transformer reads meaning. Averaging the two "
+                   "raises hate recall from 0.55 to 0.63 at the same macro-F1.",
+        "ens_num": "0.63", "ens_cap": "hate recall (was 0.55)",
         "link_code": "Code &amp; study", "link_docs": "Documentation", "link_demo": "Demo source",
         "cta": "Try it live",
         "panel_brow": "EN / PT · research demo",
@@ -166,6 +171,11 @@ T = {
         "num1_v": "0,750", "num1_k": "melhor transformer<br>(XLM-R, macro-F1)",
         "num2_v": "0,709", "num2_k": "este demo<br>(MVP clássico, macro-F1)",
         "num3_v": "0,42→0,63", "num3_k": "transferência EN→PT zero-shot<br>(TF-IDF → SBERT multilíngue)",
+        "ens_label": "Superfície + semântica",
+        "ens_main": "Juntos pegam mais ódio.",
+        "ens_sub": "O clássico lê o palavrão, o transformer lê o sentido. A média dos dois sobe o "
+                   "recall de ódio de 0,55 para 0,63 com o mesmo macro-F1.",
+        "ens_num": "0,63", "ens_cap": "recall de ódio (era 0,55)",
         "link_code": "Código &amp; estudo", "link_docs": "Documentação", "link_demo": "Código do demo",
         "cta": "Experimente ao vivo",
         "panel_brow": "EN / PT · demo de pesquisa",
@@ -638,6 +648,15 @@ st.markdown(
     <div class="numc reveal"><div class="v">{t["num1_v"]}</div><div class="k">{t["num1_k"]}</div></div>
     <div class="numc alt reveal"><div class="v">{t["num2_v"]}</div><div class="k">{t["num2_k"]}</div></div>
     <div class="numc reveal"><div class="v">{t["num3_v"]}</div><div class="k">{t["num3_k"]}</div></div>
+  </div>
+
+  <div class="hero reveal" style="margin-top:18px">
+    <div>
+      <div class="klabel">{t["ens_label"]}</div>
+      <div class="kmain">{t["ens_main"]}</div>
+      <div class="ksub">{t["ens_sub"]}</div>
+    </div>
+    <div class="knum"><div class="big">{t["ens_num"]}</div><div class="cap">{t["ens_cap"]}</div></div>
   </div>
 
   <div class="seclabel reveal">{t["abl_label"]}</div>
