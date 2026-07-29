@@ -42,6 +42,17 @@ MARK_URI = (
     else ""
 )
 
+# dark-mode token override, injected when the user flips the switch
+DARK_CSS = """
+<style>
+:root{
+  --bg:#121a2b; --surface:#1b2740; --bd:#38507a; --heading:#EAF0F8;
+  --ink:#E4ECF6; --mute:#9DB0D2; --line:#2b3a56; --bone:#121a2b;
+}
+html, body, .stApp{ background:#121a2b; }
+</style>
+"""
+
 # example texts are content (kept as-is); only the descriptor labels are translated
 EXAMPLES = [
     {"key": "en_ok", "en": "EN friendly", "pt": "EN amigável",
@@ -186,25 +197,25 @@ HEATMAP_TMPL = r"""<!doctype html><html><head><meta charset="utf-8">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
 *{box-sizing:border-box}
-html,body{margin:0;background:transparent;font-family:'Lato',system-ui,sans-serif;color:#1F3050}
+html,body{margin:0;background:transparent;font-family:'Lato',system-ui,sans-serif;color:__INK__}
 .wrap{padding:2px 16px 14px 4px}
-.seg{display:inline-flex;border:2px solid #1F3050;margin:0 0 16px}
-.seg button{font-family:inherit;font-size:12.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:8px 15px;border:none;border-right:2px solid #1F3050;background:#fff;color:#1F3050;cursor:pointer;transition:background .2s,color .2s}
+.seg{display:inline-flex;border:2px solid __BORDER__;margin:0 0 16px}
+.seg button{font-family:inherit;font-size:12.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:8px 15px;border:none;border-right:2px solid __BORDER__;background:__CARD__;color:__INK__;cursor:pointer;transition:background .2s,color .2s}
 .seg button:last-child{border-right:none}
-.seg button[aria-pressed="true"]{background:#1F3050;color:#fff}
-.card{background:#fff;border:3px solid #1F3050;box-shadow:8px 8px 0 #3D5A80;padding:14px 16px 12px;max-width:100%;overflow-x:auto}
+.seg button[aria-pressed="true"]{background:__SEGON_BG__;color:__SEGON_TX__}
+.card{background:__CARD__;border:3px solid __BORDER__;box-shadow:8px 8px 0 __SHADOW__;padding:14px 16px 12px;max-width:100%;overflow-x:auto}
 .grid{display:grid;grid-template-columns:minmax(150px,1.5fr) repeat(3,1fr);gap:6px;min-width:470px}
-.hcell{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#6B7280;padding:2px 6px 6px;align-self:end;text-align:center}
+.hcell{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:__MUTE__;padding:2px 6px 6px;align-self:end;text-align:center}
 .hcell.corner{text-align:left}
-.rlab{font-size:13.5px;font-weight:900;color:#1F3050;padding:6px 8px;display:flex;flex-direction:column;justify-content:center;transition:color .2s}
-.rlab .pol{font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#3D5A80;margin-top:2px}
+.rlab{font-size:13.5px;font-weight:900;color:__INK__;padding:6px 8px;display:flex;flex-direction:column;justify-content:center;transition:color .2s}
+.rlab .pol{font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:__POL__;margin-top:2px}
 .cell{height:46px;display:flex;align-items:center;justify-content:center;font-family:'SFMono-Regular',Consolas,monospace;font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer;border:2px solid transparent;transition:background-color .4s ease,color .4s ease;animation:cellin .45s both}
-.cell:hover{border-color:#1F3050}
+.cell:hover{border-color:__BORDER__}
 @keyframes cellin{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.cell{animation:none}}
-.legend{display:flex;align-items:center;gap:10px;margin:12px 2px 0;font-size:11.5px;font-weight:700;color:#6B7280}
+.legend{display:flex;align-items:center;gap:10px;margin:12px 2px 0;font-size:11.5px;font-weight:700;color:__MUTE__}
 .legbar{height:12px;width:130px;border:1px solid rgba(0,0,0,.15)}
-.take{margin:13px 2px 0;font-size:13px;color:#1F3050;line-height:1.5;max-width:66ch}
+.take{margin:13px 2px 0;font-size:13px;color:__INK__;line-height:1.5;max-width:66ch}
 .take b{color:#EE6C4D}
 .tip{position:fixed;pointer-events:none;opacity:0;transform:translate(-50%,-100%);background:#1F3050;color:#fff;border:2px solid #fff;box-shadow:3px 3px 0 #EE6C4D;padding:9px 12px;font-size:12.5px;z-index:30;min-width:180px;transition:opacity .08s}
 .tip .tt{font-weight:900;font-size:12.5px;margin-bottom:5px}
@@ -240,8 +251,8 @@ METRICS.forEach(function(m){var v=[];DATA.forEach(function(d){v.push(d[m.k][0],d
 var mode="base";
 function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
 function lp(a,b,t){return [Math.round(a[0]+(b[0]-a[0])*t),Math.round(a[1]+(b[1]-a[1])*t),Math.round(a[2]+(b[2]-a[2])*t)]}
-function seq(v,k){var r=RANGE[k];var t=r[1]>r[0]?(v-r[0])/(r[1]-r[0]):.5;return lp([233,239,246],[31,48,80],clamp(t,0,1))}
-function dv(d){var t=clamp(d/DELTA_FULL,-1,1);return t>=0?lp([246,242,238],[29,158,117],t):lp([246,242,238],[238,108,77],-t)}
+function seq(v,k){var r=RANGE[k];var t=r[1]>r[0]?(v-r[0])/(r[1]-r[0]):.5;return lp([__SEQLO__],[__SEQHI__],clamp(t,0,1))}
+function dv(d){var t=clamp(d/DELTA_FULL,-1,1);return t>=0?lp([__DIVMID__],[29,158,117],t):lp([__DIVMID__],[238,108,77],-t)}
 function css(c){return "rgb("+c[0]+","+c[1]+","+c[2]+")"}
 function lum(c){return (0.2126*c[0]+0.7152*c[1]+0.0722*c[2])/255}
 function fmt(v){return v.toFixed(3)}
@@ -272,8 +283,8 @@ function paint(){
     c.style.background=css(col);c.style.color=lum(col)<0.55?"#fff":"#1F3050";c.textContent=txt;
   })});
   var L=document.getElementById("legend");
-  if(mode==="delta"){L.innerHTML='<span>__LEG_WORSE__</span><span class="legbar" style="background:linear-gradient(90deg,#EE6C4D,#F6F2EE,#1D9E75)"></span><span>__LEG_BETTER__</span>'}
-  else{L.innerHTML='<span>__LEG_LO__</span><span class="legbar" style="background:linear-gradient(90deg,#E9EFF6,#1F3050)"></span><span>__LEG_HI__</span>'}
+  if(mode==="delta"){L.innerHTML='<span>__LEG_WORSE__</span><span class="legbar" style="background:linear-gradient(90deg,#EE6C4D,__MIDHEX__,#1D9E75)"></span><span>__LEG_BETTER__</span>'}
+  else{L.innerHTML='<span>__LEG_LO__</span><span class="legbar" style="background:linear-gradient(90deg,__SEQLOHEX__,__SEQHIHEX__)"></span><span>__LEG_HI__</span>'}
   document.getElementById("take").innerHTML=mode==="delta"?"__TAKE_DELTA__":"__TAKE_VAL__";
 }
 function showTip(ev,ri,mk2){
@@ -321,9 +332,27 @@ HM = {
 }
 
 
-def heatmap_html(language: str) -> str:
+HM_THEME = {
+    False: {
+        "INK": "#1F3050", "MUTE": "#6B7280", "POL": "#3D5A80",
+        "CARD": "#ffffff", "BORDER": "#1F3050", "SHADOW": "#3D5A80",
+        "SEGON_BG": "#1F3050", "SEGON_TX": "#ffffff",
+        "SEQLO": "233,239,246", "SEQHI": "31,48,80", "DIVMID": "246,242,238",
+        "SEQLOHEX": "#E9EFF6", "SEQHIHEX": "#1F3050", "MIDHEX": "#F6F2EE",
+    },
+    True: {
+        "INK": "#EAF0F8", "MUTE": "#9DB0D2", "POL": "#9DB0D2",
+        "CARD": "#1b2740", "BORDER": "#38507a", "SHADOW": "#24344f",
+        "SEGON_BG": "#EAF0F8", "SEGON_TX": "#121a2b",
+        "SEQLO": "38,52,80", "SEQHI": "171,193,224", "DIVMID": "27,39,64",
+        "SEQLOHEX": "#263450", "SEQHIHEX": "#ABC1E0", "MIDHEX": "#1b2740",
+    },
+}
+
+
+def heatmap_html(language: str, dark: bool = False) -> str:
     html = HEATMAP_TMPL
-    for key, val in HM[language].items():
+    for key, val in {**HM[language], **HM_THEME[bool(dark)]}.items():
         html = html.replace("__" + key + "__", val)
     return html
 
@@ -354,10 +383,11 @@ st.markdown(
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
 
 :root{ --slate:#3D5A80; --slate-deep:#1F3050; --coral:#EE6C4D; --amber:#F4A261;
-       --green:#1D9E75; --bone:#F6F2EE; --ink:#2B2B2B; --mute:#6B7280; --line:#DAD2C7; }
+       --green:#1D9E75; --bone:#F6F2EE; --ink:#2B2B2B; --mute:#6B7280; --line:#DAD2C7;
+       --bg:#F6F2EE; --surface:#ffffff; --bd:#1F3050; --heading:#1F3050; }
 
 html, body, [class*="css"], .stApp { font-family:'Lato', sans-serif; }
-.stApp { background:var(--bone); }
+.stApp { background:var(--bg); }
 header[data-testid="stHeader"]{ display:none; }
 #MainMenu, footer, [data-testid="stToolbar"]{ display:none; }
 .block-container{ padding-top:1rem; padding-bottom:2rem; max-width:1050px; }
@@ -372,22 +402,28 @@ header[data-testid="stHeader"]{ display:none; }
   }
 }
 
-/* brand masthead */
-.masthead{ display:flex; align-items:center; gap:12px; }
-.brandmark{ width:46px; height:46px; background-position:center; background-size:contain; background-repeat:no-repeat; flex:none; }
+/* header */
+.masthead{ display:flex; align-items:center; gap:14px; }
+.brandmark{ width:56px; height:56px; background-position:center; background-size:contain; background-repeat:no-repeat; flex:none; }
+.brandtext{ display:flex; flex-direction:column; gap:3px; }
 .brandname{ font-family:'Century Gothic','Questrial','Josefin Sans','Futura','Trebuchet MS',sans-serif;
-            font-weight:300; font-size:30px; letter-spacing:1.5px; color:var(--slate-deep); line-height:1; }
+            font-weight:300; font-size:31px; letter-spacing:1.5px; color:var(--heading); line-height:1; }
+.brandslogan{ font-size:11px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--coral); }
+.headrule{ height:0; border-bottom:2px solid var(--line); margin:10px 0 4px; }
 
-/* language toggle (compact, no offset shadow) */
+/* toggles */
 .st-key-lang_en button, .st-key-lang_pt button{
     box-shadow:none !important; text-transform:uppercase; letter-spacing:1px;
     font-weight:800 !important; padding:6px 0 !important; min-height:0 !important; }
+.st-key-dark_toggle button{ box-shadow:none !important; border:2px solid var(--bd) !important;
+    background:var(--surface) !important; color:var(--heading) !important; font-size:14px !important;
+    font-weight:800 !important; padding:6px 4px !important; min-height:0 !important; }
 
 /* landing */
 .land{ margin:2px 0 8px; }
 .land .brow{ font-size:12px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--coral); }
 .land h1{ font-size:clamp(34px,6vw,60px); font-weight:900; letter-spacing:-1.5px; line-height:.98;
-          color:var(--slate-deep); margin:12px 0 0; max-width:16ch; text-wrap:balance; }
+          color:var(--heading); margin:12px 0 0; max-width:16ch; text-wrap:balance; }
 .beta{ display:inline-block; vertical-align:top; margin-left:14px; font-size:15px; font-weight:900;
        letter-spacing:2px; text-transform:uppercase; color:#fff; background:var(--coral);
        border:2px solid var(--slate-deep); box-shadow:3px 3px 0 var(--slate-deep); padding:3px 10px; }
@@ -413,10 +449,10 @@ header[data-testid="stHeader"]{ display:none; }
 .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
 @media (max-width:760px){ .steps{ grid-template-columns:repeat(2,1fr); } }
 @media (max-width:460px){ .steps{ grid-template-columns:1fr; } }
-.step{ background:#fff; border:2px solid var(--slate-deep); box-shadow:6px 6px 0 var(--slate); padding:16px 16px 18px; }
+.step{ background:var(--surface); border:2px solid var(--bd); box-shadow:6px 6px 0 var(--slate); padding:16px 16px 18px; }
 .step .n{ font-family:'Lato'; font-size:13px; font-weight:900; color:#fff; background:var(--slate-deep);
           display:inline-block; padding:2px 9px; letter-spacing:1px; }
-.step h4{ font-size:16px; font-weight:900; color:var(--slate-deep); margin:12px 0 6px; letter-spacing:-.2px; }
+.step h4{ font-size:16px; font-weight:900; color:var(--heading); margin:12px 0 6px; letter-spacing:-.2px; }
 .step p{ font-size:13px; color:var(--mute); line-height:1.55; margin:0; }
 .step.coral{ box-shadow:6px 6px 0 var(--coral); }
 .step.coral .n{ background:var(--coral); }
@@ -430,14 +466,14 @@ header[data-testid="stHeader"]{ display:none; }
 /* how it reads text — two contrasting cards */
 .reads{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 @media (max-width:620px){ .reads{ grid-template-columns:1fr; } }
-.readc{ background:#fff; border:3px solid var(--slate-deep); box-shadow:8px 8px 0 var(--slate); padding:22px; }
+.readc{ background:var(--surface); border:3px solid var(--bd); box-shadow:8px 8px 0 var(--slate); padding:22px; }
 .readc.alt{ box-shadow:8px 8px 0 var(--coral); }
 .readc .rlab{ font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--slate); }
 .readc.alt .rlab{ color:var(--coral); }
-.readc h3{ font-size:23px; font-weight:900; color:var(--slate-deep); margin:5px 0 0; letter-spacing:-.5px; }
+.readc h3{ font-size:23px; font-weight:900; color:var(--heading); margin:5px 0 0; letter-spacing:-.5px; }
 .readc p{ font-size:13.5px; color:var(--ink); line-height:1.55; margin:12px 0 14px; }
 .readc .ms{ display:flex; gap:7px; flex-wrap:wrap; }
-.readc .ms span{ font-size:12px; font-weight:800; color:var(--slate-deep); border:2px solid var(--slate-deep); padding:4px 9px; }
+.readc .ms span{ font-size:12px; font-weight:800; color:var(--heading); border:2px solid var(--bd); padding:4px 9px; }
 .readc.alt .ms span{ border-color:var(--coral); color:var(--coral); }
 
 .nums{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
@@ -445,13 +481,13 @@ header[data-testid="stHeader"]{ display:none; }
 .numc{ background:var(--slate-deep); color:#fff; border:3px solid var(--slate-deep); box-shadow:8px 8px 0 var(--coral); padding:20px 22px; }
 .numc .v{ font-size:40px; font-weight:900; letter-spacing:-2px; line-height:1; font-variant-numeric:tabular-nums; }
 .numc .k{ font-size:12.5px; color:#B9C6DE; font-weight:700; margin-top:8px; line-height:1.4; }
-.numc.alt{ background:#fff; color:var(--slate-deep); box-shadow:8px 8px 0 var(--slate); }
+.numc.alt{ background:var(--surface); color:var(--heading); box-shadow:8px 8px 0 var(--slate); }
 .numc.alt .k{ color:var(--mute); }
 
 .links{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:26px 0 0; }
 @media (max-width:460px){ .links{ grid-template-columns:1fr; } }
 .links a{ text-align:center; text-decoration:none; font-weight:800; font-size:13.5px; letter-spacing:.5px;
-          text-transform:uppercase; padding:14px 22px; border:2px solid var(--slate-deep); color:var(--slate-deep); background:#fff; }
+          text-transform:uppercase; padding:14px 22px; border:2px solid var(--bd); color:var(--heading); background:var(--surface); }
 .links a:hover{ background:var(--slate-deep); color:#fff; }
 .links a.primary{ background:var(--coral); border-color:var(--coral); color:#fff; box-shadow:4px 4px 0 var(--slate-deep); }
 .links a.primary:hover{ background:var(--slate-deep); border-color:var(--slate-deep); box-shadow:4px 4px 0 var(--coral); }
@@ -480,25 +516,29 @@ header[data-testid="stHeader"]{ display:none; }
 .panel .hint{ font-size:14px; color:#B9C6DE; font-weight:400; margin-top:auto; }
 
 [data-testid="stColumn"]:has([data-testid="stTextArea"]){
-    background:#fff; border:3px solid var(--slate-deep); box-shadow:10px 10px 0 var(--slate); padding:26px 24px; }
+    background:var(--surface); border:3px solid var(--bd); box-shadow:10px 10px 0 var(--slate); padding:26px 24px; }
 .rlabel{ font-size:11px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; color:var(--mute); margin-bottom:12px; }
 [data-testid="stColumn"] .stButton button[kind="secondary"]{
-    border-radius:0; border:2px solid var(--slate-deep); background:#fff; color:var(--slate-deep);
+    border-radius:0; border:2px solid var(--bd); background:var(--surface); color:var(--heading);
     font-weight:800; font-size:12.5px; padding:6px 10px; box-shadow:none; }
 [data-testid="stColumn"] .stButton button[kind="secondary"]:hover{ background:var(--coral); border-color:var(--coral); color:#fff; }
 .stButton button[kind="primary"]{
     border-radius:0; border:2px solid var(--slate-deep); background:var(--slate-deep); color:#fff;
     font-weight:900; letter-spacing:1px; text-transform:uppercase; box-shadow:4px 4px 0 var(--coral); padding:12px 24px; }
 .stButton button[kind="primary"]:hover{ background:var(--coral); border-color:var(--coral); box-shadow:4px 4px 0 var(--slate-deep); }
-.stTextArea textarea{ border-radius:0 !important; border:2px solid var(--slate-deep) !important;
-    background:#fff !important; color:var(--ink) !important; font-family:'Lato',sans-serif !important; font-size:15px !important; }
-.disc{ border-left:5px solid var(--coral); background:#fff; border:1px solid var(--line);
+.stTextArea textarea{ border-radius:0 !important; border:2px solid var(--bd) !important;
+    background:var(--surface) !important; color:var(--ink) !important; font-family:'Lato',sans-serif !important; font-size:15px !important; }
+.disc{ border-left:5px solid var(--coral); background:var(--surface); border:1px solid var(--line);
        padding:16px 18px; font-size:13.5px; color:var(--mute); margin-top:26px; }
-.disc b{ color:var(--slate-deep); } .disc a{ color:var(--slate); font-weight:700; }
+.disc b{ color:var(--heading); } .disc a{ color:var(--slate); font-weight:700; }
 </style>
 """,
     unsafe_allow_html=True,
 )
+
+st.session_state.setdefault("dark", False)
+if st.session_state.dark:
+    st.markdown(DARK_CSS, unsafe_allow_html=True)
 
 # --------------------------------------------------------------------------- state
 st.session_state.setdefault("lang", "en")
@@ -510,6 +550,10 @@ def set_lang(value: str):
     st.session_state.lang = value
 
 
+def toggle_dark():
+    st.session_state.dark = not st.session_state.dark
+
+
 def use_example(value: str):
     st.session_state.text = value
     st.session_state.classified = True
@@ -519,21 +563,26 @@ def classify_now():
     st.session_state.classified = True
 
 
-# --------------------------------------------------------------------------- masthead + language toggle
-brand, toggle = st.columns([0.78, 0.22], vertical_alignment="center")
+# --------------------------------------------------------------------------- header
+brand, controls = st.columns([0.58, 0.42], vertical_alignment="center")
 with brand:
     st.markdown(
         f'<style>.brandmark{{background-image:url("{MARK_URI}")}}</style>'
         '<div class="masthead"><div class="brandmark"></div>'
-        '<div class="brandname">Luciola</div></div>',
+        '<div class="brandtext"><div class="brandname">Luciola</div>'
+        '<div class="brandslogan">many small lights</div></div></div>',
         unsafe_allow_html=True,
     )
-with toggle:
-    lc = st.columns(2)
-    lc[0].button("EN", key="lang_en", on_click=set_lang, args=("en",), use_container_width=True,
+with controls:
+    cc = st.columns([1, 1, 1.3])
+    cc[0].button("EN", key="lang_en", on_click=set_lang, args=("en",), use_container_width=True,
                  type="primary" if st.session_state.lang == "en" else "secondary")
-    lc[1].button("PT", key="lang_pt", on_click=set_lang, args=("pt",), use_container_width=True,
+    cc[1].button("PT", key="lang_pt", on_click=set_lang, args=("pt",), use_container_width=True,
                  type="primary" if st.session_state.lang == "pt" else "secondary")
+    cc[2].button("🌙 Escuro" if not st.session_state.dark else "☀ Claro",
+                 key="dark_toggle", on_click=toggle_dark, use_container_width=True)
+
+st.markdown('<div class="headrule"></div>', unsafe_allow_html=True)
 
 lang = st.session_state.lang
 t = T[lang]
@@ -597,7 +646,7 @@ st.markdown(
 )
 
 # --------------------------------------------------------------- ablation heatmap (interactive)
-render_iframe(heatmap_html(lang), height=620)
+render_iframe(heatmap_html(lang, st.session_state.dark), height=620)
 
 st.markdown(
     f"""
