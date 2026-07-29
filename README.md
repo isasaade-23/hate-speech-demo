@@ -1,8 +1,10 @@
-# Bilingual Hate-Speech Classifier — live demo (EN / PT)
+# Luciola
 
-A [Streamlit](https://streamlit.io) demo for a probabilistic hate-speech classifier over English
-and Portuguese social-media text. It returns a hate / not-hate label with a confidence score and
-the detected language.
+**Live demo (EN / PT).** A [Streamlit](https://streamlit.io) demo for a probabilistic hate-speech
+classifier over English and Portuguese social-media text. It returns a hate or not-hate label with
+a confidence score and the detected language. The interface switches between English and Portuguese
+and between a light and dark theme, and it renders the project's stop-word ablation as an
+interactive heatmap.
 
 This repository is the deployable demo only. It serves the lightweight CPU product model
 (TF-IDF word + character n-grams into Logistic Regression) chosen because it is self-contained
@@ -33,8 +35,8 @@ under `src/`; the model bundle and configs ship with the repo, so nothing is fet
 
 ## Responsible use
 
-This is not a moderation oracle. It reflects the biases of its training data — the study measures
-over-flagging of some identity terms — and should support, never replace, human review. Implicit
+This is not a moderation oracle. It reflects the biases of its training data. The study measures
+over-flagging of some identity terms. It should support, never replace, human review. Implicit
 hate expressed without slurs is its main blind spot. Predictions are probabilistic, not verdicts.
 
 ## License
