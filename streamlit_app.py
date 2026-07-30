@@ -116,6 +116,13 @@ T = {
                      "transformer. It is also why removing stop words or swapping in a tabular foundation "
                      "model (TabPFN) does not move the score: the bottleneck is the representation, not "
                      "the classifier.",
+        "totop": "Top",
+        "tab_label": "Tabular foundation model",
+        "tab_sub": "The numbers, macro-F1 on dense features. TabPFN leads there but ties the classical "
+                   "baseline and stays below the transformer.",
+        "tab_col": "Model / features",
+        "tab_r_sbert": "TabPFN · SBERT", "tab_r_svd": "TabPFN · TF-IDF→SVD",
+        "tab_r_clf": "best classical (sparse TF-IDF)", "tab_r_trf": "best transformer",
         "link_code": "Code &amp; study", "link_docs": "Documentation", "link_demo": "Demo source",
         "cta": "Try it live",
         "panel_brow": "EN / PT · research demo",
@@ -189,6 +196,13 @@ T = {
                      "pegam erros de escrita. Por isso este modelo linear pequeno fica a quatro pontos do "
                      "transformer. E por isso remover palavras vazias ou trocar por um modelo tabular de "
                      "fundação (TabPFN) não muda a nota: o gargalo é a representação, não o classificador.",
+        "totop": "Topo",
+        "tab_label": "Modelo tabular de fundação",
+        "tab_sub": "Os números, macro-F1 sobre features densas. O TabPFN lidera ali, mas empata com o "
+                   "clássico e fica abaixo do transformer.",
+        "tab_col": "Modelo / features",
+        "tab_r_sbert": "TabPFN · SBERT", "tab_r_svd": "TabPFN · TF-IDF→SVD",
+        "tab_r_clf": "melhor clássico (TF-IDF esparso)", "tab_r_trf": "melhor transformer",
         "link_code": "Código &amp; estudo", "link_docs": "Documentação", "link_demo": "Código do demo",
         "cta": "Experimente ao vivo",
         "panel_brow": "EN / PT · demo de pesquisa",
@@ -418,12 +432,18 @@ header[data-testid="stHeader"]{ display:none; }
 .block-container{ padding-top:1rem; padding-bottom:2rem; max-width:1050px; }
 
 /* animations */
+html{ scroll-behavior:smooth; }
 @keyframes fadeUp { from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:none; } }
+@keyframes revealUp { from{ opacity:0; transform:translateY(34px); } to{ opacity:1; transform:none; } }
+@keyframes totopIn { from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
 @media (prefers-reduced-motion: no-preference){
   .anim{ animation:fadeUp .7s cubic-bezier(.2,.7,.2,1) both; }
   .d1{ animation-delay:.05s } .d2{ animation-delay:.14s } .d3{ animation-delay:.23s } .d4{ animation-delay:.32s }
   @supports (animation-timeline: view()){
-    .reveal{ animation:fadeUp both; animation-timeline:view(); animation-range:entry 4% cover 26%; }
+    .reveal{ animation:revealUp both; animation-timeline:view(); animation-range:entry 2% cover 32%; }
+  }
+  @supports (animation-timeline: scroll()){
+    .totop{ animation:totopIn both; animation-timeline:scroll(root); animation-range:130px 420px; }
   }
 }
 
@@ -435,6 +455,23 @@ header[data-testid="stHeader"]{ display:none; }
             font-weight:300; font-size:31px; letter-spacing:1.5px; color:var(--heading); line-height:1; }
 .brandslogan{ font-size:11px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--coral); }
 .headrule{ height:0; border-bottom:2px solid var(--line); margin:10px 0 4px; }
+
+/* back to top (anchor; no JS) */
+.totop{ position:fixed; left:16px; bottom:16px; z-index:60; text-decoration:none; display:inline-flex;
+        align-items:center; gap:7px; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;
+        color:var(--heading); background:var(--surface); border:2px solid var(--bd); box-shadow:3px 3px 0 var(--coral);
+        padding:9px 12px; }
+.totop:hover{ background:var(--coral); color:#fff; border-color:var(--coral); box-shadow:3px 3px 0 var(--slate-deep); }
+.totop .ar{ font-size:14px; line-height:1; }
+
+/* metrics table (poster style) */
+.dtable{ background:var(--surface); border:3px solid var(--bd); box-shadow:8px 8px 0 var(--slate); overflow-x:auto; margin:0 0 6px; }
+.dtable table{ width:100%; border-collapse:collapse; font-size:13.5px; min-width:360px; }
+.dtable th, .dtable td{ padding:10px 16px; text-align:right; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; }
+.dtable th:first-child, .dtable td:first-child{ text-align:left; }
+.dtable td:first-child{ font-weight:800; color:var(--heading); }
+.dtable thead th{ font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--mute); border-bottom:2px solid var(--bd); }
+.dtable tbody tr:last-child td{ border-bottom:none; }
 
 /* toggles */
 .st-key-lang_en button, .st-key-lang_pt button{
@@ -592,6 +629,12 @@ def classify_now():
 lang = st.session_state.lang
 t = T[lang]
 
+st.markdown(
+    f'<div id="top"></div>'
+    f'<a href="#top" class="totop" aria-label="{t["totop"]}"><span class="ar">&#8593;</span> {t["totop"]}</a>',
+    unsafe_allow_html=True,
+)
+
 brand, controls = st.columns([0.58, 0.42], vertical_alignment="center")
 with brand:
     st.markdown(
@@ -627,6 +670,17 @@ for i, (title, body) in enumerate(t["steps"]):
 
 _r1 = "".join(f"<span>{m}</span>" for m in t["read1_models"])
 _r2 = "".join(f"<span>{m}</span>" for m in t["read2_models"])
+
+_dec = (lambda s: s.replace(".", ",")) if lang == "pt" else (lambda s: s)
+_tab_rows = "".join(
+    f"<tr><td>{lab}</td><td>{_dec(a)}</td><td>{_dec(b)}</td></tr>"
+    for lab, a, b in [
+        (t["tab_r_sbert"], "0.684", "0.699"),
+        (t["tab_r_svd"], "0.676", "0.691"),
+        (t["tab_r_clf"], "0.709", "0.698"),
+        (t["tab_r_trf"], "0.750", "0.748"),
+    ]
+)
 
 st.markdown(
     f"""
@@ -674,6 +728,15 @@ st.markdown(
 
   <div class="seclabel reveal">{t["diag_label"]}</div>
   <p class="tag reveal">{t["diag_body"]}</p>
+
+  <div class="seclabel reveal">{t["tab_label"]}</div>
+  <p class="tag reveal" style="margin-bottom:12px">{t["tab_sub"]}</p>
+  <div class="dtable reveal">
+    <table>
+      <thead><tr><th>{t["tab_col"]}</th><th>strict</th><th>broad</th></tr></thead>
+      <tbody>{_tab_rows}</tbody>
+    </table>
+  </div>
 
   <div class="seclabel reveal">{t["abl_label"]}</div>
   <p class="tag reveal">{t["abl_sub"]}</p>
