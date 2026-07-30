@@ -581,6 +581,11 @@ html{ scroll-behavior:smooth; }
 
 [data-testid="stColumn"]:has([data-testid="stTextArea"]){
     background:var(--surface); border:3px solid var(--bd); box-shadow:10px 10px 0 var(--slate); padding:26px 24px; }
+/* Desktop: result panel on the left, input on the right (split-canvas). The input column
+   is first in the DOM, so on mobile the columns stack input-first and the result lands below. */
+@media (min-width: 768px){
+  [data-testid="stColumn"]:has([data-testid="stTextArea"]){ order: 2; }
+}
 .rlabel{ font-size:11px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; color:var(--mute); margin-bottom:12px; }
 [data-testid="stColumn"] .stButton button[kind="secondary"]{
     border-radius:0; border:2px solid var(--bd); background:var(--surface); color:var(--heading);
@@ -808,12 +813,11 @@ def left_panel_html(res, tr) -> str:
 
 
 # --------------------------------------------------------------------------- tool
-left, right = st.columns([0.92, 1.08], gap="large")
+# Input column first in the DOM so mobile stacks it above the result. On desktop a CSS
+# `order` rule moves the result panel back to the left for the split-canvas layout.
+col_input, col_result = st.columns([1.08, 0.92], gap="large")
 
-with left:
-    st.markdown(left_panel_html(result, t), unsafe_allow_html=True)
-
-with right:
+with col_input:
     st.markdown(f'<div class="rlabel">{t["your_text"]}</div>', unsafe_allow_html=True)
     chip_cols = st.columns(2)
     for i, ex in enumerate(EXAMPLES):
@@ -825,6 +829,9 @@ with right:
         "Text", key="text", height=150, label_visibility="collapsed", placeholder=t["placeholder"],
     )
     st.button(t["classify"], type="primary", on_click=classify_now, use_container_width=True)
+
+with col_result:
+    st.markdown(left_panel_html(result, t), unsafe_allow_html=True)
 
 # --------------------------------------------------------------------------- disclaimer
 st.markdown(
