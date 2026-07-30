@@ -434,17 +434,19 @@ header[data-testid="stHeader"]{ display:none; }
 /* animations */
 html{ scroll-behavior:smooth; }
 @keyframes fadeUp { from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:none; } }
-@keyframes revealUp { from{ opacity:0; transform:translateY(34px); } to{ opacity:1; transform:none; } }
-@keyframes totopIn { from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+@keyframes revealFallback { to{ opacity:1; transform:none; } }
 @media (prefers-reduced-motion: no-preference){
   .anim{ animation:fadeUp .7s cubic-bezier(.2,.7,.2,1) both; }
   .d1{ animation-delay:.05s } .d2{ animation-delay:.14s } .d3{ animation-delay:.23s } .d4{ animation-delay:.32s }
-  @supports (animation-timeline: view()){
-    .reveal{ animation:revealUp both; animation-timeline:view(); animation-range:entry 2% cover 32%; }
-  }
-  @supports (animation-timeline: scroll()){
-    .totop{ animation:totopIn both; animation-timeline:scroll(root); animation-range:130px 420px; }
-  }
+  /* scroll reveal driven by an IntersectionObserver (adds .in). Cross-browser and light on mobile.
+     If that JS is blocked, revealFallback shows every section at 2.4s so nothing stays hidden. */
+  .reveal{ opacity:0; transform:translateY(30px) scale(.99);
+           transition:opacity .5s ease, transform .62s cubic-bezier(.2,.75,.2,1);
+           animation:revealFallback .4s ease 2.4s forwards; }
+  .reveal.in{ opacity:1; transform:none; animation:none; }
+  .steps .step:nth-child(2), .reads .readc:nth-child(2), .nums .numc:nth-child(2){ transition-delay:.08s; }
+  .steps .step:nth-child(3), .nums .numc:nth-child(3){ transition-delay:.16s; }
+  .steps .step:nth-child(4){ transition-delay:.24s; }
 }
 
 /* header */
@@ -829,4 +831,31 @@ st.markdown(
     f'<div class="disc">{t["disc"]} '
     f'<a href="{REPO}">{t["disc_code"]}</a> · <a href="{DOCS}">{t["disc_docs"]}</a>.</div>',
     unsafe_allow_html=True,
+)
+
+# --------------------------------------------------------------- scroll reveal (cross-browser)
+# st.markdown strips <script>, so inject an IntersectionObserver from a 0-height iframe that reaches
+# the parent document and adds .in to .reveal elements as they enter view. Works on mobile, Firefox
+# and Safari (unlike CSS scroll-timeline). The CSS fallback reveals everything if this is blocked.
+render_iframe(
+    """
+<script>
+(function(){
+  try{
+    var doc = window.parent && window.parent.document;
+    if(!doc){ return; }
+    var els = doc.querySelectorAll('.reveal:not(.in)');
+    var IO = window.parent.IntersectionObserver || window.IntersectionObserver;
+    if(!IO){ for(var i=0;i<els.length;i++){ els[i].classList.add('in'); } return; }
+    var io = new IO(function(entries){
+      for(var j=0;j<entries.length;j++){
+        if(entries[j].isIntersecting){ entries[j].target.classList.add('in'); io.unobserve(entries[j].target); }
+      }
+    }, {root:null, threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+    for(var k=0;k<els.length;k++){ io.observe(els[k]); }
+  }catch(e){}
+})();
+</script>
+""",
+    height=1,
 )
