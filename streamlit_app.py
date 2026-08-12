@@ -75,7 +75,7 @@ T = {
         "find_label": "The finding",
         "find_main": "Transformers win. The gap is <b>statistically significant</b>.",
         "find_sub": "BERTimbau reaches macro-F1 0.784. The best classical baseline reaches 0.729 "
-                    "(paired McNemar, Holm, p<0.001). This demo runs the classical model, 3.6 MB. It "
+                    "(paired McNemar, Holm, p<0.001). This demo runs the classical model, 3.8 MB. It "
                     "stays about five points behind and needs no GPU.",
         "find_num": "0.784", "find_cap": "best macro-F1",
         "how": "How it was built",
@@ -89,13 +89,13 @@ T = {
                       "billions of words and we fine-tune them on our labels, on Colab GPU."),
             ("Evaluate", "Macro-F1, paired McNemar with Holm, calibration (ECE), an identity-term "
                          "bias probe, cross-lingual transfer."),
-            ("Ship", "Pareto picks tfidf_logreg. 3.6 MB, 1.6 ms on CPU. It answers you below."),
+            ("Ship", "Pareto picks tfidf_logreg. 3.8 MB, under 5 ms on CPU. It answers you below."),
         ],
         "reads_label": "How it reads text",
         "read1_title": "Word by word", "read1_sub": "bag-of-words",
         "read1_body": "It counts words and character patterns (bag-of-words, TF-IDF), with no "
                       "context beyond short windows. The classifier on top learns from scratch, only "
-                      "from our labeled examples. In return it is fast, 3.6 MB, and runs on any CPU.",
+                      "from our labeled examples. In return it is fast, 3.8 MB, and runs on any CPU.",
         "read1_models": ["Logistic Regression", "Linear SVM", "LightGBM"],
         "read2_title": "The whole sentence", "read2_sub": "contextual",
         "read2_body": "It reads the full sentence in context. These models were pretrained on "
@@ -162,7 +162,7 @@ T = {
         "find_label": "O achado",
         "find_main": "Os transformers vencem. A diferença é <b>estatisticamente significativa</b>.",
         "find_sub": "O BERTimbau chega a macro-F1 0,784. O melhor clássico chega a 0,729 (McNemar "
-                    "pareado, Holm, p<0,001). Este demo roda o clássico, 3,6 MB. Fica cerca de cinco "
+                    "pareado, Holm, p<0,001). Este demo roda o clássico, 3,8 MB. Fica cerca de cinco "
                     "pontos atrás e dispensa GPU.",
         "find_num": "0,784", "find_cap": "melhor macro-F1",
         "how": "Como foi construído",
@@ -176,14 +176,14 @@ T = {
                         "em bilhões de palavras e nós os ajustamos com os nossos rótulos, na GPU do Colab."),
             ("Avaliar", "Macro-F1, McNemar pareado com Holm, calibração (ECE), sonda de viés por "
                         "termo de identidade, transferência entre idiomas."),
-            ("Publicar", "Pareto escolhe o tfidf_logreg. 3,6 MB, 1,6 ms na CPU. É ele que responde "
+            ("Publicar", "Pareto escolhe o tfidf_logreg. 3,8 MB, abaixo de 5 ms na CPU. É ele que responde "
                          "abaixo."),
         ],
         "reads_label": "Como ela lê o texto",
         "read1_title": "Palavra por palavra", "read1_sub": "saco de palavras",
         "read1_body": "Conta palavras e padrões de caractere (saco de palavras, TF-IDF), sem contexto "
                       "além de janelas curtas. O classificador em cima aprende do zero, só com os nossos "
-                      "exemplos rotulados. Em troca, é rápido, ocupa 3,6 MB e roda em qualquer CPU.",
+                      "exemplos rotulados. Em troca, é rápido, ocupa 3,8 MB e roda em qualquer CPU.",
         "read1_models": ["Logistic Regression", "Linear SVM", "LightGBM"],
         "read2_title": "A frase inteira", "read2_sub": "contextual",
         "read2_body": "Lê a frase inteira em contexto. Esses modelos foram pré-treinados em bilhões de "
