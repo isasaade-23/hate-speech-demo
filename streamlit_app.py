@@ -107,6 +107,9 @@ T = {
         "num1_v": "0.784", "num1_k": "best transformer, strict<br>(BERTimbau, macro-F1)",
         "num2_v": "0.729", "num2_k": "this demo, strict<br>(classical MVP, macro-F1)",
         "num3_v": "0.835", "num3_k": "best model, broad<br>(BERTimbau, macro-F1)",
+        "lb_model": "Model", "lb_demo": "TF-IDF + LogReg (this demo)",
+        "lb_cap": "Best result per model, test macro-F1. BERTimbau leads both policies; the "
+                  "classical model this demo runs stays within reach on CPU.",
         "ens_label": "Surface + semantic",
         "ens_main": "Together they catch more hate.",
         "ens_sub": "The classical model reads slurs, the transformer reads meaning. Averaging the two "
@@ -192,6 +195,9 @@ T = {
         "num1_v": "0,784", "num1_k": "melhor transformer, strict<br>(BERTimbau, macro-F1)",
         "num2_v": "0,729", "num2_k": "este demo, strict<br>(MVP clássico, macro-F1)",
         "num3_v": "0,835", "num3_k": "melhor modelo, broad<br>(BERTimbau, macro-F1)",
+        "lb_model": "Modelo", "lb_demo": "TF-IDF + LogReg (este demo)",
+        "lb_cap": "Melhor resultado por modelo, macro-F1 no teste. O BERTimbau lidera nas duas "
+                  "políticas; o clássico que este demo roda fica ao alcance, na CPU.",
         "ens_label": "Superfície + semântica",
         "ens_main": "Juntos pegam mais ódio.",
         "ens_sub": "O clássico lê o palavrão, o transformer lê o sentido. A média dos dois sobe o "
@@ -483,6 +489,8 @@ html{ scroll-behavior:smooth; }
 .dtable td:first-child{ font-weight:800; color:var(--heading); }
 .dtable thead th{ font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--mute); border-bottom:2px solid var(--bd); }
 .dtable tbody tr:last-child td{ border-bottom:none; }
+.dtable tbody tr.lbwin td{ color:var(--coral); font-weight:800; }
+.dtable tbody tr.lbdemo td:first-child{ color:var(--slate); }
 
 /* toggles */
 .st-key-lang_en button, .st-key-lang_pt button{
@@ -687,6 +695,20 @@ for i, (title, body) in enumerate(t["steps"]):
 _r1 = "".join(f"<span>{m}</span>" for m in t["read1_models"])
 _r2 = "".join(f"<span>{m}</span>" for m in t["read2_models"])
 
+# leaderboard table (best result per model, macro-F1, both policies) — backs the Results cards
+_dec = (lambda s: s.replace(".", ",")) if lang == "pt" else (lambda s: s)
+_lb_data = [
+    ("BERTimbau (PT)", "0.784", "0.835", "lbwin"),
+    ("twitter-XLM-R", "0.749", "0.766", ""),
+    ("XLM-R multilingual", "0.743", "0.764", ""),
+    ("BERTweet (EN)", "0.708", "0.753", ""),
+    (t["lb_demo"], "0.729", "0.746", "lbdemo"),
+]
+_lb_rows = ""
+for _name, _a, _b, _cls in _lb_data:
+    _c = f' class="{_cls}"' if _cls else ""
+    _lb_rows += f"<tr{_c}><td>{_name}</td><td>{_dec(_a)}</td><td>{_dec(_b)}</td></tr>"
+
 st.markdown(
     f"""
 <div class="land">
@@ -720,6 +742,14 @@ st.markdown(
     <div class="numc reveal"><div class="v">{t["num1_v"]}</div><div class="k">{t["num1_k"]}</div></div>
     <div class="numc alt reveal"><div class="v">{t["num2_v"]}</div><div class="k">{t["num2_k"]}</div></div>
     <div class="numc reveal"><div class="v">{t["num3_v"]}</div><div class="k">{t["num3_k"]}</div></div>
+  </div>
+
+  <p class="anote reveal" style="margin:22px 0 12px">{t["lb_cap"]}</p>
+  <div class="dtable reveal">
+    <table>
+      <thead><tr><th>{t["lb_model"]}</th><th>strict</th><th>broad</th></tr></thead>
+      <tbody>{_lb_rows}</tbody>
+    </table>
   </div>
 
   <div class="seclabel reveal">{t["diag_label"]}</div>
