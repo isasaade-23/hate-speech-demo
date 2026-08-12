@@ -25,7 +25,7 @@ import streamlit.components.v1 as components  # noqa: E402
 from hsc.inference import get_classifier  # noqa: E402
 
 MODEL_ID = "tfidf_logreg_strict_s42"
-THRESHOLD_PCT = 66.5  # tuned decision threshold, shown on the meter for transparency
+THRESHOLD_PCT = 63.6  # tuned decision threshold, shown on the meter for transparency
 
 REPO = "https://github.com/isasaade-23/hate-speech-nlp-en-pt"
 DOCS = "https://isasaade-23.github.io/hate-speech-nlp-en-pt/"
@@ -57,12 +57,12 @@ html, body, .stApp{ background:#121a2b; }
 EXAMPLES = [
     {"key": "en_ok", "en": "EN friendly", "pt": "EN amigável",
      "text": "I love this community, everyone is so welcoming!"},
-    {"key": "en_hate", "en": "EN implicit hate", "pt": "EN ódio implícito",
-     "text": "those people are subhuman and should be removed"},
+    {"key": "en_hate", "en": "EN hate", "pt": "EN ódio",
+     "text": "i hate these faggots, they make me sick"},
     {"key": "pt_ok", "en": "PT friendly", "pt": "PT amigável",
      "text": "que vídeo incrível, parabéns pelo trabalho de vocês"},
-    {"key": "pt_hate", "en": "PT hostile", "pt": "PT hostil",
-     "text": "vocês são um bando de idiotas e não deviam existir"},
+    {"key": "pt_hate", "en": "PT hate", "pt": "PT ódio",
+     "text": "essas mulheres são todas umas vadias nojentas, deviam apanhar"},
 ]
 
 # --------------------------------------------------------------------------- i18n
@@ -74,52 +74,56 @@ T = {
                "protocol. Below runs the classifier it produced. Try it.",
         "find_label": "The finding",
         "find_main": "Transformers win. The gap is <b>statistically significant</b>.",
-        "find_sub": "XLM-R reaches macro-F1 0.750. The best classical baseline reaches 0.709 "
-                    "(paired McNemar, Holm). This demo runs the classical model, 3.6 MB. It stays "
-                    "four points behind and needs no GPU.",
-        "find_num": "0.750", "find_cap": "best macro-F1",
+        "find_sub": "BERTimbau reaches macro-F1 0.784. The best classical baseline reaches 0.729 "
+                    "(paired McNemar, Holm, p<0.001). This demo runs the classical model, 3.6 MB. It "
+                    "stays about five points behind and needs no GPU.",
+        "find_num": "0.784", "find_cap": "best macro-F1",
         "how": "How it was built",
         "steps": [
-            ("Harmonize", "Four sources become one binary schema. Tweets and memes in English, "
-                          "comments in Portuguese. Labels follow two policies, strict and broad."),
+            ("Harmonize", "Five sources become one binary schema. Tweets and memes in English, web "
+                          "and Instagram comments in Portuguese. Labels follow two policies, strict and broad."),
             ("De-leak", "Exact and near-duplicate removal (MinHash/LSH) runs first. The group split "
                         "is frozen. No paraphrase crosses train and test."),
-            ("Train", "TF-IDF and SBERT feed LogReg, SVM and LightGBM on CPU. XLM-R, BERTimbau and "
-                      "BERTweet are fine-tuned on Colab."),
+            ("Train", "Two regimes. The classical models learn from scratch on our labels, over "
+                      "TF-IDF or SBERT features, on CPU. The transformers arrive pretrained on "
+                      "billions of words and we fine-tune them on our labels, on Colab GPU."),
             ("Evaluate", "Macro-F1, paired McNemar with Holm, calibration (ECE), an identity-term "
                          "bias probe, cross-lingual transfer."),
             ("Ship", "Pareto picks tfidf_logreg. 3.6 MB, 1.6 ms on CPU. It answers you below."),
         ],
         "reads_label": "How it reads text",
         "read1_title": "Word by word", "read1_sub": "bag-of-words",
-        "read1_body": "It counts words and character patterns (TF-IDF). It sees no context beyond "
-                      "short windows. In return it is fast, 3.6 MB, and runs on any CPU.",
+        "read1_body": "It counts words and character patterns (bag-of-words, TF-IDF), with no "
+                      "context beyond short windows. The classifier on top learns from scratch, only "
+                      "from our labeled examples. In return it is fast, 3.6 MB, and runs on any CPU.",
         "read1_models": ["Logistic Regression", "Linear SVM", "LightGBM"],
         "read2_title": "The whole sentence", "read2_sub": "contextual",
-        "read2_body": "It reads the full sentence in context, through multilingual embeddings and "
-                      "fine-tuned transformers. It costs more. It grasps meaning and transfers "
-                      "across languages. The accuracy comes from here.",
+        "read2_body": "It reads the full sentence in context. These models were pretrained on "
+                      "billions of words. We use the multilingual embeddings as they are and "
+                      "fine-tune the transformers on our labels. That pretraining is where meaning "
+                      "and cross-language transfer come from. It costs more and needs a GPU.",
         "read2_models": ["multilingual SBERT", "XLM-RoBERTa", "BERTimbau", "BERTweet"],
         "results": "Results",
-        "num1_v": "0.750", "num1_k": "best transformer<br>(XLM-R, macro-F1)",
-        "num2_v": "0.709", "num2_k": "this demo<br>(classical MVP, macro-F1)",
-        "num3_v": "0.42→0.63", "num3_k": "EN→PT zero-shot transfer<br>(TF-IDF → multilingual SBERT)",
+        "num1_v": "0.784", "num1_k": "best transformer, strict<br>(BERTimbau, macro-F1)",
+        "num2_v": "0.729", "num2_k": "this demo, strict<br>(classical MVP, macro-F1)",
+        "num3_v": "0.835", "num3_k": "best model, broad<br>(BERTimbau, macro-F1)",
         "ens_label": "Surface + semantic",
         "ens_main": "Together they catch more hate.",
         "ens_sub": "The classical model reads slurs, the transformer reads meaning. Averaging the two "
-                   "raises hate recall from 0.55 to 0.63 at the same macro-F1.",
+                   "raises hate recall from 0.55 to 0.63 with no change in macro-F1. Exploratory run, "
+                   "outside the main leaderboard.",
         "ens_num": "0.63", "ens_cap": "hate recall (was 0.55)",
         "diag_label": "Why the simple model holds up",
         "diag_body": "Hate detection here is largely lexical. The model's strongest cues are explicit "
                      "slurs and identity attacks in both languages, plus character patterns that catch "
                      "misspellings. That is why this small linear model stays within four points of the "
-                     "transformer. It is also why removing stop words or swapping in a tabular foundation "
-                     "model (TabPFN) does not move the score: the bottleneck is the representation, not "
-                     "the classifier.",
+                     "transformer. It is also why removing stop words barely moves the score, which points "
+                     "to the representation as the limit, not the classifier.",
         "totop": "Top",
         "tab_label": "Tabular foundation model",
-        "tab_sub": "The numbers, macro-F1 on dense features. TabPFN leads there but ties the classical "
-                   "baseline and stays below the transformer.",
+        "tab_sub": "On dense features, TabPFN is the strongest classifier. It still ties the sparse "
+                   "classical baseline and stays below the transformer, which places the limit in the "
+                   "representation, not the model. Exploratory run, outside the main leaderboard.",
         "tab_col": "Model / features",
         "tab_r_sbert": "TabPFN · SBERT", "tab_r_svd": "TabPFN · TF-IDF→SVD",
         "tab_r_clf": "best classical (sparse TF-IDF)", "tab_r_trf": "best transformer",
@@ -154,18 +158,19 @@ T = {
                "vazamento. Abaixo roda o classificador que ele produziu. Teste.",
         "find_label": "O achado",
         "find_main": "Os transformers vencem. A diferença é <b>estatisticamente significativa</b>.",
-        "find_sub": "O XLM-R chega a macro-F1 0,750. O melhor clássico chega a 0,709 (McNemar "
-                    "pareado, Holm). Este demo roda o clássico, 3,6 MB. Fica quatro pontos atrás e "
-                    "dispensa GPU.",
-        "find_num": "0,750", "find_cap": "melhor macro-F1",
+        "find_sub": "O BERTimbau chega a macro-F1 0,784. O melhor clássico chega a 0,729 (McNemar "
+                    "pareado, Holm, p<0,001). Este demo roda o clássico, 3,6 MB. Fica cerca de cinco "
+                    "pontos atrás e dispensa GPU.",
+        "find_num": "0,784", "find_cap": "melhor macro-F1",
         "how": "Como foi construído",
         "steps": [
-            ("Harmonizar", "Quatro fontes viram um esquema binário. Tweets e memes em inglês, "
-                           "comentários em português. Os rótulos seguem duas políticas, strict e broad."),
+            ("Harmonizar", "Cinco fontes viram um esquema binário. Tweets e memes em inglês, "
+                           "comentários web e do Instagram em português. Os rótulos seguem duas políticas, strict e broad."),
             ("Anti-vazamento", "Primeiro remove duplicatas exatas e quase-duplicatas (MinHash/LSH). "
                                "O split por grupo é congelado. Nenhuma paráfrase cruza treino e teste."),
-            ("Treinar", "TF-IDF e SBERT alimentam LogReg, SVM e LightGBM na CPU. XLM-R, BERTimbau e "
-                        "BERTweet são ajustados no Colab."),
+            ("Treinar", "Dois regimes. Os modelos clássicos aprendem do zero com os nossos rótulos, "
+                        "sobre features TF-IDF ou SBERT, na CPU. Os transformers chegam pré-treinados "
+                        "em bilhões de palavras e nós os ajustamos com os nossos rótulos, na GPU do Colab."),
             ("Avaliar", "Macro-F1, McNemar pareado com Holm, calibração (ECE), sonda de viés por "
                         "termo de identidade, transferência entre idiomas."),
             ("Publicar", "Pareto escolhe o tfidf_logreg. 3,6 MB, 1,6 ms na CPU. É ele que responde "
@@ -173,33 +178,37 @@ T = {
         ],
         "reads_label": "Como ela lê o texto",
         "read1_title": "Palavra por palavra", "read1_sub": "saco de palavras",
-        "read1_body": "Conta palavras e padrões de caractere (TF-IDF). Não vê contexto além de "
-                      "janelas curtas. Em troca, é rápido, ocupa 3,6 MB e roda em qualquer CPU.",
+        "read1_body": "Conta palavras e padrões de caractere (saco de palavras, TF-IDF), sem contexto "
+                      "além de janelas curtas. O classificador em cima aprende do zero, só com os nossos "
+                      "exemplos rotulados. Em troca, é rápido, ocupa 3,6 MB e roda em qualquer CPU.",
         "read1_models": ["Logistic Regression", "Linear SVM", "LightGBM"],
         "read2_title": "A frase inteira", "read2_sub": "contextual",
-        "read2_body": "Lê a frase inteira em contexto, por embeddings multilíngues e transformers "
-                      "ajustados. Custa mais. Capta o sentido e transfere entre idiomas. A acurácia "
-                      "vem daí.",
+        "read2_body": "Lê a frase inteira em contexto. Esses modelos foram pré-treinados em bilhões de "
+                      "palavras. Usamos os embeddings multilíngues como estão e ajustamos os transformers "
+                      "com os nossos rótulos. É desse pré-treino que vêm o sentido e a transferência entre "
+                      "idiomas. Custa mais e precisa de GPU.",
         "read2_models": ["multilingual SBERT", "XLM-RoBERTa", "BERTimbau", "BERTweet"],
         "results": "Resultados",
-        "num1_v": "0,750", "num1_k": "melhor transformer<br>(XLM-R, macro-F1)",
-        "num2_v": "0,709", "num2_k": "este demo<br>(MVP clássico, macro-F1)",
-        "num3_v": "0,42→0,63", "num3_k": "transferência EN→PT zero-shot<br>(TF-IDF → SBERT multilíngue)",
+        "num1_v": "0,784", "num1_k": "melhor transformer, strict<br>(BERTimbau, macro-F1)",
+        "num2_v": "0,729", "num2_k": "este demo, strict<br>(MVP clássico, macro-F1)",
+        "num3_v": "0,835", "num3_k": "melhor modelo, broad<br>(BERTimbau, macro-F1)",
         "ens_label": "Superfície + semântica",
         "ens_main": "Juntos pegam mais ódio.",
         "ens_sub": "O clássico lê o palavrão, o transformer lê o sentido. A média dos dois sobe o "
-                   "recall de ódio de 0,55 para 0,63 com o mesmo macro-F1.",
+                   "recall de ódio de 0,55 para 0,63 sem mudar o macro-F1. Experimento exploratório, "
+                   "fora do leaderboard principal.",
         "ens_num": "0,63", "ens_cap": "recall de ódio (era 0,55)",
         "diag_label": "Por que o modelo simples se segura",
         "diag_body": "Detectar ódio aqui é, em boa parte, léxico. As pistas mais fortes do modelo são "
                      "palavrão e ataque de identidade nos dois idiomas, além de padrões de caractere que "
                      "pegam erros de escrita. Por isso este modelo linear pequeno fica a quatro pontos do "
-                     "transformer. E por isso remover palavras vazias ou trocar por um modelo tabular de "
-                     "fundação (TabPFN) não muda a nota: o gargalo é a representação, não o classificador.",
+                     "transformer. E por isso remover palavras vazias quase não muda a nota, o que aponta "
+                     "para a representação como o limite, não o classificador.",
         "totop": "Topo",
         "tab_label": "Modelo tabular de fundação",
-        "tab_sub": "Os números, macro-F1 sobre features densas. O TabPFN lidera ali, mas empata com o "
-                   "clássico e fica abaixo do transformer.",
+        "tab_sub": "Sobre features densas, o TabPFN é o classificador mais forte. Ainda assim empata com "
+                   "o clássico esparso e fica abaixo do transformer, o que coloca o limite na representação, "
+                   "não no modelo. Experimento exploratório, fora do leaderboard principal.",
         "tab_col": "Modelo / features",
         "tab_r_sbert": "TabPFN · SBERT", "tab_r_svd": "TabPFN · TF-IDF→SVD",
         "tab_r_clf": "melhor clássico (TF-IDF esparso)", "tab_r_trf": "melhor transformer",
@@ -275,12 +284,12 @@ html,body{margin:0;background:transparent;font-family:'Lato',system-ui,sans-seri
 <div class="tip" id="tip" aria-hidden="true"></div>
 <script>
 const DATA=[
- {model:"LogReg",policy:"strict",f1:[0.7094,0.7139],auc:[0.8413,0.8404],rec:[0.4631,0.5437]},
- {model:"LogReg",policy:"broad",f1:[0.6976,0.6936],auc:[0.7684,0.7678],rec:[0.5475,0.5456]},
- {model:"LightGBM",policy:"strict",f1:[0.7065,0.7012],auc:[0.8200,0.8181],rec:[0.5575,0.5403]},
- {model:"LightGBM",policy:"broad",f1:[0.6983,0.6978],auc:[0.7679,0.7690],rec:[0.5513,0.5206]},
- {model:"SVM",policy:"strict",f1:[0.6716,0.6641],auc:[0.7722,0.7727],rec:[0.4974,0.5214]},
- {model:"SVM",policy:"broad",f1:[0.6734,0.6647],auc:[0.7363,0.7344],rec:[0.5250,0.4675]}
+ {model:"LogReg",policy:"strict",f1:[0.7293,0.7247],auc:[0.8531,0.8514],rec:[0.5044,0.5323]},
+ {model:"LogReg",policy:"broad",f1:[0.7459,0.7468],auc:[0.8199,0.8206],rec:[0.6558,0.6442]},
+ {model:"LightGBM",policy:"strict",f1:[0.7114,0.7057],auc:[0.8380,0.8386],rec:[0.4956,0.4765]},
+ {model:"LightGBM",policy:"broad",f1:[0.7246,0.7300],auc:[0.8087,0.8081],rec:[0.5755,0.6346]},
+ {model:"SVM",policy:"strict",f1:[0.6967,0.6928],auc:[0.8271,0.8253],rec:[0.4736,0.4428]},
+ {model:"SVM",policy:"broad",f1:[0.7288,0.7216],auc:[0.7978,0.7966],rec:[0.6428,0.6625]}
 ];
 const METRICS=[{k:"f1",label:"macro-F1"},{k:"auc",label:"ROC-AUC"},{k:"rec",label:"__REC_LABEL__"}];
 const LB={base:"__TT_BASE__",nostop:"__TT_NOSTOP__",delta:"__TT_DELTA__"};
@@ -678,17 +687,6 @@ for i, (title, body) in enumerate(t["steps"]):
 _r1 = "".join(f"<span>{m}</span>" for m in t["read1_models"])
 _r2 = "".join(f"<span>{m}</span>" for m in t["read2_models"])
 
-_dec = (lambda s: s.replace(".", ",")) if lang == "pt" else (lambda s: s)
-_tab_rows = "".join(
-    f"<tr><td>{lab}</td><td>{_dec(a)}</td><td>{_dec(b)}</td></tr>"
-    for lab, a, b in [
-        (t["tab_r_sbert"], "0.684", "0.699"),
-        (t["tab_r_svd"], "0.676", "0.691"),
-        (t["tab_r_clf"], "0.709", "0.698"),
-        (t["tab_r_trf"], "0.750", "0.748"),
-    ]
-)
-
 st.markdown(
     f"""
 <div class="land">
@@ -724,26 +722,8 @@ st.markdown(
     <div class="numc reveal"><div class="v">{t["num3_v"]}</div><div class="k">{t["num3_k"]}</div></div>
   </div>
 
-  <div class="hero reveal" style="margin-top:18px">
-    <div>
-      <div class="klabel">{t["ens_label"]}</div>
-      <div class="kmain">{t["ens_main"]}</div>
-      <div class="ksub">{t["ens_sub"]}</div>
-    </div>
-    <div class="knum"><div class="big">{t["ens_num"]}</div><div class="cap">{t["ens_cap"]}</div></div>
-  </div>
-
   <div class="seclabel reveal">{t["diag_label"]}</div>
   <p class="tag reveal">{t["diag_body"]}</p>
-
-  <div class="seclabel reveal">{t["tab_label"]}</div>
-  <p class="tag reveal" style="margin-bottom:12px">{t["tab_sub"]}</p>
-  <div class="dtable reveal">
-    <table>
-      <thead><tr><th>{t["tab_col"]}</th><th>strict</th><th>broad</th></tr></thead>
-      <tbody>{_tab_rows}</tbody>
-    </table>
-  </div>
 
   <div class="seclabel reveal">{t["abl_label"]}</div>
   <p class="tag reveal">{t["abl_sub"]}</p>
