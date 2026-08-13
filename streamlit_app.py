@@ -138,6 +138,7 @@ T = {
         "cta": "Try it live",
         "pipe": [("Text", "i-msg"), ("Language", "i-globe"), ("Model", "i-cpu"),
                  ("Verdict", "i-target"), ("Confidence", "i-gauge"), ("Explanation", "i-search")],
+        "art_cap": "some things sit closer to hate, others farther away",
         "panel_brow": "EN / PT · research demo",
         "panel_title": "Bilingual Hate-Speech Classifier",
         "panel_hint": "Type or pick an example, then press Classify. The verdict and its "
@@ -238,6 +239,7 @@ T = {
         "cta": "Experimente ao vivo",
         "pipe": [("Texto", "i-msg"), ("Idioma", "i-globe"), ("Modelo", "i-cpu"),
                  ("Veredito", "i-target"), ("Confiança", "i-gauge"), ("Explicação", "i-search")],
+        "art_cap": "o que está mais perto e o que está mais longe do ódio",
         "panel_brow": "EN / PT · demo de pesquisa",
         "panel_title": "Classificador Bilíngue de Discurso de Ódio",
         "panel_hint": "Digite ou escolha um exemplo e clique em Classificar. O veredito e a "
@@ -554,7 +556,7 @@ html, body, [class*="css"], .stApp { font-family:'Lato', sans-serif; }
 header[data-testid="stHeader"]{ display:none; }
 #MainMenu, footer, [data-testid="stToolbar"]{ display:none; }
 .block-container{ padding-top:var(--s3); padding-bottom:var(--s5); max-width:1050px; }
-[data-testid="stVerticalBlock"]{ gap:.7rem; }
+[data-testid="stVerticalBlock"]{ gap:.5rem; }
 
 /* icon family: outline, 2px stroke, colored via currentColor (CSS mask) */
 .ico{ display:inline-block; width:15px; height:15px; background:currentColor; flex:none;
@@ -586,7 +588,7 @@ header[data-testid="stHeader"]{ display:none; }
     color:var(--heading) !important; margin:0; }
 h2.seclabel{ display:flex; align-items:center; gap:10px; font-size:12px; font-weight:800;
     letter-spacing:3px; text-transform:uppercase; color:var(--slate);
-    margin:var(--s6) 0 var(--s4); border:none; padding:0; }
+    margin:var(--s5) 0 var(--s3); border:none; padding:0; }
 h2.seclabel .ico{ width:14px; height:14px; opacity:.9; }
 h2.seclabel::after{ content:""; flex:1; height:1px;
     background:linear-gradient(90deg, var(--line), transparent 85%); }
@@ -596,7 +598,7 @@ h3{ color:var(--heading); margin:0; }
 .label{ font-size:11px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; }
 
 /* unconventional divider: three fireflies */
-.dots{ display:flex; justify-content:center; gap:10px; margin:var(--s5) 0 0; }
+.dots{ display:flex; justify-content:center; gap:10px; margin:var(--s4) 0 0; }
 .dots span{ width:5px; height:5px; border-radius:50%; background:var(--slate); opacity:.35; }
 .dots span:nth-child(2){ background:var(--coral); opacity:.55;
     box-shadow:0 0 8px rgba(238,108,77,.5); }
@@ -691,6 +693,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
        letter-spacing:2px; text-transform:uppercase; color:#fff; background:var(--coral);
        border-radius:var(--r-pill); padding:4px 12px; box-shadow:0 0 16px rgba(238,108,77,.35); }
 .land .tag{ font-size:17px; color:var(--mute); font-weight:400; max-width:52ch; margin:var(--s3) 0 0; line-height:1.6; }
+.land > section > p.tag{ max-width:none; }
 .land .tick{ width:64px; height:5px; background:var(--coral); border-radius:var(--r-pill); margin:var(--s4) 0 0; }
 
 /* luciola art: constellation panel, EN and PT as two connected lights */
@@ -712,9 +715,38 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
     box-shadow:0 0 10px rgba(238,108,77,.8); opacity:.6; }
 .heroart .fl.f1{ left:12%; top:66%; } .heroart .fl.f2{ left:80%; top:22%; }
 .heroart .fl.f3{ left:46%; top:12%; width:4px; height:4px; }
+/* the mark comes alive: graph -> venn -> constellation -> graph (14s loop) */
+.heroart .ph{ opacity:0; }
+.heroart .ph-g{ opacity:1; }
+.heroart .cap{ position:absolute; left:0; right:0; bottom:8px; margin:0; text-align:center;
+    font-size:11px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase;
+    color:var(--mute); opacity:.85; }
+@media (prefers-reduced-motion: no-preference){
+  .heroart .ph-g{ animation:phg 14s ease-in-out infinite; }
+  .heroart .ph-v{ animation:phv 14s ease-in-out infinite; }
+  .heroart .ph-c{ animation:phc 14s ease-in-out infinite; }
+  .heroart .node.en{ animation:nen 14s ease-in-out infinite; }
+  .heroart .node.pt{ animation:npt 14s ease-in-out infinite; }
+}
+@keyframes phg{ 0%,24%{opacity:1} 34%,86%{opacity:0} 96%,100%{opacity:1} }
+@keyframes phv{ 0%,28%{opacity:0} 38%,54%{opacity:1} 64%,100%{opacity:0} }
+@keyframes phc{ 0%,58%{opacity:0} 68%,86%{opacity:1} 96%,100%{opacity:0} }
+@keyframes nen{ 0%,24%{left:24%;top:28%} 38%,54%{left:27%;top:37%} 68%,86%{left:13%;top:17%} 96%,100%{left:24%;top:28%} }
+@keyframes npt{ 0%,24%{left:60%;top:54%} 38%,54%{left:53%;top:37%} 68%,86%{left:76%;top:63%} 96%,100%{left:60%;top:54%} }
+
+/* explanation term graph: nodes pulled toward the hate / not-hate poles */
+.tgraph{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-card);
+    padding:10px 12px 6px; }
+.tgraph svg{ width:100%; height:auto; display:block; }
+.tgraph text{ font-family:'SFMono-Regular',Consolas,monospace; font-size:11.5px; fill:var(--heading); }
+.tgraph text.tp{ font-family:'Lato',sans-serif; font-size:10.5px; font-weight:800; letter-spacing:1.2px; }
+.gscale{ display:flex; align-items:center; gap:10px; margin-top:var(--s2);
+    font-size:11.5px; color:var(--mute); }
+.gscale i{ flex:1; height:8px; border-radius:var(--r-pill); max-width:220px;
+    background:linear-gradient(90deg, var(--success), var(--line), var(--danger)); }
 
 /* the finding: elevated accent surface (kept as the one brutal signature) */
-.hero{ margin:var(--s5) 0 0; background:linear-gradient(160deg,#243a63,#1F3050 60%,#16223d); color:#fff;
+.hero{ margin:var(--s4) 0 0; background:linear-gradient(160deg,#243a63,#1F3050 60%,#16223d); color:#fff;
        border:1px solid #16223d; border-radius:var(--r-card); box-shadow:10px 10px 0 var(--coral);
        padding:var(--s4) 28px; display:flex; align-items:center; gap:var(--s4); flex-wrap:wrap; }
 .hero .klabel{ font-size:11px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; color:var(--amber); }
@@ -784,7 +816,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 .numc.alt .k{ color:var(--mute); }
 
 /* links */
-.links{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s3); margin:var(--s4) 0 0; }
+.links{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s3); margin:var(--s3) 0 0; }
 @media (max-width:460px){ .links{ grid-template-columns:1fr; } }
 .links a{ display:flex; align-items:center; justify-content:center; gap:9px; text-decoration:none;
           font-weight:800; font-size:13px; letter-spacing:.5px; text-transform:uppercase;
@@ -795,7 +827,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
           box-shadow:0 0 18px rgba(238,108,77,.35); }
 .links a.primary:hover{ background:var(--slate-deep); border-color:var(--slate-deep); }
 
-.anote{ font-size:12.5px; color:var(--mute); line-height:1.6; margin:var(--s4) 0 2px; max-width:82ch; }
+.anote{ font-size:12.5px; color:var(--mute); line-height:1.6; margin:var(--s3) 0 2px; max-width:none; }
 
 /* pipeline infographic */
 .pipe{ display:flex; align-items:stretch; gap:0; margin:var(--s4) 0 0; flex-wrap:nowrap; }
@@ -817,7 +849,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
   .pipe .plink::after{ right:-2.5px; top:auto; bottom:0; }
 }
 
-.cta{ margin:var(--s6) 0 var(--s2); text-align:center; }
+.cta{ margin:var(--s5) 0 var(--s2); text-align:center; }
 .cta .go{ display:inline-flex; align-items:center; gap:10px; font-size:13px; font-weight:800;
     letter-spacing:3px; text-transform:uppercase; color:var(--coral); border:none; margin:0; padding:0; }
 .cta .go .ico{ width:15px; height:15px; }
@@ -909,7 +941,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 
 /* explainability: methodological surface, distinct from the verdict */
 .explain{ background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r-card);
-          box-shadow:var(--shadow-1); padding:var(--s4); margin-top:var(--s4); }
+          box-shadow:var(--shadow-1); padding:var(--s4); margin-top:var(--s3); }
 .explain h3{ display:flex; align-items:center; gap:9px; font-size:12px; font-weight:800;
     letter-spacing:2.5px; text-transform:uppercase; color:var(--slate); margin:0 0 var(--s3); }
 .explain h3 .ico{ width:14px; height:14px; }
@@ -941,7 +973,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 .sitefoot{ display:flex; align-items:flex-start; gap:12px; background:var(--surface);
     border:1px solid var(--line); border-left:4px solid var(--coral);
     border-radius:var(--r-card); box-shadow:var(--shadow-1);
-    padding:var(--s3) 18px; font-size:13.5px; color:var(--mute); margin-top:var(--s4); line-height:1.6; }
+    padding:var(--s3) 18px; font-size:13.5px; color:var(--mute); margin-top:var(--s3); line-height:1.6; }
 .sitefoot .ico{ width:16px; height:16px; color:var(--coral); flex:none; margin-top:3px; }
 .sitefoot b{ color:var(--heading); } .sitefoot a{ color:var(--slate); font-weight:700; }
 </style>
@@ -1061,16 +1093,30 @@ st.markdown(
         <p class="tag anim d3">{t["tag"]}</p>
         <div class="tick anim d4" role="presentation"></div>
       </div>
-      <div class="heroart anim d3" role="img" aria-label="EN and PT as two connected lights">
+      <div class="heroart anim d3" role="img" aria-label="{t['art_cap']}">
         <svg viewBox="0 0 400 260" preserveAspectRatio="none" aria-hidden="true">
-          <g fill="none" stroke="#3D5A80" stroke-opacity=".22">
-            <path d="M118 92 L260 154"/>
-            <path d="M50 180 L118 92 L180 40 L318 62"/>
-            <path d="M260 154 L330 210"/>
+          <g class="ph ph-g">
+            <g fill="none" stroke="#3D5A80" stroke-opacity=".22">
+              <path d="M118 92 L260 154"/>
+              <path d="M50 180 L118 92 L180 40 L318 62"/>
+              <path d="M260 154 L330 210"/>
+            </g>
+            <g fill="#3D5A80" fill-opacity=".4">
+              <circle cx="180" cy="40" r="3"/><circle cx="318" cy="62" r="2.4"/>
+              <circle cx="50" cy="180" r="2.6"/><circle cx="330" cy="210" r="3"/>
+            </g>
           </g>
-          <g fill="#3D5A80" fill-opacity=".4">
-            <circle cx="180" cy="40" r="3"/><circle cx="318" cy="62" r="2.4"/>
-            <circle cx="50" cy="180" r="2.6"/><circle cx="330" cy="210" r="3"/>
+          <g class="ph ph-v">
+            <circle cx="152" cy="112" r="74" style="fill:rgba(61,90,128,.10);stroke:#3D5A80" stroke-opacity=".4"/>
+            <circle cx="248" cy="112" r="74" style="fill:rgba(238,108,77,.10);stroke:#EE6C4D" stroke-opacity=".45"/>
+            <path d="M200 49 A74 74 0 0 1 200 175 A74 74 0 0 1 200 49 Z" style="fill:rgba(238,108,77,.14)"/>
+          </g>
+          <g class="ph ph-c" fill="#EE6C4D">
+            <circle cx="60" cy="60" r="2.4" fill-opacity=".7"/><circle cx="140" cy="30" r="1.8" fill="#3D5A80" fill-opacity=".55"/>
+            <circle cx="230" cy="52" r="2.8" fill-opacity=".8"/><circle cx="330" cy="40" r="2" fill="#3D5A80" fill-opacity=".5"/>
+            <circle cx="40" cy="150" r="2" fill="#3D5A80" fill-opacity=".5"/><circle cx="120" cy="200" r="2.6" fill-opacity=".7"/>
+            <circle cx="210" cy="160" r="1.8" fill="#3D5A80" fill-opacity=".55"/><circle cx="300" cy="190" r="2.6" fill-opacity=".75"/>
+            <circle cx="360" cy="120" r="2" fill="#3D5A80" fill-opacity=".5"/>
           </g>
         </svg>
         <span class="node en">EN</span>
@@ -1078,6 +1124,7 @@ st.markdown(
         <span class="fl f1" role="presentation"></span>
         <span class="fl f2" role="presentation"></span>
         <span class="fl f3" role="presentation"></span>
+        <p class="cap">{t["art_cap"]}</p>
       </div>
     </div>
 
@@ -1139,7 +1186,7 @@ st.markdown(
 )
 
 # --------------------------------------------------------------- ablation heatmap (interactive)
-render_iframe(heatmap_html(lang, st.session_state.dark), height=620)
+render_iframe(heatmap_html(lang, st.session_state.dark), height=545)
 
 st.markdown(
     html_block(f"""
@@ -1240,6 +1287,53 @@ def result_panel_html(res, tr, error: bool) -> str:
     )
 
 
+def term_graph_svg(terms: list[tuple[str, float]], tr) -> str:
+    """Connected graph of the strongest cues. Each term is a node pulled toward the
+    hate pole (right, danger) or the not-hate pole (left, success). Node position,
+    size, color saturation and edge weight all encode the same signal: the exact
+    linear contribution of that feature to this prediction."""
+    if not terms:
+        return ""
+    cmax = max(abs(c) for _, c in terms) or 1.0
+    W, H = 660, 216
+    cx = W / 2
+    pole_l, pole_r, pole_y = 62, W - 62, H / 2 - 6
+    rows = [56, 112, 168]
+    parts = [
+        f'<line x1="{cx}" y1="26" x2="{cx}" y2="{H - 18}" style="stroke:var(--line)" stroke-dasharray="4 5"/>',
+        f'<circle cx="{pole_l}" cy="{pole_y}" r="11" style="fill:var(--success);opacity:.9"/>',
+        f'<text x="{pole_l}" y="{pole_y - 20}" text-anchor="middle" class="tp" '
+        f'style="fill:var(--success)">{tr["state_nothate"].upper()}</text>',
+        f'<circle cx="{pole_r}" cy="{pole_y}" r="11" style="fill:var(--danger);opacity:.9"/>',
+        f'<text x="{pole_r}" y="{pole_y - 20}" text-anchor="middle" class="tp" '
+        f'style="fill:var(--danger)">{tr["state_hate"].upper()}</text>',
+    ]
+    edges, nodes = [], []
+    for i, (name, c) in enumerate(terms):
+        w = c / cmax  # -1 .. 1
+        x = cx + w * (cx - 118)
+        y = rows[i % 3]
+        col = "var(--danger)" if c > 0 else "var(--success)"
+        px = pole_r if c > 0 else pole_l
+        op = 0.30 + 0.60 * abs(w)
+        r = 6 + 7 * abs(w)
+        edges.append(
+            f'<line x1="{x:.0f}" y1="{y}" x2="{px}" y2="{pole_y}" '
+            f'style="stroke:{col};opacity:{op * 0.45:.2f}" stroke-width="{1 + 2 * abs(w):.1f}"/>'
+        )
+        label = name if len(name) <= 14 else name[:13] + "…"
+        nodes.append(
+            f'<circle cx="{x:.0f}" cy="{y}" r="{r:.0f}" style="fill:{col};opacity:{op:.2f}"/>'
+            f'<text x="{x:.0f}" y="{y + r + 14:.0f}" text-anchor="middle">{label}</text>'
+        )
+    return (
+        f'<div class="tgraph"><svg viewBox="0 0 {W} {H}" role="img" '
+        f'aria-label="{tr["exp_terms"]}">{"".join(parts) + "".join(edges) + "".join(nodes)}</svg></div>'
+        f'<div class="gscale"><span>{tr["exp_away"]}</span><i role="presentation"></i>'
+        f'<span>{tr["exp_toward"]}</span></div>'
+    )
+
+
 def explain_html(res, tr) -> str:
     """Explainability card: model facts plus the exact linear term attribution."""
     score = float(res["score"])
@@ -1266,19 +1360,7 @@ def explain_html(res, tr) -> str:
     )
     terms = top_terms(res["text"])
     if terms:
-        cmax = max(abs(c) for _, c in terms) or 1.0
-        chips = "".join(
-            f'<span class="term {"up" if c > 0 else "down"}" '
-            f'style="--w:{max(18, round(abs(c) / cmax * 100))}%">{name}</span>'
-            for name, c in terms
-        )
-        terms_html = (
-            f'<p class="termlab">{tr["exp_terms"]}</p>'
-            f'<div class="terms">{chips}</div>'
-            f'<p class="legend"><span class="sw" style="background:var(--danger)"></span>'
-            f'{tr["exp_toward"]}<span class="sw" style="background:var(--success)"></span>'
-            f'{tr["exp_away"]}</p>'
-        )
+        terms_html = f'<p class="termlab">{tr["exp_terms"]}</p>' + term_graph_svg(terms, tr)
     else:
         terms_html = f'<p class="termlab">{tr["exp_none"]}</p>'
     return (
