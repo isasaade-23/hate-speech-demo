@@ -487,11 +487,15 @@ def feature_names():
 
 
 def top_terms(raw_text: str, k: int = 6) -> list[tuple[str, float]]:
-    """Exact linear attribution: contribution of feature i = tfidf_i * coef_i.
+    """Exact linear attribution aggregated per word of the input text.
 
-    Only defined for linear estimators with coef_ (the served LogReg qualifies).
-    Returns the k features with the largest absolute contribution, cleaned of
-    the FeatureUnion prefix. Spaces inside char n-grams are shown as a dot.
+    Contribution of feature i is tfidf_i * coef_i. A single word spreads over
+    many features (its word n-grams plus every char n-gram inside it), so
+    ranking raw features surfaces stopwords whose signal sits in one feature
+    while a slur's signal is diluted across dozens. Summing every feature's
+    contribution into the word(s) it occurs in answers the question the reader
+    is actually asking: which words in THIS text pushed the score. Features
+    matching several words split their contribution equally among them.
     """
     coef = getattr(clf.estimator, "coef_", None)
     if coef is None:
@@ -500,19 +504,23 @@ def top_terms(raw_text: str, k: int = 6) -> list[tuple[str, float]]:
     cleaned = clean_text(raw_text, clf._profile)
     X = clf.vectorizer.transform([cleaned])
     names = feature_names()
-    contribs = [(int(i), float(X[0, i] * coef[i])) for i in X.nonzero()[1]]
-    contribs.sort(key=lambda p: -abs(p[1]))
-    out, seen = [], set()
-    for i, c in contribs:
-        name = str(names[i]).split("__", 1)[-1]
-        disp = name.replace(" ", "·")
-        if len(disp.strip("·")) < 2 or disp in seen or abs(c) < 1e-6:
-            continue
-        seen.add(disp)
-        out.append((disp, c))
-        if len(out) >= k:
-            break
-    return out
+    raw_tokens = cleaned.lower().split()
+    keys = [t.strip(".,;:!?\"'()[]") or t for t in raw_tokens]
+    padded = [" " + t + " " for t in raw_tokens]
+    agg: dict[str, float] = {}
+    for i in X.nonzero()[1]:
+        c = float(X[0, i] * coef[i])
+        kind, gram = str(names[i]).split("__", 1)
+        if kind == "word":
+            words = gram.split()
+            hits = {key for key, tok in zip(keys, raw_tokens)
+                    if any(w in re.findall(r"\w+", tok) for w in words)}
+        else:  # char_wb n-grams live inside space-padded words
+            hits = {key for key, pad in zip(keys, padded) if gram in pad}
+        for key in hits:
+            agg[key] = agg.get(key, 0.0) + c / len(hits)
+    ranked = sorted(agg.items(), key=lambda p: -abs(p[1]))
+    return [(w, c) for w, c in ranked if len(w) >= 2 and abs(c) > 1e-6][:k]
 
 
 st.set_page_config(page_title="Luciola · Bilingual Hate-Speech Classifier (EN/PT)",
