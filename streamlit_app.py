@@ -34,6 +34,7 @@ UNCERTAIN_MARGIN = 0.08  # |score - threshold| below this reads as "near the thr
 REPO = "https://github.com/isasaade-23/hate-speech-nlp-en-pt"
 DOCS = "https://isasaade-23.github.io/hate-speech-nlp-en-pt/"
 DEMO_REPO = "https://github.com/isasaade-23/hate-speech-demo"
+INTERP_URL = "https://christophm.github.io/interpretable-ml-book/limo.html"
 
 CORAL = "#EE6C4D"
 GREEN = "#1D9E75"
@@ -163,10 +164,14 @@ T = {
         "exp_terms": "Strongest cues in this text",
         "exp_toward": "pushes toward hate", "exp_away": "pushes away from hate",
         "exp_none": "No single feature stands out for this text.",
-        "exp_note": "The model is linear, so each prediction decomposes exactly into word and "
-                    "character features. Fragments with a dot are character n-grams; the dot marks "
-                    "a space. This shows what the model reads. It is not a human explanation of "
-                    "why a text is hateful.",
+        "exp_help": "What is this graph?",
+        "exp_note": "This graph is a representation of how the model reads your text, not a human "
+                    "explanation of why a text is hateful. The model is linear, so the prediction "
+                    "decomposes exactly into feature contributions. Each word shows the sum of "
+                    "every word and character feature inside it.",
+        "exp_more": "Learn more:",
+        "exp_more_book": "linear models in Interpretable ML (Molnar)",
+        "exp_more_docs": "the study behind this demo",
         "disc": "<b>Responsible use.</b> This is not a moderation oracle. It carries the biases of "
                 "its training data; the study measures over-flagging of some identity terms. It "
                 "should support human review, not replace it. Implicit hate without slurs is where "
@@ -264,10 +269,14 @@ T = {
         "exp_terms": "Pistas mais fortes neste texto",
         "exp_toward": "empurra para ódio", "exp_away": "empurra para não-ódio",
         "exp_none": "Nenhuma feature isolada se destaca neste texto.",
-        "exp_note": "O modelo é linear, então cada predição se decompõe exatamente em features de "
-                    "palavra e de caractere. Fragmentos com ponto são n-gramas de caractere; o ponto "
-                    "marca um espaço. Isto mostra o que o modelo lê. Não é uma explicação humana de "
-                    "por que um texto é odioso.",
+        "exp_help": "O que é este gráfico?",
+        "exp_note": "Este gráfico é uma representação de como o modelo lê o seu texto, não uma "
+                    "explicação humana de por que um texto é odioso. O modelo é linear, então a "
+                    "predição se decompõe exatamente em contribuições de features. Cada palavra "
+                    "mostra a soma de todas as features de palavra e de caractere dentro dela.",
+        "exp_more": "Saiba mais:",
+        "exp_more_book": "modelos lineares em Interpretable ML (Molnar)",
+        "exp_more_docs": "o estudo por trás deste demo",
         "disc": "<b>Uso responsável.</b> Isto não é um oráculo de moderação. Carrega os vieses dos "
                 "dados de treino; o estudo mede a super-marcação de alguns termos de identidade. "
                 "Serve para apoiar a revisão humana, não para substituí-la. Falha mais no ódio "
@@ -975,7 +984,13 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 .explain .legend{ font-size:11.5px; color:var(--mute); margin-top:var(--s2); }
 .explain .legend .sw{ display:inline-block; width:9px; height:9px; border-radius:50%;
     vertical-align:middle; margin:0 5px 2px 12px; }
-.explain .note{ font-size:12.5px; color:var(--mute); line-height:1.6; margin:var(--s3) 0 0; max-width:82ch; }
+.explain .note{ font-size:12.5px; color:var(--mute); line-height:1.6; margin:var(--s3) 0 0; }
+.explain .note .more a{ color:var(--slate); font-weight:700; text-decoration:underline;
+    text-underline-offset:2px; }
+.explain .ihelp{ display:inline-flex; align-items:center; vertical-align:-2px; margin-left:4px;
+    opacity:.65; transition:opacity .15s; }
+.explain .ihelp:hover{ opacity:1; }
+.explain .ihelp .ico{ width:13px; height:13px; }
 
 /* footer */
 .sitefoot{ display:flex; align-items:flex-start; gap:12px; background:var(--surface);
@@ -1367,16 +1382,28 @@ def explain_html(res, tr) -> str:
         for ic, k, v in facts
     )
     terms = top_terms(res["text"])
+    help_link = (
+        f'<a class="ihelp" href="{INTERP_URL}" target="_blank" rel="noopener" '
+        f'title="{tr["exp_help"]}" aria-label="{tr["exp_help"]}">{ico("i-info")}</a>'
+    )
     if terms:
-        terms_html = f'<p class="termlab">{tr["exp_terms"]}</p>' + term_graph_svg(terms, tr)
+        terms_html = (
+            f'<p class="termlab">{tr["exp_terms"]} {help_link}</p>'
+            + term_graph_svg(terms, tr)
+        )
     else:
-        terms_html = f'<p class="termlab">{tr["exp_none"]}</p>'
+        terms_html = f'<p class="termlab">{tr["exp_none"]} {help_link}</p>'
+    more = (
+        f'<span class="more">{tr["exp_more"]} '
+        f'<a href="{INTERP_URL}" target="_blank" rel="noopener">{tr["exp_more_book"]}</a> · '
+        f'<a href="{DOCS}" target="_blank" rel="noopener">{tr["exp_more_docs"]}</a></span>'
+    )
     return (
         '<section class="explain reveal in" aria-label="explainability">'
         f"<h3>{ico('i-search')} {tr['exp_label']}</h3>"
         f'<div class="facts">{facts_html}</div>'
         f"{terms_html}"
-        f'<p class="note">{tr["exp_note"]}</p>'
+        f'<p class="note">{tr["exp_note"]} {more}</p>'
         "</section>"
     )
 
