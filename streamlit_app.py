@@ -1,12 +1,9 @@
 """Streamlit demo — bilingual (EN/PT) hate-speech classifier.
 
-Poster / split-canvas design with an animated landing that scrolls into the live tool.
-The interface language (EN/PT) is switchable at the top; the classifier itself handles
-both languages regardless.
-
-Structure: Streamlit provides the widgets and reactivity; a Luciola design system
-(CSS tokens for color, spacing and type) turns the generated containers into a
-semantic, layered page: header > main sections > tool > footer.
+Luciola visual system over Streamlit: light + language + AI. Streamlit provides the
+widgets and reactivity; a token-based design system (color roles, spacing scale,
+surface levels, one icon family, firefly-constellation texture) turns the generated
+containers into a designed product: header > hero > method > results > tool > footer.
 
 Serves the CPU product model (tfidf_logreg_strict) directly. Self-contained: the `hsc`
 package is vendored under src/, the model bundle and configs travel with the repo.
@@ -18,6 +15,7 @@ from __future__ import annotations
 
 import base64
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -56,8 +54,15 @@ DARK_CSS = """
   --bg:#121a2b; --surface:#1b2740; --surface-2:#16223a; --bd:#38507a; --heading:#EAF0F8;
   --ink:#E4ECF6; --mute:#9DB0D2; --line:#2b3a56; --bone:#121a2b;
   --danger:#FF8A6B; --success:#4FC79A; --warning:#F4B266;
+  --shadow-1:0 2px 12px rgba(0,0,0,.35); --shadow-2:0 6px 24px rgba(0,0,0,.45);
 }
 html, body, .stApp{ background:#121a2b; }
+.stApp{
+  background-image:
+    radial-gradient(420px 300px at 85% 4%, rgba(238,108,77,.05), transparent 70%),
+    radial-gradient(360px 260px at 8% 30%, rgba(157,176,210,.05), transparent 70%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='560' height='560' viewBox='0 0 560 560'><g fill='none' stroke='%23ABC1E0' stroke-opacity='.05'><path d='M60 90 L200 60 L330 140'/><path d='M330 140 L470 90'/><path d='M120 300 L250 260 L390 330 L510 280'/><path d='M80 470 L230 430 L360 500'/></g><g fill='%23ABC1E0' fill-opacity='.10'><circle cx='60' cy='90' r='2'/><circle cx='200' cy='60' r='1.6'/><circle cx='330' cy='140' r='2.4'/><circle cx='470' cy='90' r='1.5'/><circle cx='120' cy='300' r='1.6'/><circle cx='250' cy='260' r='2'/><circle cx='390' cy='330' r='1.5'/><circle cx='510' cy='280' r='2.2'/><circle cx='80' cy='470' r='1.5'/><circle cx='230' cy='430' r='2.2'/><circle cx='360' cy='500' r='1.6'/></g><g fill='%23EE6C4D' fill-opacity='.10'><circle cx='330' cy='140' r='1.2'/><circle cx='230' cy='430' r='1.2'/></g></svg>");
+}
 </style>
 """
 
@@ -112,6 +117,9 @@ T = {
                       "fine-tune the transformers on our labels. That pretraining is where meaning "
                       "and cross-language transfer come from. It costs more and needs a GPU.",
         "read2_models": ["multilingual SBERT", "XLM-RoBERTa", "BERTimbau", "BERTweet"],
+        "tech_label": "Built with",
+        "techs": ["NLP", "multilingual EN/PT", "TF-IDF", "transformers", "McNemar + Holm",
+                  "calibration", "bias probe"],
         "results": "Results",
         "num1_v": "0.784", "num1_k": "best transformer, strict<br>(BERTimbau, macro-F1)",
         "num2_v": "0.729", "num2_k": "this demo, strict<br>(classical MVP, macro-F1)",
@@ -128,16 +136,20 @@ T = {
         "totop": "Top",
         "link_code": "Code &amp; study", "link_docs": "Documentation", "link_demo": "Demo source",
         "cta": "Try it live",
+        "pipe": [("Text", "i-msg"), ("Language", "i-globe"), ("Model", "i-cpu"),
+                 ("Verdict", "i-target"), ("Confidence", "i-gauge"), ("Explanation", "i-search")],
         "panel_brow": "EN / PT · research demo",
         "panel_title": "Bilingual Hate-Speech Classifier",
         "panel_hint": "Type or pick an example, then press Classify. The verdict and its "
                       "probability show here.",
+        "chat_you": "your text", "chat_bot": "Luciola",
         "state_hate": "Hate", "state_nothate": "Not hate",
         "state_uncertain": "near the threshold",
         "status_analyzing": "Analyzing...",
         "status_done": "Analysis complete",
         "status_err": "Enter some text first, then press Classify.",
         "meta_prob": "hate probability", "meta_thr": "threshold",
+        "dist_label": "class distribution",
         "your_text": "Your text",
         "ex_label": "Examples",
         "placeholder": "Type English or Portuguese text...",
@@ -205,6 +217,9 @@ T = {
                       "com os nossos rótulos. É desse pré-treino que vêm o sentido e a transferência entre "
                       "idiomas. Custa mais e precisa de GPU.",
         "read2_models": ["multilingual SBERT", "XLM-RoBERTa", "BERTimbau", "BERTweet"],
+        "tech_label": "Feito com",
+        "techs": ["NLP", "multilíngue EN/PT", "TF-IDF", "transformers", "McNemar + Holm",
+                  "calibração", "sonda de viés"],
         "results": "Resultados",
         "num1_v": "0,784", "num1_k": "melhor transformer, strict<br>(BERTimbau, macro-F1)",
         "num2_v": "0,729", "num2_k": "este demo, strict<br>(MVP clássico, macro-F1)",
@@ -221,16 +236,20 @@ T = {
         "totop": "Topo",
         "link_code": "Código &amp; estudo", "link_docs": "Documentação", "link_demo": "Código do demo",
         "cta": "Experimente ao vivo",
+        "pipe": [("Texto", "i-msg"), ("Idioma", "i-globe"), ("Modelo", "i-cpu"),
+                 ("Veredito", "i-target"), ("Confiança", "i-gauge"), ("Explicação", "i-search")],
         "panel_brow": "EN / PT · demo de pesquisa",
         "panel_title": "Classificador Bilíngue de Discurso de Ódio",
         "panel_hint": "Digite ou escolha um exemplo e clique em Classificar. O veredito e a "
                       "probabilidade aparecem aqui.",
+        "chat_you": "seu texto", "chat_bot": "Luciola",
         "state_hate": "Ódio", "state_nothate": "Não é ódio",
         "state_uncertain": "perto do limiar",
         "status_analyzing": "Analisando...",
         "status_done": "Análise concluída",
         "status_err": "Digite um texto primeiro e clique em Classificar.",
         "meta_prob": "probabilidade de ódio", "meta_thr": "limiar",
+        "dist_label": "distribuição entre classes",
         "your_text": "Seu texto",
         "ex_label": "Exemplos",
         "placeholder": "Digite um texto em inglês ou português...",
@@ -271,26 +290,26 @@ HEATMAP_TMPL = r"""<!doctype html><html><head><meta charset="utf-8">
 *{box-sizing:border-box}
 html,body{margin:0;background:transparent;font-family:'Lato',system-ui,sans-serif;color:__INK__}
 .wrap{padding:2px 16px 14px 4px}
-.seg{display:inline-flex;border:2px solid __BORDER__;margin:0 0 16px}
-.seg button{font-family:inherit;font-size:12.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:8px 15px;border:none;border-right:2px solid __BORDER__;background:__CARD__;color:__INK__;cursor:pointer;transition:background .2s,color .2s}
+.seg{display:inline-flex;border:1px solid __BORDER__;border-radius:999px;overflow:hidden;margin:0 0 16px}
+.seg button{font-family:inherit;font-size:12.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:8px 15px;border:none;border-right:1px solid __BORDER__;background:__CARD__;color:__INK__;cursor:pointer;transition:background .2s,color .2s}
 .seg button:last-child{border-right:none}
 .seg button[aria-pressed="true"]{background:__SEGON_BG__;color:__SEGON_TX__}
 .seg button:focus-visible{outline:3px solid #EE6C4D;outline-offset:2px}
-.card{background:__CARD__;border:3px solid __BORDER__;box-shadow:8px 8px 0 __SHADOW__;padding:14px 16px 12px;max-width:100%;overflow-x:auto}
+.card{background:__CARD__;border:1px solid __BORDER__;border-radius:14px;box-shadow:0 2px 12px rgba(31,48,80,.08);padding:14px 16px 12px;max-width:100%;overflow-x:auto}
 .grid{display:grid;grid-template-columns:minmax(150px,1.5fr) repeat(3,1fr);gap:6px;min-width:470px}
 .hcell{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:__MUTE__;padding:2px 6px 6px;align-self:end;text-align:center}
 .hcell.corner{text-align:left}
 .rlab{font-size:13.5px;font-weight:900;color:__INK__;padding:6px 8px;display:flex;flex-direction:column;justify-content:center;transition:color .2s}
 .rlab .pol{font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:__POL__;margin-top:2px}
-.cell{height:46px;display:flex;align-items:center;justify-content:center;font-family:'SFMono-Regular',Consolas,monospace;font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer;border:2px solid transparent;transition:background-color .4s ease,color .4s ease;animation:cellin .45s both}
+.cell{height:46px;display:flex;align-items:center;justify-content:center;font-family:'SFMono-Regular',Consolas,monospace;font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer;border:2px solid transparent;border-radius:8px;transition:background-color .4s ease,color .4s ease;animation:cellin .45s both}
 .cell:hover{border-color:__BORDER__}
 @keyframes cellin{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.cell{animation:none}}
 .legend{display:flex;align-items:center;gap:10px;margin:12px 2px 0;font-size:11.5px;font-weight:700;color:__MUTE__}
-.legbar{height:12px;width:130px;border:1px solid rgba(0,0,0,.15)}
+.legbar{height:12px;width:130px;border:1px solid rgba(0,0,0,.15);border-radius:6px}
 .take{margin:13px 2px 0;font-size:13px;color:__INK__;line-height:1.5;max-width:66ch}
 .take b{color:#EE6C4D}
-.tip{position:fixed;pointer-events:none;opacity:0;transform:translate(-50%,-100%);background:#1F3050;color:#fff;border:2px solid #fff;box-shadow:3px 3px 0 #EE6C4D;padding:9px 12px;font-size:12.5px;z-index:30;min-width:180px;transition:opacity .08s}
+.tip{position:fixed;pointer-events:none;opacity:0;transform:translate(-50%,-100%);background:#1F3050;color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.35);padding:9px 12px;font-size:12.5px;z-index:30;min-width:180px;transition:opacity .08s}
 .tip .tt{font-weight:900;font-size:12.5px;margin-bottom:5px}
 .tip .tr{display:flex;justify-content:space-between;gap:16px;font-variant-numeric:tabular-nums;margin-top:3px}
 .tip .k{color:#9DB0D2}
@@ -408,14 +427,14 @@ HM = {
 HM_THEME = {
     False: {
         "INK": "#1F3050", "MUTE": "#6B7280", "POL": "#3D5A80",
-        "CARD": "#ffffff", "BORDER": "#1F3050", "SHADOW": "#3D5A80",
+        "CARD": "#ffffff", "BORDER": "#DAD2C7", "SHADOW": "#3D5A80",
         "SEGON_BG": "#1F3050", "SEGON_TX": "#ffffff",
         "SEQLO": "233,239,246", "SEQHI": "31,48,80", "DIVMID": "246,242,238",
         "SEQLOHEX": "#E9EFF6", "SEQHIHEX": "#1F3050", "MIDHEX": "#F6F2EE",
     },
     True: {
         "INK": "#EAF0F8", "MUTE": "#9DB0D2", "POL": "#9DB0D2",
-        "CARD": "#1b2740", "BORDER": "#38507a", "SHADOW": "#24344f",
+        "CARD": "#1b2740", "BORDER": "#2b3a56", "SHADOW": "#24344f",
         "SEGON_BG": "#EAF0F8", "SEGON_TX": "#121a2b",
         "SEQLO": "38,52,80", "SEQHI": "171,193,224", "DIVMID": "27,39,64",
         "SEQLOHEX": "#263450", "SEQHIHEX": "#ABC1E0", "MIDHEX": "#1b2740",
@@ -430,13 +449,16 @@ def heatmap_html(language: str, dark: bool = False) -> str:
     return html
 
 
-import re  # noqa: E402
-
-
 def html_block(markup: str) -> str:
     """Strip per-line indentation so st.markdown never reads nested HTML as a
     4-space markdown code block. Content lives inside tags, so this is safe."""
     return re.sub(r"(?m)^[ \t]+", "", markup)
+
+
+def ico(name: str) -> str:
+    """One icon family (outline, 2px stroke) rendered as CSS-mask spans so the color
+    always follows currentColor in both themes. Streamlit sanitizes inline <svg>."""
+    return f'<span class="ico {name}" aria-hidden="true"></span>'
 
 
 def render_iframe(html: str, height: int) -> None:
@@ -495,7 +517,10 @@ st.set_page_config(page_title="Luciola · Bilingual Hate-Speech Classifier (EN/P
                    page_icon="🔆", layout="wide")
 
 # ------------------------------------------------------------------- design system
-# Tokens first (color, spacing, type), then components. One place to change each.
+# Tokens first (color, spacing, shape, elevation, type), then the icon family, then
+# components. Surfaces build depth in five levels: bg -> textured bg -> surface ->
+# elevated -> accent (deep navy). Coral and amber are budgeted: actions, verdicts and
+# one highlight per section.
 st.markdown(
     """
 <style>
@@ -511,36 +536,85 @@ st.markdown(
   --bone:#F6F2EE;
   /* spacing scale */
   --s1:4px; --s2:8px; --s3:16px; --s4:24px; --s5:32px; --s6:48px; --s7:64px;
+  /* shape + elevation */
+  --r-card:14px; --r-pill:999px; --r-input:12px;
+  --shadow-1:0 2px 12px rgba(31,48,80,.07);
+  --shadow-2:0 8px 28px rgba(31,48,80,.13);
 }
 
 html, body, [class*="css"], .stApp { font-family:'Lato', sans-serif; }
 .stApp { background:var(--bg); }
+/* level 2: firefly-constellation texture, quiet enough to only appear when sought */
+.stApp{
+  background-image:
+    radial-gradient(420px 300px at 85% 4%, rgba(238,108,77,.045), transparent 70%),
+    radial-gradient(360px 260px at 8% 30%, rgba(61,90,128,.05), transparent 70%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='560' height='560' viewBox='0 0 560 560'><g fill='none' stroke='%233D5A80' stroke-opacity='.06'><path d='M60 90 L200 60 L330 140'/><path d='M330 140 L470 90'/><path d='M120 300 L250 260 L390 330 L510 280'/><path d='M80 470 L230 430 L360 500'/></g><g fill='%233D5A80' fill-opacity='.12'><circle cx='60' cy='90' r='2'/><circle cx='200' cy='60' r='1.6'/><circle cx='330' cy='140' r='2.4'/><circle cx='470' cy='90' r='1.5'/><circle cx='120' cy='300' r='1.6'/><circle cx='250' cy='260' r='2'/><circle cx='390' cy='330' r='1.5'/><circle cx='510' cy='280' r='2.2'/><circle cx='80' cy='470' r='1.5'/><circle cx='230' cy='430' r='2.2'/><circle cx='360' cy='500' r='1.6'/></g><g fill='%23EE6C4D' fill-opacity='.12'><circle cx='330' cy='140' r='1.2'/><circle cx='230' cy='430' r='1.2'/></g></svg>");
+}
 header[data-testid="stHeader"]{ display:none; }
 #MainMenu, footer, [data-testid="stToolbar"]{ display:none; }
 .block-container{ padding-top:var(--s3); padding-bottom:var(--s5); max-width:1050px; }
+[data-testid="stVerticalBlock"]{ gap:.7rem; }
+
+/* icon family: outline, 2px stroke, colored via currentColor (CSS mask) */
+.ico{ display:inline-block; width:15px; height:15px; background:currentColor; flex:none;
+  vertical-align:-2px;
+  -webkit-mask:var(--i) center/contain no-repeat; mask:var(--i) center/contain no-repeat; }
+.i-fly{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='3'/><path d='M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.5 1.5M16.9 16.9l1.5 1.5M18.4 5.6l-1.5 1.5M7.1 16.9l-1.5 1.5'/></svg>");}
+.i-globe{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><path d='M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z'/></svg>");}
+.i-cpu{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><rect x='4' y='4' width='16' height='16' rx='2'/><rect x='9' y='9' width='6' height='6'/><path d='M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3'/></svg>");}
+.i-gauge{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><path d='M12 14l4-4'/><path d='M3.34 19a10 10 0 1 1 17.32 0'/></svg>");}
+.i-zap{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M13 2L3 14h9l-1 8 10-12h-9l1-8z'/></svg>");}
+.i-target{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><circle cx='12' cy='12' r='10'/><circle cx='12' cy='12' r='6'/><circle cx='12' cy='12' r='2'/></svg>");}
+.i-search{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='8'/><path d='M21 21l-4.35-4.35'/></svg>");}
+.i-alert{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'/><path d='M12 9v4M12 17h.01'/></svg>");}
+.i-check{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M22 11.08V12a10 10 0 1 1-5.93-9.14'/><path d='M22 4L12 14.01l-3-3'/></svg>");}
+.i-msg{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/></svg>");}
+.i-book{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/><path d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/></svg>");}
+.i-net{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'><circle cx='18' cy='5' r='3'/><circle cx='6' cy='12' r='3'/><circle cx='18' cy='19' r='3'/><path d='M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98'/></svg>");}
+.i-chart{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><path d='M12 20V10M18 20V4M6 20v-4'/></svg>");}
+.i-info{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><path d='M12 16v-4M12 8h.01'/></svg>");}
+.i-code{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M16 18l6-6-6-6M8 6l-6 6 6 6'/></svg>");}
+.i-doc{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/><path d='M14 2v6h6M16 13H8M16 17H8'/></svg>");}
+.i-layers{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M12 2L2 7l10 5 10-5-10-5z'/><path d='M2 17l10 5 10-5M2 12l10 5 10-5'/></svg>");}
+.i-shield{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>");}
+.i-send{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z'/></svg>");}
+.i-type{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><path d='M4 7V4h16v3M9 20h6M12 4v16'/></svg>");}
 
 /* typographic hierarchy */
-h1{ font-size:clamp(34px,6vw,60px); font-weight:900; letter-spacing:-1.5px; line-height:.98;
-    color:var(--heading); margin:0; }
-h2.seclabel{ font-size:12px; font-weight:800; letter-spacing:3px; text-transform:uppercase;
-    color:var(--slate); border-bottom:2px solid var(--line); padding-bottom:var(--s2);
-    margin:var(--s6) 0 var(--s4); }
+.stApp h1{ font-size:clamp(34px,6vw,58px); font-weight:900; letter-spacing:-1.5px; line-height:1;
+    color:var(--heading) !important; margin:0; }
+h2.seclabel{ display:flex; align-items:center; gap:10px; font-size:12px; font-weight:800;
+    letter-spacing:3px; text-transform:uppercase; color:var(--slate);
+    margin:var(--s6) 0 var(--s4); border:none; padding:0; }
+h2.seclabel .ico{ width:14px; height:14px; opacity:.9; }
+h2.seclabel::after{ content:""; flex:1; height:1px;
+    background:linear-gradient(90deg, var(--line), transparent 85%); }
 h3{ color:var(--heading); margin:0; }
 .body{ font-size:17px; color:var(--mute); line-height:1.6; }
 .small{ font-size:12.5px; color:var(--mute); line-height:1.6; }
 .label{ font-size:11px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; }
+
+/* unconventional divider: three fireflies */
+.dots{ display:flex; justify-content:center; gap:10px; margin:var(--s5) 0 0; }
+.dots span{ width:5px; height:5px; border-radius:50%; background:var(--slate); opacity:.35; }
+.dots span:nth-child(2){ background:var(--coral); opacity:.55;
+    box-shadow:0 0 8px rgba(238,108,77,.5); }
 
 /* accessibility */
 html{ scroll-behavior:smooth; }
 button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:focus-visible{
   outline:3px solid var(--primary) !important; outline-offset:2px; }
 .skiplink{ position:absolute; left:-9999px; top:0; z-index:100; background:var(--slate-deep);
-  color:#fff; padding:var(--s2) var(--s3); font-weight:800; text-decoration:none; }
+  color:#fff; padding:var(--s2) var(--s3); font-weight:800; text-decoration:none;
+  border-radius:0 0 var(--r-input) 0; }
 .skiplink:focus{ left:var(--s3); }
 
 /* animations */
 @keyframes fadeUp { from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:none; } }
 @keyframes revealFallback { to{ opacity:1; transform:none; } }
+@keyframes glowIn { from{ opacity:0; filter:brightness(1.5); } to{ opacity:1; filter:none; } }
+@keyframes pulse { 0%,100%{ opacity:.35; transform:scale(1); } 50%{ opacity:1; transform:scale(1.25); } }
 @media (prefers-reduced-motion: no-preference){
   .anim{ animation:fadeUp .7s cubic-bezier(.2,.7,.2,1) both; }
   .d1{ animation-delay:.05s } .d2{ animation-delay:.14s } .d3{ animation-delay:.23s } .d4{ animation-delay:.32s }
@@ -551,57 +625,98 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
   .steps .step:nth-child(2), .reads .readc:nth-child(2), .nums .numc:nth-child(2){ transition-delay:.08s; }
   .steps .step:nth-child(3), .nums .numc:nth-child(3){ transition-delay:.16s; }
   .steps .step:nth-child(4){ transition-delay:.24s; }
+  .verdictwrap{ animation:glowIn .6s ease both; }
+  .heroart .fl{ animation:pulse 3.2s ease-in-out infinite; }
+  .heroart .fl.f2{ animation-delay:1.1s; } .heroart .fl.f3{ animation-delay:2.2s; }
+  .lucload span{ animation:pulse 1.2s ease-in-out infinite; }
+  .lucload span:nth-child(2){ animation-delay:.2s } .lucload span:nth-child(3){ animation-delay:.4s }
 }
 
 /* header */
 .masthead{ display:flex; align-items:center; gap:var(--s3); }
-.brandmark{ width:56px; height:56px; background-position:center; background-size:contain; background-repeat:no-repeat; flex:none; }
+.brandmark{ width:56px; height:56px; background-position:center; background-size:contain;
+    background-repeat:no-repeat; flex:none;
+    filter:drop-shadow(0 0 10px rgba(238,108,77,.25)); }
 .brandtext{ display:flex; flex-direction:column; gap:3px; }
 .brandname{ font-family:'Century Gothic','Questrial','Josefin Sans','Futura','Trebuchet MS',sans-serif;
             font-weight:300; font-size:31px; letter-spacing:1.5px; color:var(--heading); line-height:1; }
 .brandslogan{ font-size:11px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--coral); }
-.headrule{ height:0; border-bottom:2px solid var(--line); margin:var(--s2) 0 var(--s1); }
+.headrule{ height:0; border-bottom:1px solid var(--line); margin:var(--s2) 0 var(--s1); }
 
 /* back to top (anchor; no JS) */
 .totop{ position:fixed; left:var(--s3); bottom:var(--s3); z-index:60; text-decoration:none; display:inline-flex;
         align-items:center; gap:7px; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;
-        color:var(--heading); background:var(--surface); border:2px solid var(--bd); box-shadow:3px 3px 0 var(--coral);
-        padding:9px 12px; }
-.totop:hover{ background:var(--coral); color:#fff; border-color:var(--coral); box-shadow:3px 3px 0 var(--slate-deep); }
+        color:var(--heading); background:var(--surface); border:1px solid var(--line);
+        border-radius:var(--r-pill); box-shadow:var(--shadow-1); padding:9px 14px;
+        transition:box-shadow .2s, border-color .2s; }
+.totop:hover{ border-color:var(--coral); box-shadow:0 0 0 3px rgba(238,108,77,.15), var(--shadow-1); }
 .totop .ar{ font-size:14px; line-height:1; }
 
-/* metrics table (poster style) */
-.dtable{ background:var(--surface); border:3px solid var(--bd); box-shadow:8px 8px 0 var(--slate); overflow-x:auto; margin:0 0 var(--s2); }
+/* metrics table */
+.dtable{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-card);
+    box-shadow:var(--shadow-1); overflow-x:auto; margin:0 0 var(--s2); }
 .dtable table{ width:100%; border-collapse:collapse; font-size:13.5px; min-width:360px; }
 .dtable th, .dtable td{ padding:10px var(--s3); text-align:right; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; }
 .dtable th:first-child, .dtable td:first-child{ text-align:left; }
 .dtable td:first-child{ font-weight:800; color:var(--heading); }
-.dtable thead th{ font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--mute); border-bottom:2px solid var(--bd); }
+.dtable thead th{ font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--mute); border-bottom:2px solid var(--line); }
 .dtable tbody tr:last-child td{ border-bottom:none; }
 .dtable tbody tr.lbwin td{ color:var(--coral); font-weight:800; }
 .dtable tbody tr.lbdemo td:first-child{ color:var(--slate); }
 
-/* header controls (language + theme) */
+/* header controls: EN/PT as one sliding pill pair, theme toggle in the same family */
 .st-key-lang_en button, .st-key-lang_pt button{
     box-shadow:none !important; text-transform:uppercase; letter-spacing:1px;
-    font-weight:800 !important; padding:6px 0 !important; min-height:0 !important; }
-.st-key-dark_toggle button{ box-shadow:none !important; border:2px solid var(--bd) !important;
-    background:var(--surface) !important; color:var(--heading) !important; font-size:14px !important;
+    font-weight:800 !important; padding:6px 0 !important; min-height:0 !important;
+    border:1px solid var(--line) !important; }
+.st-key-lang_en button[kind="secondary"], .st-key-lang_pt button[kind="secondary"]{
+    background:var(--surface) !important; color:var(--heading) !important; }
+.st-key-lang_en button{ border-radius:var(--r-pill) 0 0 var(--r-pill) !important; }
+.st-key-lang_pt button{ border-radius:0 var(--r-pill) var(--r-pill) 0 !important; margin-left:-1px; }
+.st-key-lang_en button[kind="primary"], .st-key-lang_pt button[kind="primary"]{
+    background:var(--slate-deep) !important; border-color:var(--slate-deep) !important;
+    box-shadow:inset 0 0 12px rgba(238,108,77,.35) !important; }
+.st-key-dark_toggle button{ box-shadow:none !important; border:1px solid var(--line) !important;
+    border-radius:var(--r-pill) !important;
+    background:var(--surface) !important; color:var(--heading) !important; font-size:13px !important;
     font-weight:800 !important; padding:6px 4px !important; min-height:0 !important; }
 
-/* landing */
+/* hero: two columns, message left + luciola art right */
 .land{ margin:2px 0 var(--s2); }
+.heroband{ display:grid; grid-template-columns:1.15fr .85fr; gap:var(--s4); align-items:center; }
+@media (max-width:760px){ .heroband{ grid-template-columns:1fr; } }
 .land .brow{ font-size:12px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--coral); }
 .land h1{ margin:12px 0 0; max-width:16ch; text-wrap:balance; }
-.beta{ display:inline-block; vertical-align:top; margin-left:14px; font-size:15px; font-weight:900;
+.beta{ display:inline-block; vertical-align:top; margin-left:14px; font-size:13px; font-weight:900;
        letter-spacing:2px; text-transform:uppercase; color:#fff; background:var(--coral);
-       border:2px solid var(--slate-deep); box-shadow:3px 3px 0 var(--slate-deep); padding:3px 10px; }
+       border-radius:var(--r-pill); padding:4px 12px; box-shadow:0 0 16px rgba(238,108,77,.35); }
 .land .tag{ font-size:17px; color:var(--mute); font-weight:400; max-width:52ch; margin:var(--s3) 0 0; line-height:1.6; }
-.land .tick{ width:64px; height:6px; background:var(--coral); border-radius:2px; margin:var(--s4) 0 0; }
+.land .tick{ width:64px; height:5px; background:var(--coral); border-radius:var(--r-pill); margin:var(--s4) 0 0; }
 
+/* luciola art: constellation panel, EN and PT as two connected lights */
+.heroart{ position:relative; min-height:240px; border-radius:var(--r-card);
+    background:
+      radial-gradient(140px 100px at 30% 35%, rgba(238,108,77,.10), transparent 70%),
+      radial-gradient(160px 120px at 72% 62%, rgba(61,90,128,.12), transparent 70%),
+      var(--surface-2);
+    border:1px solid var(--line); box-shadow:var(--shadow-1); overflow:hidden; }
+.heroart svg{ position:absolute; inset:0; width:100%; height:100%; }
+.heroart .node{ position:absolute; display:flex; align-items:center; justify-content:center;
+    width:52px; height:52px; border-radius:50%; font-size:13px; font-weight:900;
+    letter-spacing:1px; color:#fff; background:var(--slate-deep);
+    box-shadow:0 0 0 5px rgba(61,90,128,.14), 0 0 22px rgba(238,108,77,.28); }
+.heroart .node.en{ left:24%; top:28%; }
+.heroart .node.pt{ left:60%; top:54%; background:var(--coral);
+    box-shadow:0 0 0 5px rgba(238,108,77,.16), 0 0 22px rgba(238,108,77,.4); }
+.heroart .fl{ position:absolute; width:6px; height:6px; border-radius:50%; background:var(--coral);
+    box-shadow:0 0 10px rgba(238,108,77,.8); opacity:.6; }
+.heroart .fl.f1{ left:12%; top:66%; } .heroart .fl.f2{ left:80%; top:22%; }
+.heroart .fl.f3{ left:46%; top:12%; width:4px; height:4px; }
+
+/* the finding: elevated accent surface (kept as the one brutal signature) */
 .hero{ margin:var(--s5) 0 0; background:linear-gradient(160deg,#243a63,#1F3050 60%,#16223d); color:#fff;
-       border:3px solid var(--slate-deep); box-shadow:12px 12px 0 var(--coral); padding:var(--s4) 28px;
-       display:flex; align-items:center; gap:var(--s4); flex-wrap:wrap; }
+       border:1px solid #16223d; border-radius:var(--r-card); box-shadow:10px 10px 0 var(--coral);
+       padding:var(--s4) 28px; display:flex; align-items:center; gap:var(--s4); flex-wrap:wrap; }
 .hero .klabel{ font-size:11px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; color:var(--amber); }
 .hero .kmain{ font-size:26px; font-weight:900; letter-spacing:-.5px; margin:6px 0 0; line-height:1.1; }
 .hero .kmain b{ color:var(--coral); }
@@ -612,16 +727,21 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
                   background-clip:text; -webkit-text-fill-color:transparent; }
 .hero .knum .cap{ font-size:11px; color:#9DB0D2; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
 
+/* method steps */
 .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s3); }
 @media (max-width:760px){ .steps{ grid-template-columns:repeat(2,1fr); } }
 @media (max-width:460px){ .steps{ grid-template-columns:1fr; } }
-.step{ background:var(--surface); border:2px solid var(--bd); box-shadow:6px 6px 0 var(--slate); padding:var(--s3) var(--s3) 18px; }
-.step .n{ font-family:'Lato'; font-size:13px; font-weight:900; color:#fff; background:var(--slate-deep);
-          display:inline-block; padding:2px 9px; letter-spacing:1px; }
+.step{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-card);
+    box-shadow:var(--shadow-1); padding:var(--s3) var(--s3) 18px;
+    transition:transform .2s, box-shadow .2s; }
+.step:hover{ transform:translateY(-2px); box-shadow:var(--shadow-2); }
+.step .n{ display:inline-flex; align-items:center; gap:7px; font-size:11px; font-weight:900;
+    color:var(--slate); background:var(--surface-2); border-radius:var(--r-pill);
+    padding:4px 11px; letter-spacing:1px; }
+.step .n .ico{ width:12px; height:12px; }
 .step h3{ font-size:16px; font-weight:900; margin:12px 0 6px; letter-spacing:-.2px; }
 .step p{ font-size:13px; color:var(--mute); line-height:1.55; margin:0; }
-.step.coral{ box-shadow:6px 6px 0 var(--coral); }
-.step.coral .n{ background:var(--coral); }
+.step.coral .n{ background:rgba(238,108,77,.12); color:var(--danger); }
 .step.coral h3{ color:var(--coral); }
 .step.ship{ grid-column:1 / -1; display:flex; align-items:center; gap:var(--s4); padding:18px 20px; }
 .step.ship .shiphead{ display:flex; align-items:center; gap:12px; flex:none; }
@@ -629,111 +749,200 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 .step.ship p{ font-size:14px; }
 @media (max-width:460px){ .step.ship{ flex-direction:column; align-items:flex-start; gap:10px; } }
 
-/* how it reads text — two contrasting cards */
+/* how it reads text */
 .reads{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s3); }
 @media (max-width:620px){ .reads{ grid-template-columns:1fr; } }
-.readc{ background:var(--surface); border:3px solid var(--bd); box-shadow:8px 8px 0 var(--slate); padding:22px; }
-.readc.alt{ box-shadow:8px 8px 0 var(--coral); }
+.readc{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-card);
+    box-shadow:var(--shadow-1); padding:22px; transition:transform .2s, box-shadow .2s; }
+.readc:hover{ transform:translateY(-2px); box-shadow:var(--shadow-2); }
+.readc.alt{ border-top:3px solid var(--coral); }
 .readc .rlab{ font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--slate); }
 .readc.alt .rlab{ color:var(--coral); }
 .readc h3{ font-size:23px; font-weight:900; margin:5px 0 0; letter-spacing:-.5px; }
 .readc p{ font-size:13.5px; color:var(--ink); line-height:1.55; margin:12px 0 14px; }
 .readc .ms{ display:flex; gap:7px; flex-wrap:wrap; }
-.readc .ms span{ font-size:12px; font-weight:800; color:var(--heading); border:2px solid var(--bd); padding:4px 9px; }
-.readc.alt .ms span{ border-color:var(--coral); color:var(--coral); }
+.readc .ms span{ font-size:12px; font-weight:700; color:var(--heading); background:var(--surface-2);
+    border-radius:var(--r-pill); padding:5px 12px; }
+.readc.alt .ms span{ color:var(--danger); background:rgba(238,108,77,.10); }
 
+/* tech badges */
+.techs{ display:flex; gap:var(--s2); flex-wrap:wrap; align-items:center; margin:var(--s4) 0 0; }
+.techs .tl{ font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--mute); margin-right:6px; }
+.techs span.badge{ display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
+    color:var(--slate); background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--r-pill); padding:5px 12px; }
+.techs span.badge .ico{ width:12px; height:12px; }
+
+/* results stats */
 .nums{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s3); }
 @media (max-width:620px){ .nums{ grid-template-columns:1fr; } }
-.numc{ background:var(--slate-deep); color:#fff; border:3px solid var(--slate-deep); box-shadow:8px 8px 0 var(--coral); padding:20px 22px; }
+.numc{ background:linear-gradient(160deg,#243a63,#1F3050 70%); color:#fff; border-radius:var(--r-card);
+    border:1px solid #16223d; box-shadow:var(--shadow-1); padding:20px 22px; }
 .numc .v{ font-size:40px; font-weight:900; letter-spacing:-2px; line-height:1; font-variant-numeric:tabular-nums; }
 .numc .k{ font-size:12.5px; color:#B9C6DE; font-weight:700; margin-top:var(--s2); line-height:1.4; }
-.numc.alt{ background:var(--surface); color:var(--heading); box-shadow:8px 8px 0 var(--slate); }
+.numc.alt{ background:var(--surface); color:var(--heading); border:1px solid var(--line); }
 .numc.alt .k{ color:var(--mute); }
 
+/* links */
 .links{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--s3); margin:var(--s4) 0 0; }
 @media (max-width:460px){ .links{ grid-template-columns:1fr; } }
-.links a{ text-align:center; text-decoration:none; font-weight:800; font-size:13.5px; letter-spacing:.5px;
-          text-transform:uppercase; padding:14px 22px; border:2px solid var(--bd); color:var(--heading); background:var(--surface); }
-.links a:hover{ background:var(--slate-deep); color:#fff; }
-.links a.primary{ background:var(--coral); border-color:var(--coral); color:#fff; box-shadow:4px 4px 0 var(--slate-deep); }
-.links a.primary:hover{ background:var(--slate-deep); border-color:var(--slate-deep); box-shadow:4px 4px 0 var(--coral); }
+.links a{ display:flex; align-items:center; justify-content:center; gap:9px; text-decoration:none;
+          font-weight:800; font-size:13px; letter-spacing:.5px; text-transform:uppercase;
+          padding:13px 20px; border:1px solid var(--line); border-radius:var(--r-pill);
+          color:var(--heading); background:var(--surface); transition:box-shadow .2s, border-color .2s; }
+.links a:hover{ border-color:var(--slate); box-shadow:var(--shadow-1); }
+.links a.primary{ background:var(--coral); border-color:var(--coral); color:#fff;
+          box-shadow:0 0 18px rgba(238,108,77,.35); }
+.links a.primary:hover{ background:var(--slate-deep); border-color:var(--slate-deep); }
 
 .anote{ font-size:12.5px; color:var(--mute); line-height:1.6; margin:var(--s4) 0 2px; max-width:82ch; }
 
+/* pipeline infographic */
+.pipe{ display:flex; align-items:stretch; gap:0; margin:var(--s4) 0 0; flex-wrap:nowrap; }
+.pipe .pnode{ flex:1; display:flex; flex-direction:column; align-items:center; gap:8px;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r-card);
+    padding:14px 8px; text-align:center; min-width:0; }
+.pipe .pnode .ico{ width:18px; height:18px; color:var(--slate); }
+.pipe .pnode b{ font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--heading); }
+.pipe .pnode.lit{ border-color:rgba(238,108,77,.5); box-shadow:0 0 14px rgba(238,108,77,.18); }
+.pipe .pnode.lit .ico{ color:var(--coral); }
+.pipe .plink{ width:22px; flex:none; align-self:center; height:1px;
+    background:linear-gradient(90deg, var(--line), var(--slate)); position:relative; }
+.pipe .plink::after{ content:""; position:absolute; right:0; top:-2.5px; width:6px; height:6px;
+    border-radius:50%; background:var(--slate); opacity:.6; }
+@media (max-width:700px){
+  .pipe{ flex-direction:column; align-items:stretch; }
+  .pipe .plink{ width:1px; height:18px; align-self:center;
+      background:linear-gradient(180deg, var(--line), var(--slate)); }
+  .pipe .plink::after{ right:-2.5px; top:auto; bottom:0; }
+}
+
 .cta{ margin:var(--s6) 0 var(--s2); text-align:center; }
-.cta .line{ height:2px; background:var(--line); margin-bottom:18px; }
-.cta .go{ font-size:13px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--coral); }
-.cta .go .arrow{ display:block; font-size:22px; color:var(--slate); margin-top:var(--s1); }
+.cta .go{ display:inline-flex; align-items:center; gap:10px; font-size:13px; font-weight:800;
+    letter-spacing:3px; text-transform:uppercase; color:var(--coral); border:none; margin:0; padding:0; }
+.cta .go .ico{ width:15px; height:15px; }
 
 /* ------------------------------------------------------------------ tool section */
-/* result card: state-aware accent (idle / analyzing / hate / ok / uncertain / error) */
 .panel{ background:linear-gradient(160deg,#243a63,#1F3050 60%,#16223d); color:#fff;
-        border:3px solid var(--slate-deep); box-shadow:12px 12px 0 var(--coral);
-        padding:var(--s5) 28px; min-height:380px; display:flex; flex-direction:column; }
+        border:1px solid #16223d; border-radius:var(--r-card); box-shadow:var(--shadow-2);
+        padding:var(--s4) 26px; min-height:400px; display:flex; flex-direction:column; }
 .panel .brow{ font-size:11px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--amber); }
-.panel .ttl{ font-size:20px; font-weight:800; letter-spacing:-.3px; line-height:1.15; margin:var(--s2) 0 auto; max-width:16ch; }
-.panel .state{ font-size:14px; font-weight:900; letter-spacing:2px; text-transform:uppercase; }
-.panel .state .near{ font-size:11px; font-weight:800; letter-spacing:1px; color:#F4B266;
-                     border:1px solid #F4B266; padding:2px 7px; margin-left:10px; vertical-align:middle; }
-.panel .giant{ font-size:94px; font-weight:900; letter-spacing:-5px; line-height:.85; margin:var(--s1) 0 0; font-variant-numeric:tabular-nums; }
-.panel .giant .u{ font-size:32px; font-weight:700; letter-spacing:-1px; color:#93A2C0; }
-.panel .meter{ position:relative; height:10px; background:rgba(255,255,255,.14); margin:18px 0 var(--s2); }
-.panel .meter .fill{ height:100%; }
-.panel .meter .thr{ position:absolute; top:-4px; bottom:-4px; width:2px; background:#fff; opacity:.8; }
-.panel .meta{ font-size:11.5px; color:#9DB0D2; font-weight:600; letter-spacing:.3px; }
-.panel .status{ font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase;
-                color:#7FE0B0; margin-top:var(--s3); }
-.panel.err .status{ color:#FFA98C; }
-.panel.idle .ttl{ margin-bottom:var(--s3); }
+.panel .ttl{ font-size:19px; font-weight:800; letter-spacing:-.3px; line-height:1.15; margin:var(--s2) 0 var(--s3); max-width:18ch; }
 .panel .hint{ font-size:14px; color:#B9C6DE; font-weight:400; margin-top:auto; line-height:1.6; }
+.panel.idle .hint{ margin-top:auto; }
 
-/* input card: a keyed Streamlit container styled as a component */
-.st-key-input_card{ background:var(--surface); border:3px solid var(--bd);
-    box-shadow:10px 10px 0 var(--slate); padding:var(--s4); }
-.st-key-input_card .cardlabel{ font-size:11px; font-weight:800; letter-spacing:2.5px;
-    text-transform:uppercase; color:var(--mute); margin:0 0 12px; }
+/* one-turn chat: the analyzed text as a message, the verdict as Luciola's reply */
+.bubble{ align-self:flex-end; max-width:92%; background:rgba(255,255,255,.09);
+    border:1px solid rgba(255,255,255,.12); border-radius:14px 14px 4px 14px;
+    padding:10px 14px; font-size:13.5px; line-height:1.5; color:#DCE5F2; }
+.bubble .bl{ display:block; font-size:10px; font-weight:800; letter-spacing:1.5px;
+    text-transform:uppercase; color:#9DB0D2; margin-bottom:3px; }
+.replyhead{ display:flex; align-items:center; gap:8px; margin:var(--s3) 0 var(--s2);
+    font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#9DB0D2; }
+.replyhead .ico{ width:13px; height:13px; color:var(--amber); }
+
+/* verdict composition: seal + number + bars */
+.verdictwrap{ display:flex; flex-direction:column; }
+.verdict{ display:inline-flex; align-items:center; gap:9px; align-self:flex-start;
+    font-size:14px; font-weight:900; letter-spacing:2px; text-transform:uppercase;
+    color:#fff; background:rgba(255,255,255,.06); border:1px solid var(--vc);
+    border-radius:var(--r-pill); padding:7px 16px;
+    box-shadow:0 0 18px color-mix(in srgb, var(--vc) 45%, transparent); }
+.verdict .ico{ width:15px; height:15px; color:var(--vc); }
+.verdict .vword{ color:var(--vc); }
+.verdict .near{ font-size:10px; font-weight:800; letter-spacing:1px; color:#F4B266;
+    border-left:1px solid rgba(255,255,255,.25); padding-left:9px; text-transform:none; }
+.panel .giant{ font-size:84px; font-weight:900; letter-spacing:-4px; line-height:.9;
+    margin:var(--s3) 0 0; font-variant-numeric:tabular-nums; }
+.panel .giant .u{ font-size:30px; font-weight:700; letter-spacing:-1px; color:#93A2C0; }
+.panel .meter{ position:relative; height:8px; border-radius:var(--r-pill);
+    background:rgba(255,255,255,.14); margin:16px 0 6px; overflow:visible; }
+.panel .meter .fill{ height:100%; border-radius:var(--r-pill);
+    background:linear-gradient(90deg, color-mix(in srgb, var(--vc) 55%, transparent), var(--vc)); }
+.panel .meter .thr{ position:absolute; top:-4px; bottom:-4px; width:2px; background:#fff; opacity:.85; }
+.panel .meta{ font-size:11.5px; color:#9DB0D2; font-weight:600; letter-spacing:.3px; }
+/* class distribution: dual segmented bar */
+.dist{ margin:var(--s3) 0 0; }
+.dist .dl{ font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#9DB0D2; margin-bottom:6px; }
+.dist .dbar{ display:flex; height:14px; border-radius:var(--r-pill); overflow:hidden; }
+.dist .dbar i{ display:block; height:100%; }
+.dist .dlegend{ display:flex; justify-content:space-between; font-size:11px; color:#B9C6DE; margin-top:5px; font-variant-numeric:tabular-nums; }
+.panel .status{ display:flex; align-items:center; gap:7px; font-size:12px; font-weight:800;
+    letter-spacing:1px; text-transform:uppercase; color:#7FE0B0; margin-top:var(--s3); }
+.panel .status .ico{ width:13px; height:13px; }
+.panel.err .status{ color:#FFA98C; }
+.lucload{ display:inline-flex; gap:6px; margin-top:var(--s3); }
+.lucload span{ width:7px; height:7px; border-radius:50%; background:var(--amber);
+    box-shadow:0 0 8px rgba(244,162,97,.7); opacity:.4; }
+
+/* input card */
+.st-key-input_card{ background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--r-card); box-shadow:var(--shadow-1); padding:var(--s4); }
+.st-key-input_card .cardlabel{ display:flex; align-items:center; gap:8px; font-size:11px;
+    font-weight:800; letter-spacing:2.5px; text-transform:uppercase; color:var(--mute); margin:0 0 12px; }
+.st-key-input_card .cardlabel .ico{ width:13px; height:13px; color:var(--slate); }
 .st-key-input_card .exlabel{ font-size:11px; font-weight:800; letter-spacing:1.5px;
     text-transform:uppercase; color:var(--slate); margin:0 0 6px; }
-/* Desktop: result panel left, input right (split-canvas). Input is first in the DOM,
-   so mobile stacks Input then Result then Explanation. */
 @media (min-width: 768px){
   [data-testid="stColumn"]:has(.st-key-input_card){ order: 2; }
 }
 .st-key-input_card .stButton button[kind="secondary"]{
-    border-radius:0; border:2px solid var(--bd); background:var(--surface); color:var(--heading);
-    font-weight:800; font-size:12.5px; padding:6px 10px; box-shadow:none; }
-.st-key-input_card .stButton button[kind="secondary"]:hover{ background:var(--coral); border-color:var(--coral); color:#fff; }
+    border-radius:var(--r-pill); border:1px solid var(--line); background:var(--surface);
+    color:var(--heading); font-weight:700; font-size:12.5px; padding:6px 10px; box-shadow:none;
+    transition:border-color .2s, box-shadow .2s; }
+.st-key-input_card .stButton button[kind="secondary"]:hover{
+    border-color:var(--coral); color:var(--danger);
+    box-shadow:0 0 0 3px rgba(238,108,77,.12); background:var(--surface); }
 .stButton button[kind="primary"]{
-    border-radius:0; border:2px solid var(--slate-deep); background:var(--slate-deep); color:#fff;
-    font-weight:900; letter-spacing:1px; text-transform:uppercase; box-shadow:4px 4px 0 var(--coral); padding:12px 24px; }
-.stButton button[kind="primary"]:hover{ background:var(--coral); border-color:var(--coral); box-shadow:4px 4px 0 var(--slate-deep); }
-.stTextArea textarea{ border-radius:0 !important; border:2px solid var(--bd) !important;
-    background:var(--surface) !important; color:var(--ink) !important; font-family:'Lato',sans-serif !important; font-size:15px !important; }
+    border-radius:var(--r-pill); border:none; background:var(--slate-deep); color:#fff;
+    font-weight:900; letter-spacing:1px; text-transform:uppercase;
+    box-shadow:0 0 16px rgba(238,108,77,.25); padding:12px 24px;
+    transition:background .2s, box-shadow .2s; }
+.stButton button[kind="primary"]:hover{ background:var(--coral);
+    box-shadow:0 0 22px rgba(238,108,77,.45); }
+.stTextArea textarea{ border-radius:var(--r-input) !important; border:1px solid var(--line) !important;
+    background:var(--surface) !important; color:var(--ink) !important;
+    font-family:'Lato',sans-serif !important; font-size:15px !important; }
+.stTextArea textarea:focus{ border-color:var(--coral) !important;
+    box-shadow:0 0 0 3px rgba(238,108,77,.15) !important; }
+.stSpinner > div{ border-top-color:var(--coral) !important; }
 
-/* explainability card, visually distinct from the verdict */
-.explain{ background:var(--surface-2); border:3px solid var(--bd); box-shadow:8px 8px 0 var(--slate);
-          padding:var(--s4); margin-top:var(--s4); }
-.explain h3{ font-size:12px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase;
-             color:var(--slate); margin:0 0 var(--s3); }
+/* explainability: methodological surface, distinct from the verdict */
+.explain{ background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r-card);
+          box-shadow:var(--shadow-1); padding:var(--s4); margin-top:var(--s4); }
+.explain h3{ display:flex; align-items:center; gap:9px; font-size:12px; font-weight:800;
+    letter-spacing:2.5px; text-transform:uppercase; color:var(--slate); margin:0 0 var(--s3); }
+.explain h3 .ico{ width:14px; height:14px; }
 .explain .facts{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
                  gap:var(--s2) var(--s4); margin:0 0 var(--s3); }
-.explain .fact .fk{ font-size:10.5px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--mute); }
-.explain .fact .fv{ font-size:14px; font-weight:700; color:var(--heading); font-variant-numeric:tabular-nums; }
+.explain .fact .fk{ display:flex; align-items:center; gap:6px; font-size:10.5px; font-weight:800;
+    letter-spacing:1.5px; text-transform:uppercase; color:var(--mute); }
+.explain .fact .fk .ico{ width:11px; height:11px; }
+.explain .fact .fv{ font-size:14px; font-weight:700; color:var(--heading); font-variant-numeric:tabular-nums; margin-top:2px; }
+.explain .fact .cdots{ display:inline-flex; gap:4px; margin-left:7px; vertical-align:1px; }
+.explain .fact .cdots i{ width:7px; height:7px; border-radius:50%; background:var(--line); }
+.explain .fact .cdots i.on{ background:var(--slate); box-shadow:0 0 6px rgba(61,90,128,.5); }
 .explain .termlab{ font-size:10.5px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;
                    color:var(--mute); margin:var(--s3) 0 var(--s2); }
 .explain .terms{ display:flex; gap:var(--s2); flex-wrap:wrap; }
-.explain .term{ font-family:'SFMono-Regular',Consolas,monospace; font-size:13px; font-weight:700;
-                white-space:pre; padding:5px 10px; background:var(--surface); border:2px solid var(--bd); }
-.explain .term.up{ border-color:var(--danger); color:var(--danger); }
-.explain .term.down{ border-color:var(--success); color:var(--success); }
+.explain .term{ position:relative; font-family:'SFMono-Regular',Consolas,monospace; font-size:13px;
+    font-weight:700; white-space:pre; padding:6px 11px 9px; background:var(--surface);
+    border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+.explain .term::after{ content:""; position:absolute; left:0; bottom:0; height:3px;
+    width:var(--w,50%); background:currentColor; opacity:.55; }
+.explain .term.up{ color:var(--danger); border-color:color-mix(in srgb, var(--danger) 45%, var(--line)); }
+.explain .term.down{ color:var(--success); border-color:color-mix(in srgb, var(--success) 45%, var(--line)); }
 .explain .legend{ font-size:11.5px; color:var(--mute); margin-top:var(--s2); }
-.explain .legend .sw{ display:inline-block; width:10px; height:10px; border:2px solid; vertical-align:middle; margin:0 4px 2px 10px; }
+.explain .legend .sw{ display:inline-block; width:9px; height:9px; border-radius:50%;
+    vertical-align:middle; margin:0 5px 2px 12px; }
 .explain .note{ font-size:12.5px; color:var(--mute); line-height:1.6; margin:var(--s3) 0 0; max-width:82ch; }
 
 /* footer */
-.sitefoot{ border-left:5px solid var(--coral); background:var(--surface); border-top:1px solid var(--line);
-       border-right:1px solid var(--line); border-bottom:1px solid var(--line);
-       padding:var(--s3) 18px; font-size:13.5px; color:var(--mute); margin-top:var(--s4); line-height:1.6; }
+.sitefoot{ display:flex; align-items:flex-start; gap:12px; background:var(--surface);
+    border:1px solid var(--line); border-left:4px solid var(--coral);
+    border-radius:var(--r-card); box-shadow:var(--shadow-1);
+    padding:var(--s3) 18px; font-size:13.5px; color:var(--mute); margin-top:var(--s4); line-height:1.6; }
+.sitefoot .ico{ width:16px; height:16px; color:var(--coral); flex:none; margin-top:3px; }
 .sitefoot b{ color:var(--heading); } .sitefoot a{ color:var(--slate); font-weight:700; }
 </style>
 """,
@@ -788,7 +997,7 @@ with brand:
         unsafe_allow_html=True,
     )
 with controls:
-    cc = st.columns([1, 1, 1.3])
+    cc = st.columns([1, 1, 1.3], gap="small")
     cc[0].button("EN", key="lang_en", on_click=set_lang, args=("en",), use_container_width=True,
                  type="primary" if lang == "en" else "secondary")
     cc[1].button("PT", key="lang_pt", on_click=set_lang, args=("pt",), use_container_width=True,
@@ -799,20 +1008,33 @@ with controls:
 st.markdown('<div class="headrule" role="presentation"></div>', unsafe_allow_html=True)
 
 # --------------------------------------------------------------------------- landing
+_step_icons = ["i-layers", "i-shield", "i-cpu", "i-chart", "i-send"]
 _steps_html = ""
 for i, (title, body) in enumerate(t["steps"]):
+    icon = ico(_step_icons[i])
     if i == 4:
         _steps_html += (
-            f'<article class="step ship coral reveal"><div class="shiphead"><span class="n">05</span>'
+            f'<article class="step ship coral reveal"><div class="shiphead">'
+            f'<span class="n">{icon} 05</span>'
             f'<h3>{title}</h3></div><p>{body}</p></article>'
         )
     else:
         _steps_html += (
-            f'<article class="step reveal"><span class="n">0{i + 1}</span><h3>{title}</h3><p>{body}</p></article>'
+            f'<article class="step reveal"><span class="n">{icon} 0{i + 1}</span>'
+            f'<h3>{title}</h3><p>{body}</p></article>'
         )
 
 _r1 = "".join(f"<span>{m}</span>" for m in t["read1_models"])
 _r2 = "".join(f"<span>{m}</span>" for m in t["read2_models"])
+_techs = "".join(f'<span class="badge">{ico("i-net")} {x}</span>' for x in t["techs"])
+
+# pipeline infographic: TEXT -> LANGUAGE -> MODEL -> VERDICT -> CONFIDENCE -> EXPLANATION
+_pipe_html = ""
+for i, (plabel, picon) in enumerate(t["pipe"]):
+    lit = " lit" if i == 3 else ""
+    if i:
+        _pipe_html += '<span class="plink" role="presentation"></span>'
+    _pipe_html += f'<span class="pnode{lit}">{ico(picon)}<b>{plabel}</b></span>'
 
 # leaderboard table (best result per model, macro-F1, both policies) — backs the Results cards
 _dec = (lambda s: s.replace(".", ",")) if lang == "pt" else (lambda s: s)
@@ -832,10 +1054,32 @@ st.markdown(
     html_block(f"""
 <main class="land">
   <section aria-label="{t["eyebrow"]}">
-    <p class="brow anim d1">{t["eyebrow"]}</p>
-    <h1 class="anim d2">{t["title"]} <span class="beta">Beta</span></h1>
-    <p class="tag anim d3">{t["tag"]}</p>
-    <div class="tick anim d4" role="presentation"></div>
+    <div class="heroband">
+      <div>
+        <p class="brow anim d1">{t["eyebrow"]}</p>
+        <h1 class="anim d2">{t["title"]} <span class="beta">Beta</span></h1>
+        <p class="tag anim d3">{t["tag"]}</p>
+        <div class="tick anim d4" role="presentation"></div>
+      </div>
+      <div class="heroart anim d3" role="img" aria-label="EN and PT as two connected lights">
+        <svg viewBox="0 0 400 260" preserveAspectRatio="none" aria-hidden="true">
+          <g fill="none" stroke="#3D5A80" stroke-opacity=".22">
+            <path d="M118 92 L260 154"/>
+            <path d="M50 180 L118 92 L180 40 L318 62"/>
+            <path d="M260 154 L330 210"/>
+          </g>
+          <g fill="#3D5A80" fill-opacity=".4">
+            <circle cx="180" cy="40" r="3"/><circle cx="318" cy="62" r="2.4"/>
+            <circle cx="50" cy="180" r="2.6"/><circle cx="330" cy="210" r="3"/>
+          </g>
+        </svg>
+        <span class="node en">EN</span>
+        <span class="node pt">PT</span>
+        <span class="fl f1" role="presentation"></span>
+        <span class="fl f2" role="presentation"></span>
+        <span class="fl f3" role="presentation"></span>
+      </div>
+    </div>
 
     <article class="hero anim d4">
       <div>
@@ -848,22 +1092,23 @@ st.markdown(
   </section>
 
   <section aria-label="{t["how"]}">
-    <h2 class="seclabel reveal">{t["how"]}</h2>
+    <h2 class="seclabel reveal">{ico("i-book")} {t["how"]}</h2>
     <div class="steps">{_steps_html}</div>
   </section>
 
   <section aria-label="{t["reads_label"]}">
-    <h2 class="seclabel reveal">{t["reads_label"]}</h2>
+    <h2 class="seclabel reveal">{ico("i-type")} {t["reads_label"]}</h2>
     <div class="reads">
       <article class="readc reveal"><p class="rlab">{t["read1_sub"]}</p><h3>{t["read1_title"]}</h3>
         <p>{t["read1_body"]}</p><div class="ms">{_r1}</div></article>
       <article class="readc alt reveal"><p class="rlab">{t["read2_sub"]}</p><h3>{t["read2_title"]}</h3>
         <p>{t["read2_body"]}</p><div class="ms">{_r2}</div></article>
     </div>
+    <div class="techs reveal"><span class="tl">{t["tech_label"]}</span>{_techs}</div>
   </section>
 
   <section aria-label="{t["results"]}">
-    <h2 class="seclabel reveal">{t["results"]}</h2>
+    <h2 class="seclabel reveal">{ico("i-chart")} {t["results"]}</h2>
     <div class="nums">
       <article class="numc reveal"><div class="v">{t["num1_v"]}</div><div class="k">{t["num1_k"]}</div></article>
       <article class="numc alt reveal"><div class="v">{t["num2_v"]}</div><div class="k">{t["num2_k"]}</div></article>
@@ -880,12 +1125,12 @@ st.markdown(
   </section>
 
   <section aria-label="{t["diag_label"]}">
-    <h2 class="seclabel reveal">{t["diag_label"]}</h2>
+    <h2 class="seclabel reveal">{ico("i-info")} {t["diag_label"]}</h2>
     <p class="tag reveal">{t["diag_body"]}</p>
   </section>
 
   <section aria-label="{t["abl_label"]}">
-    <h2 class="seclabel reveal">{t["abl_label"]}</h2>
+    <h2 class="seclabel reveal">{ico("i-search")} {t["abl_label"]}</h2>
     <p class="tag reveal">{t["abl_sub"]}</p>
   </section>
 </main>
@@ -902,14 +1147,16 @@ st.markdown(
   <p class="anote reveal">{t["abl_foot"]}</p>
 
   <nav class="links reveal" aria-label="project links">
-    <a class="primary" href="{REPO}" target="_blank">{t["link_code"]}</a>
-    <a href="{DOCS}" target="_blank">{t["link_docs"]}</a>
-    <a href="{DEMO_REPO}" target="_blank">{t["link_demo"]}</a>
+    <a class="primary" href="{REPO}" target="_blank">{ico("i-code")} {t["link_code"]}</a>
+    <a href="{DOCS}" target="_blank">{ico("i-doc")} {t["link_docs"]}</a>
+    <a href="{DEMO_REPO}" target="_blank">{ico("i-code")} {t["link_demo"]}</a>
   </nav>
 
+  <div class="dots reveal" role="presentation"><span></span><span></span><span></span></div>
+
   <div class="cta reveal" id="tool">
-    <div class="line" role="presentation"></div>
-    <h2 class="go" style="border:none;margin:0;padding:0">{t["cta"]}<span class="arrow" aria-hidden="true">&#8595;</span></h2>
+    <h2 class="go">{ico("i-fly")} {t["cta"]}</h2>
+    <div class="pipe" aria-label="pipeline">{_pipe_html}</div>
   </div>
 </div>
 """),
@@ -930,14 +1177,21 @@ if wants_result and has_text:
         latency_ms = (time.perf_counter() - _t0) * 1000
 
 
+def _shorten(s: str, n: int = 120) -> str:
+    s = s.strip()
+    return s if len(s) <= n else s[: n - 1].rstrip() + "…"
+
+
 def result_panel_html(res, tr, error: bool) -> str:
-    """The verdict card. States: idle, error (empty input), hate, not hate, uncertain."""
+    """The verdict card. States: idle, error (empty input), hate, not hate, uncertain.
+    One chat turn: the analyzed text appears as a message, the verdict as the reply."""
     if error:
         return (
             '<article class="panel idle err" role="alert">'
             f'<p class="brow">{tr["panel_brow"]}</p>'
             f'<h3 class="ttl">{tr["panel_title"]}</h3>'
-            f'<p class="hint">{tr["status_err"]}</p>'
+            f'<p class="status">{ico("i-alert")} {tr["status_err"]}</p>'
+            f'<p class="hint">{tr["panel_hint"]}</p>'
             "</article>"
         )
     if not res:
@@ -945,6 +1199,7 @@ def result_panel_html(res, tr, error: bool) -> str:
             '<article class="panel idle" role="status" aria-live="polite">'
             f'<p class="brow">{tr["panel_brow"]}</p>'
             f'<h3 class="ttl">{tr["panel_title"]}</h3>'
+            f'<div class="lucload" role="presentation"><span></span><span></span><span></span></div>'
             f'<p class="hint">{tr["panel_hint"]}</p>'
             "</article>"
         )
@@ -953,27 +1208,35 @@ def result_panel_html(res, tr, error: bool) -> str:
     is_hate = res["label"] == "hate"
     uncertain = abs(score - clf.threshold) < UNCERTAIN_MARGIN
     color = AMBER if uncertain else (CORAL if is_hate else GREEN)
+    vicon = "i-alert" if is_hate else "i-check"
     state = tr["state_hate"] if is_hate else tr["state_nothate"]
     near = f'<span class="near">{tr["state_uncertain"]}</span>' if uncertain else ""
     lg = res["language"]
     done = tr["status_done"]
     if latency_ms is not None:
-        ms = f"{latency_ms:.0f}"
-        done = f"{done} · {ms} ms"
+        done = f"{done} · {latency_ms:.0f} ms"
+    not_pct = 100 - pct
     return (
         '<article class="panel" role="status" aria-live="polite">'
         f'<p class="brow">{tr["panel_brow"]}</p>'
-        f'<h3 class="ttl">{tr["panel_title"]}</h3>'
-        f'<p class="state" style="color:{color}">{state}{near}</p>'
+        f'<div class="bubble"><span class="bl">{tr["chat_you"]}</span>{_shorten(res["text"])}</div>'
+        f'<div class="replyhead">{ico("i-fly")} {tr["chat_bot"]}</div>'
+        f'<div class="verdictwrap" style="--vc:{color}">'
+        f'<span class="verdict">{ico(vicon)}<span class="vword">{state}</span>{near}</span>'
         f'<p class="giant">{pct:.0f}<span class="u">%</span></p>'
         f'<div class="meter" role="img" aria-label="{tr["meta_prob"]}: {pct:.0f}%">'
-        f'<div class="fill" style="width:{pct:.1f}%; background:{color}"></div>'
+        f'<div class="fill" style="width:{pct:.1f}%"></div>'
         f'<div class="thr" style="left:{THRESHOLD_PCT}%"></div>'
         "</div>"
         f'<p class="meta">{tr["meta_prob"]} · {tr["meta_thr"]} {THRESHOLD_PCT}% · '
         f'{lg["detected"]} ({lg["confidence"]}) · {res["model_version"].replace("_s42", "")}</p>'
-        f'<p class="status">&#10003; {done}</p>'
-        "</article>"
+        f'<div class="dist"><div class="dl">{tr["dist_label"]}</div>'
+        f'<div class="dbar"><i style="width:{pct:.1f}%;background:{CORAL}"></i>'
+        f'<i style="width:{not_pct:.1f}%;background:{GREEN}"></i></div>'
+        f'<div class="dlegend"><span>{tr["state_hate"].lower()} {pct:.0f}%</span>'
+        f'<span>{tr["state_nothate"].lower()} {not_pct:.0f}%</span></div></div>'
+        f'<p class="status">{ico("i-check")} {done}</p>'
+        "</div></article>"
     )
 
 
@@ -982,40 +1245,45 @@ def explain_html(res, tr) -> str:
     score = float(res["score"])
     margin = abs(score - clf.threshold)
     if margin >= 0.15:
-        conf = tr["conf_high"]
+        conf, conf_n = tr["conf_high"], 3
     elif margin >= UNCERTAIN_MARGIN:
-        conf = tr["conf_med"]
+        conf, conf_n = tr["conf_med"], 2
     else:
-        conf = tr["conf_low"]
+        conf, conf_n = tr["conf_low"], 1
+    cdots = "".join(f'<i class="{"on" if i < conf_n else ""}"></i>' for i in range(3))
     lg = res["language"]
     ms = f"{latency_ms:.0f} ms" if latency_ms is not None else "n/d"
     facts = [
-        (tr["exp_model"], tr["exp_model_v"]),
-        (tr["exp_latency"], ms),
-        (tr["exp_lang"], f'{lg["detected"]} ({lg["confidence"]})'),
-        (tr["exp_thr"], f"{THRESHOLD_PCT}%"),
-        (tr["exp_conf"], conf),
+        ("i-cpu", tr["exp_model"], tr["exp_model_v"]),
+        ("i-zap", tr["exp_latency"], ms),
+        ("i-globe", tr["exp_lang"], f'{lg["detected"]} ({lg["confidence"]})'),
+        ("i-target", tr["exp_thr"], f"{THRESHOLD_PCT}%"),
+        ("i-gauge", tr["exp_conf"], f'{conf}<span class="cdots">{cdots}</span>'),
     ]
     facts_html = "".join(
-        f'<div class="fact"><div class="fk">{k}</div><div class="fv">{v}</div></div>' for k, v in facts
+        f'<div class="fact"><div class="fk">{ico(ic)} {k}</div><div class="fv">{v}</div></div>'
+        for ic, k, v in facts
     )
     terms = top_terms(res["text"])
     if terms:
+        cmax = max(abs(c) for _, c in terms) or 1.0
         chips = "".join(
-            f'<span class="term {"up" if c > 0 else "down"}">{name}</span>' for name, c in terms
+            f'<span class="term {"up" if c > 0 else "down"}" '
+            f'style="--w:{max(18, round(abs(c) / cmax * 100))}%">{name}</span>'
+            for name, c in terms
         )
         terms_html = (
             f'<p class="termlab">{tr["exp_terms"]}</p>'
             f'<div class="terms">{chips}</div>'
-            f'<p class="legend"><span class="sw" style="border-color:var(--danger)"></span>'
-            f'{tr["exp_toward"]}<span class="sw" style="border-color:var(--success)"></span>'
+            f'<p class="legend"><span class="sw" style="background:var(--danger)"></span>'
+            f'{tr["exp_toward"]}<span class="sw" style="background:var(--success)"></span>'
             f'{tr["exp_away"]}</p>'
         )
     else:
         terms_html = f'<p class="termlab">{tr["exp_none"]}</p>'
     return (
         '<section class="explain reveal in" aria-label="explainability">'
-        f"<h3>{tr['exp_label']}</h3>"
+        f"<h3>{ico('i-search')} {tr['exp_label']}</h3>"
         f'<div class="facts">{facts_html}</div>'
         f"{terms_html}"
         f'<p class="note">{tr["exp_note"]}</p>'
@@ -1030,7 +1298,8 @@ col_input, col_result = st.columns([1.08, 0.92], gap="large")
 
 with col_input:
     with st.container(key="input_card"):
-        st.markdown(f'<h3 class="cardlabel">{t["your_text"]}</h3>', unsafe_allow_html=True)
+        st.markdown(f'<h3 class="cardlabel">{ico("i-msg")} {t["your_text"]}</h3>',
+                    unsafe_allow_html=True)
         st.markdown(f'<p class="exlabel">{t["ex_label"]}</p>', unsafe_allow_html=True)
         chip_cols = st.columns(2)
         for i, ex in enumerate(EXAMPLES):
@@ -1053,8 +1322,8 @@ if result is not None:
 
 # --------------------------------------------------------------------------- footer
 st.markdown(
-    f'<footer class="sitefoot" role="contentinfo">{t["disc"]} '
-    f'<a href="{REPO}">{t["disc_code"]}</a> · <a href="{DOCS}">{t["disc_docs"]}</a>.</footer>',
+    f'<footer class="sitefoot" role="contentinfo">{ico("i-info")}<span>{t["disc"]} '
+    f'<a href="{REPO}">{t["disc_code"]}</a> · <a href="{DOCS}">{t["disc_docs"]}</a>.</span></footer>',
     unsafe_allow_html=True,
 )
 
