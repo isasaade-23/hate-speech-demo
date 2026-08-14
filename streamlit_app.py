@@ -54,6 +54,8 @@ DARK_CSS = """
 :root{
   --bg:#121a2b; --surface:#1b2740; --surface-2:#16223a; --bd:#38507a; --heading:#EAF0F8;
   --ink:#E4ECF6; --mute:#9DB0D2; --line:#2b3a56; --bone:#121a2b;
+  /* accent tokens: the light-theme slate is near-invisible on a dark bg */
+  --slate:#8FB3DE; --slate-deep:#2E4A7A;
   --danger:#FF8A6B; --success:#4FC79A; --warning:#F4B266;
   --shadow-1:0 2px 12px rgba(0,0,0,.35); --shadow-2:0 6px 24px rgba(0,0,0,.45);
 }
@@ -942,6 +944,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 .st-key-input_card .stButton button[kind="secondary"]:hover{
     border-color:var(--coral); color:var(--danger);
     box-shadow:0 0 0 3px rgba(238,108,77,.12); background:var(--surface); }
+.st-key-input_card .stTextArea{ margin-top:14px; }
 .stButton button[kind="primary"]{
     border-radius:var(--r-pill); border:none; background:var(--slate-deep); color:#fff;
     font-weight:900; letter-spacing:1px; text-transform:uppercase;
