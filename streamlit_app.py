@@ -809,7 +809,8 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 .readc.alt{ border-top:3px solid var(--coral); }
 .readc .rlab{ font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--slate); }
 .readc.alt .rlab{ color:var(--coral); }
-.readc h3{ font-size:23px; font-weight:900; margin:5px 0 0; letter-spacing:-.5px; }
+.readc h3{ font-size:23px; font-weight:900; margin:5px 0 0; letter-spacing:-.5px;
+    color:var(--heading) !important; }
 .readc p{ font-size:13.5px; color:var(--ink); line-height:1.55; margin:12px 0 14px; }
 .readc .ms{ display:flex; gap:7px; flex-wrap:wrap; }
 .readc .ms span{ font-size:12px; font-weight:700; color:var(--heading); background:var(--surface-2);
@@ -955,6 +956,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 .stTextArea textarea{ border-radius:var(--r-input) !important; border:1px solid var(--line) !important;
     background:var(--surface) !important; color:var(--ink) !important;
     font-family:'Lato',sans-serif !important; font-size:15px !important; }
+.stTextArea textarea::placeholder{ color:var(--mute) !important; opacity:.8; }
 .stTextArea textarea:focus{ border-color:var(--coral) !important;
     box-shadow:0 0 0 3px rgba(238,108,77,.15) !important; }
 .stSpinner > div{ border-top-color:var(--coral) !important; }
