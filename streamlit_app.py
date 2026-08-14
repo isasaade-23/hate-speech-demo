@@ -28,7 +28,7 @@ import streamlit.components.v1 as components  # noqa: E402
 from hsc.clean import clean_text  # noqa: E402
 from hsc.inference import HateClassifier  # noqa: E402
 
-MODEL_ID = "tfidf_logreg_strict_s42"
+MODEL_ID = "stack_strict_s42"
 UNCERTAIN_MARGIN = 0.08  # |score - threshold| below this reads as "near the threshold"
 
 REPO = "https://github.com/isasaade-23/hate-speech-nlp-en-pt"
@@ -90,15 +90,18 @@ T = {
                "protocol. Below runs the classifier it produced. Try it.",
         "skip": "Skip to the classifier",
         "find_label": "The finding",
-        "find_main": "Transformers win. The gap is <b>statistically significant</b>.",
-        "find_sub": "BERTimbau reaches macro-F1 0.784. The best classical baseline reaches 0.729 "
-                    "(paired McNemar, Holm, p<0.001). This demo runs the classical model, 3.8 MB. It "
-                    "stays about five points behind and needs no GPU.",
-        "find_num": "0.784", "find_cap": "best macro-F1",
+        "find_main": "Beta 2.0. A calibrated ensemble now answers, and Portuguese is its "
+                     "<b>strongest language</b>.",
+        "find_sub": "Three TF-IDF models are stacked by a meta model fit on validation only. "
+                    "Test ROC-AUC 0.877 on the new corpus, with honest probabilities (ECE 0.04). "
+                    "In the first study the transformers led by four points; they await a re-run "
+                    "on this corpus.",
+        "find_num": "0.877", "find_cap": "ROC-AUC, strict",
         "how": "How it was built",
         "steps": [
-            ("Harmonize", "Five sources become one binary schema. Tweets and memes in English, web "
-                          "and Instagram comments in Portuguese. Labels follow two policies, strict and broad."),
+            ("Harmonize", "Six sources become one binary schema. Tweets in English and Portuguese, "
+                          "web and Instagram comments in Portuguese. Meme text stays out as an "
+                          "external test. Labels follow two policies, strict and broad."),
             ("De-leak", "Exact and near-duplicate removal (MinHash/LSH) runs first. The group split "
                         "is frozen. No paraphrase crosses train and test."),
             ("Train", "Two regimes. The classical models learn from scratch on our labels, over "
@@ -106,13 +109,15 @@ T = {
                       "billions of words and we fine-tune them on our labels, on Colab GPU."),
             ("Evaluate", "Macro-F1, paired McNemar with Holm, calibration (ECE), an identity-term "
                          "bias probe, cross-lingual transfer."),
-            ("Ship", "Pareto picks tfidf_logreg. 3.8 MB, under 5 ms on CPU. It answers you below."),
+            ("Ship", "Pareto picks a stacked ensemble of the three TF-IDF models. 15 MB, about "
+                     "35 ms on CPU. It answers you below."),
         ],
         "reads_label": "How it reads text",
         "read1_title": "Word by word", "read1_sub": "bag-of-words",
         "read1_body": "It counts words and character patterns (bag-of-words, TF-IDF), with no "
                       "context beyond short windows. The classifier on top learns from scratch, only "
-                      "from our labeled examples. In return it is fast, 3.8 MB, and runs on any CPU.",
+                      "from our labeled examples. In return it is fast, a few MB, and runs on any "
+                      "CPU. This demo stacks the three of them.",
         "read1_models": ["Logistic Regression", "Linear SVM", "LightGBM"],
         "read2_title": "The whole sentence", "read2_sub": "contextual",
         "read2_body": "It reads the full sentence in context. These models were pretrained on "
@@ -124,18 +129,19 @@ T = {
         "techs": ["NLP", "multilingual EN/PT", "TF-IDF", "transformers", "McNemar + Holm",
                   "calibration", "bias probe"],
         "results": "Results",
-        "num1_v": "0.784", "num1_k": "best transformer, strict<br>(BERTimbau, macro-F1)",
-        "num2_v": "0.729", "num2_k": "this demo, strict<br>(classical MVP, macro-F1)",
-        "num3_v": "0.835", "num3_k": "best model, broad<br>(BERTimbau, macro-F1)",
-        "lb_model": "Model", "lb_demo": "TF-IDF + LogReg (this demo)",
-        "lb_cap": "Best result per model, test macro-F1. BERTimbau leads both policies; the "
-                  "classical model this demo runs stays within reach on CPU.",
+        "num1_v": "0.877", "num1_k": "this demo, strict<br>(stacked ensemble, ROC-AUC)",
+        "num2_v": "0.711", "num2_k": "this demo, strict<br>(stacked ensemble, macro-F1)",
+        "num3_v": "0.91", "num3_k": "Portuguese sources<br>(per-source ROC-AUC)",
+        "lb_model": "Model", "lb_demo": "Stacked ensemble (this demo)",
+        "lb_cap": "Test macro-F1 per model. The transformer rows come from the v1 study on the "
+                  "earlier corpus; the ensemble rows are Beta 2.0 on corpus v4. The two corpora "
+                  "differ, so read them as two snapshots, not one race.",
         "diag_label": "Why the simple model holds up",
         "diag_body": "Hate detection here is largely lexical. The model's strongest cues are explicit "
                      "slurs and identity attacks in both languages, plus character patterns that catch "
-                     "misspellings. That is why this small linear model stays within four points of the "
-                     "transformer. It is also why removing stop words barely moves the score, which points "
-                     "to the representation as the limit, not the classifier.",
+                     "misspellings. That is why this small ensemble stayed within four points of the "
+                     "transformers in the first study. It is also why removing stop words barely moves "
+                     "the score, which points to the representation as the limit, not the classifier.",
         "totop": "Top",
         "link_code": "Code &amp; study", "link_docs": "Documentation", "link_demo": "Demo source",
         "cta": "Try it live",
@@ -168,9 +174,10 @@ T = {
         "exp_none": "No single feature stands out for this text.",
         "exp_help": "What is this graph?",
         "exp_note": "This graph is a representation of how the model reads your text, not a human "
-                    "explanation of why a text is hateful. The model is linear, so the prediction "
-                    "decomposes exactly into feature contributions. Each word shows the sum of "
-                    "every word and character feature inside it.",
+                    "explanation of why a text is hateful. The served model is an ensemble; the "
+                    "graph shows its linear member, whose prediction decomposes exactly into "
+                    "feature contributions. Each word shows the sum of every word and character "
+                    "feature inside it.",
         "exp_more": "Learn more:",
         "exp_more_book": "linear models in Interpretable ML (Molnar)",
         "exp_more_docs": "the study behind this demo",
@@ -194,15 +201,18 @@ T = {
                "vazamento. Abaixo roda o classificador que ele produziu. Teste.",
         "skip": "Pular para o classificador",
         "find_label": "O achado",
-        "find_main": "Os transformers vencem. A diferença é <b>estatisticamente significativa</b>.",
-        "find_sub": "O BERTimbau chega a macro-F1 0,784. O melhor clássico chega a 0,729 (McNemar "
-                    "pareado, Holm, p<0,001). Este demo roda o clássico, 3,8 MB. Fica cerca de cinco "
-                    "pontos atrás e dispensa GPU.",
-        "find_num": "0,784", "find_cap": "melhor macro-F1",
+        "find_main": "Beta 2.0. Um ensemble calibrado agora responde, e o português é o "
+                     "<b>idioma mais forte</b> dele.",
+        "find_sub": "Três modelos TF-IDF são empilhados por um meta-modelo ajustado só na "
+                    "validação. ROC-AUC 0,877 no teste do corpus novo, com probabilidades honestas "
+                    "(ECE 0,04). No primeiro estudo os transformers lideravam por quatro pontos; "
+                    "eles aguardam re-treino neste corpus.",
+        "find_num": "0,877", "find_cap": "ROC-AUC, strict",
         "how": "Como foi construído",
         "steps": [
-            ("Harmonizar", "Cinco fontes viram um esquema binário. Tweets e memes em inglês, "
-                           "comentários web e do Instagram em português. Os rótulos seguem duas políticas, strict e broad."),
+            ("Harmonizar", "Seis fontes viram um esquema binário. Tweets em inglês e português, "
+                           "comentários web e do Instagram em português. O texto de meme fica de fora "
+                           "como teste externo. Os rótulos seguem duas políticas, strict e broad."),
             ("Anti-vazamento", "Primeiro remove duplicatas exatas e quase-duplicatas (MinHash/LSH). "
                                "O split por grupo é congelado. Nenhuma paráfrase cruza treino e teste."),
             ("Treinar", "Dois regimes. Os modelos clássicos aprendem do zero com os nossos rótulos, "
@@ -210,14 +220,15 @@ T = {
                         "em bilhões de palavras e nós os ajustamos com os nossos rótulos, na GPU do Colab."),
             ("Avaliar", "Macro-F1, McNemar pareado com Holm, calibração (ECE), sonda de viés por "
                         "termo de identidade, transferência entre idiomas."),
-            ("Publicar", "Pareto escolhe o tfidf_logreg. 3,8 MB, abaixo de 5 ms na CPU. É ele que responde "
-                         "abaixo."),
+            ("Publicar", "Pareto escolhe um ensemble empilhado dos três modelos TF-IDF. 15 MB, "
+                         "cerca de 35 ms na CPU. É ele que responde abaixo."),
         ],
         "reads_label": "Como ela lê o texto",
         "read1_title": "Palavra por palavra", "read1_sub": "saco de palavras",
         "read1_body": "Conta palavras e padrões de caractere (saco de palavras, TF-IDF), sem contexto "
                       "além de janelas curtas. O classificador em cima aprende do zero, só com os nossos "
-                      "exemplos rotulados. Em troca, é rápido, ocupa 3,8 MB e roda em qualquer CPU.",
+                      "exemplos rotulados. Em troca, é rápido, ocupa poucos MB e roda em qualquer "
+                      "CPU. Este demo empilha os três.",
         "read1_models": ["Logistic Regression", "Linear SVM", "LightGBM"],
         "read2_title": "A frase inteira", "read2_sub": "contextual",
         "read2_body": "Lê a frase inteira em contexto. Esses modelos foram pré-treinados em bilhões de "
@@ -229,18 +240,19 @@ T = {
         "techs": ["NLP", "multilíngue EN/PT", "TF-IDF", "transformers", "McNemar + Holm",
                   "calibração", "sonda de viés"],
         "results": "Resultados",
-        "num1_v": "0,784", "num1_k": "melhor transformer, strict<br>(BERTimbau, macro-F1)",
-        "num2_v": "0,729", "num2_k": "este demo, strict<br>(MVP clássico, macro-F1)",
-        "num3_v": "0,835", "num3_k": "melhor modelo, broad<br>(BERTimbau, macro-F1)",
-        "lb_model": "Modelo", "lb_demo": "TF-IDF + LogReg (este demo)",
-        "lb_cap": "Melhor resultado por modelo, macro-F1 no teste. O BERTimbau lidera nas duas "
-                  "políticas; o clássico que este demo roda fica ao alcance, na CPU.",
+        "num1_v": "0,877", "num1_k": "este demo, strict<br>(ensemble empilhado, ROC-AUC)",
+        "num2_v": "0,711", "num2_k": "este demo, strict<br>(ensemble empilhado, macro-F1)",
+        "num3_v": "0,91", "num3_k": "fontes em português<br>(ROC-AUC por fonte)",
+        "lb_model": "Modelo", "lb_demo": "Ensemble empilhado (este demo)",
+        "lb_cap": "Macro-F1 no teste, por modelo. As linhas de transformer vêm do estudo v1 no "
+                  "corpus anterior; as do ensemble são a Beta 2.0 no corpus v4. Os corpora "
+                  "diferem, então leia como duas fotos, não uma corrida.",
         "diag_label": "Por que o modelo simples se segura",
         "diag_body": "Detectar ódio aqui é, em boa parte, léxico. As pistas mais fortes do modelo são "
                      "palavrão e ataque de identidade nos dois idiomas, além de padrões de caractere que "
-                     "pegam erros de escrita. Por isso este modelo linear pequeno fica a quatro pontos do "
-                     "transformer. E por isso remover palavras vazias quase não muda a nota, o que aponta "
-                     "para a representação como o limite, não o classificador.",
+                     "pegam erros de escrita. Por isso este ensemble pequeno ficou a quatro pontos dos "
+                     "transformers no primeiro estudo. E por isso remover palavras vazias quase não muda "
+                     "a nota, o que aponta para a representação como o limite, não o classificador.",
         "totop": "Topo",
         "link_code": "Código &amp; estudo", "link_docs": "Documentação", "link_demo": "Código do demo",
         "cta": "Experimente ao vivo",
@@ -273,9 +285,10 @@ T = {
         "exp_none": "Nenhuma feature isolada se destaca neste texto.",
         "exp_help": "O que é este gráfico?",
         "exp_note": "Este gráfico é uma representação de como o modelo lê o seu texto, não uma "
-                    "explicação humana de por que um texto é odioso. O modelo é linear, então a "
-                    "predição se decompõe exatamente em contribuições de features. Cada palavra "
-                    "mostra a soma de todas as features de palavra e de caractere dentro dela.",
+                    "explicação humana de por que um texto é odioso. O modelo servido é um "
+                    "ensemble; o gráfico mostra o membro linear dele, cuja predição se decompõe "
+                    "exatamente em contribuições de features. Cada palavra mostra a soma de todas "
+                    "as features de palavra e de caractere dentro dela.",
         "exp_more": "Saiba mais:",
         "exp_more_book": "modelos lineares em Interpretable ML (Molnar)",
         "exp_more_docs": "o estudo por trás deste demo",
@@ -341,12 +354,12 @@ html,body{margin:0;background:transparent;font-family:'Lato',system-ui,sans-seri
 <div class="tip" id="tip" aria-hidden="true"></div>
 <script>
 const DATA=[
- {model:"LogReg",policy:"strict",f1:[0.7293,0.7247],auc:[0.8531,0.8514],rec:[0.5044,0.5323]},
- {model:"LogReg",policy:"broad",f1:[0.7459,0.7468],auc:[0.8199,0.8206],rec:[0.6558,0.6442]},
- {model:"LightGBM",policy:"strict",f1:[0.7114,0.7057],auc:[0.8380,0.8386],rec:[0.4956,0.4765]},
- {model:"LightGBM",policy:"broad",f1:[0.7246,0.7300],auc:[0.8087,0.8081],rec:[0.5755,0.6346]},
- {model:"SVM",policy:"strict",f1:[0.6967,0.6928],auc:[0.8271,0.8253],rec:[0.4736,0.4428]},
- {model:"SVM",policy:"broad",f1:[0.7288,0.7216],auc:[0.7978,0.7966],rec:[0.6428,0.6625]}
+ {model:"LogReg",policy:"strict",f1:[0.7022,0.7062],auc:[0.8728,0.8717],rec:[0.4809,0.4369]},
+ {model:"LogReg",policy:"broad",f1:[0.7577,0.7548],auc:[0.8446,0.8434],rec:[0.7024,0.6928]},
+ {model:"LightGBM",policy:"strict",f1:[0.7065,0.6979],auc:[0.8604,0.8628],rec:[0.4965,0.5248]},
+ {model:"LightGBM",policy:"broad",f1:[0.7463,0.7464],auc:[0.8338,0.8338],rec:[0.6701,0.6883]},
+ {model:"SVM",policy:"strict",f1:[0.6949,0.6882],auc:[0.8549,0.8505],rec:[0.5206,0.4879]},
+ {model:"SVM",policy:"broad",f1:[0.7269,0.7360],auc:[0.8203,0.8173],rec:[0.5581,0.6631]}
 ];
 const METRICS=[{k:"f1",label:"macro-F1"},{k:"auc",label:"ROC-AUC"},{k:"rec",label:"__REC_LABEL__"}];
 const LB={base:"__TT_BASE__",nostop:"__TT_NOSTOP__",delta:"__TT_DELTA__"};
@@ -1103,12 +1116,13 @@ for i, (plabel, picon) in enumerate(t["pipe"]):
 
 # leaderboard table (best result per model, macro-F1, both policies) — backs the Results cards
 _dec = (lambda s: s.replace(".", ",")) if lang == "pt" else (lambda s: s)
+_v1tag = " · v1"
 _lb_data = [
-    ("BERTimbau (PT)", "0.784", "0.835", "lbwin"),
-    ("twitter-XLM-R", "0.749", "0.766", ""),
-    ("XLM-R multilingual", "0.743", "0.764", ""),
-    ("BERTweet (EN)", "0.708", "0.753", ""),
-    (t["lb_demo"], "0.729", "0.746", "lbdemo"),
+    (t["lb_demo"], "0.711", "0.758", "lbdemo"),
+    (f"BERTimbau (PT){_v1tag}", "0.784", "0.835", "lbwin"),
+    (f"twitter-XLM-R{_v1tag}", "0.749", "0.766", ""),
+    (f"XLM-R multilingual{_v1tag}", "0.743", "0.764", ""),
+    (f"BERTweet (EN){_v1tag}", "0.708", "0.753", ""),
 ]
 _lb_rows = ""
 for _name, _a, _b, _cls in _lb_data:
@@ -1122,7 +1136,7 @@ st.markdown(
     <div class="heroband">
       <div>
         <p class="brow anim d1">{t["eyebrow"]}</p>
-        <h1 class="anim d2">{t["title"]} <span class="beta">Beta</span></h1>
+        <h1 class="anim d2">{t["title"]} <span class="beta">Beta 2.0</span></h1>
         <p class="tag anim d3">{t["tag"]}</p>
         <div class="tick anim d4" role="presentation"></div>
       </div>
