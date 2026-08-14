@@ -26,7 +26,7 @@ import streamlit as st  # noqa: E402
 import streamlit.components.v1 as components  # noqa: E402
 
 from hsc.clean import clean_text  # noqa: E402
-from hsc.inference import get_classifier  # noqa: E402
+from hsc.inference import HateClassifier  # noqa: E402
 
 MODEL_ID = "tfidf_logreg_strict_s42"
 UNCERTAIN_MARGIN = 0.08  # |score - threshold| below this reads as "near the threshold"
@@ -483,12 +483,17 @@ def render_iframe(html: str, height: int) -> None:
         components.html(html, height=height, scrolling=False)
 
 
+_BUNDLE = Path(__file__).parent / "models" / MODEL_ID / "model.joblib"
+
+
 @st.cache_resource
-def load_classifier():
-    return get_classifier(MODEL_ID)
+def load_classifier(bundle_mtime: float):
+    # keyed by the bundle's mtime: Streamlit Cloud syncs new commits without a
+    # process restart, and an unkeyed cache_resource would keep serving the old model
+    return HateClassifier(MODEL_ID)
 
 
-clf = load_classifier()
+clf = load_classifier(_BUNDLE.stat().st_mtime if _BUNDLE.exists() else 0.0)
 THRESHOLD_PCT = round(clf.threshold * 100, 1)  # single source of truth: the bundle
 
 
