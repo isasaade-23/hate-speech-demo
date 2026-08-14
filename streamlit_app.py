@@ -64,7 +64,7 @@ html, body, .stApp{ background:#121a2b; }
   background-image:
     radial-gradient(420px 300px at 85% 4%, rgba(238,108,77,.05), transparent 70%),
     radial-gradient(360px 260px at 8% 30%, rgba(157,176,210,.05), transparent 70%),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='560' height='560' viewBox='0 0 560 560'><g fill='none' stroke='%23ABC1E0' stroke-opacity='.05'><path d='M60 90 L200 60 L330 140'/><path d='M330 140 L470 90'/><path d='M120 300 L250 260 L390 330 L510 280'/><path d='M80 470 L230 430 L360 500'/></g><g fill='%23ABC1E0' fill-opacity='.10'><circle cx='60' cy='90' r='2'/><circle cx='200' cy='60' r='1.6'/><circle cx='330' cy='140' r='2.4'/><circle cx='470' cy='90' r='1.5'/><circle cx='120' cy='300' r='1.6'/><circle cx='250' cy='260' r='2'/><circle cx='390' cy='330' r='1.5'/><circle cx='510' cy='280' r='2.2'/><circle cx='80' cy='470' r='1.5'/><circle cx='230' cy='430' r='2.2'/><circle cx='360' cy='500' r='1.6'/></g><g fill='%23EE6C4D' fill-opacity='.10'><circle cx='330' cy='140' r='1.2'/><circle cx='230' cy='430' r='1.2'/></g></svg>");
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='780' height='780' viewBox='0 0 780 780'><g fill='none' stroke='%23ABC1E0' stroke-opacity='.05'><path d='M70 40 L150 130 L90 235'/><path d='M300 60 L430 30 L520 150 L610 120'/><path d='M700 260 L640 380 L720 470'/><path d='M120 380 L230 330 L260 460 L370 520'/><path d='M480 300 L560 420'/><path d='M40 600 L170 650 L240 590'/><path d='M400 640 L520 700 L650 620 L700 720'/><path d='M330 200 L300 320'/></g><g fill='%23ABC1E0' fill-opacity='.10'><circle cx='70' cy='40' r='1.8'/><circle cx='150' cy='130' r='2.4'/><circle cx='90' cy='235' r='1.5'/><circle cx='300' cy='60' r='2'/><circle cx='430' cy='30' r='1.5'/><circle cx='520' cy='150' r='2.6'/><circle cx='610' cy='120' r='1.6'/><circle cx='700' cy='260' r='1.5'/><circle cx='640' cy='380' r='2.2'/><circle cx='720' cy='470' r='1.6'/><circle cx='120' cy='380' r='1.5'/><circle cx='230' cy='330' r='2.4'/><circle cx='260' cy='460' r='1.6'/><circle cx='370' cy='520' r='2'/><circle cx='480' cy='300' r='1.5'/><circle cx='560' cy='420' r='2.2'/><circle cx='40' cy='600' r='1.6'/><circle cx='170' cy='650' r='2.4'/><circle cx='240' cy='590' r='1.5'/><circle cx='400' cy='640' r='1.6'/><circle cx='520' cy='700' r='2.2'/><circle cx='650' cy='620' r='1.5'/><circle cx='700' cy='720' r='1.8'/><circle cx='330' cy='200' r='1.6'/><circle cx='300' cy='320' r='2'/><circle cx='740' cy='60' r='1.4'/><circle cx='60' cy='300' r='2.2'/><circle cx='580' cy='560' r='1.5'/><circle cx='200' cy='740' r='1.8'/><circle cx='660' cy='40' r='1.5'/></g><g fill='%23EE6C4D' fill-opacity='.10'><circle cx='520' cy='150' r='1.3'/><circle cx='370' cy='520' r='1.2'/><circle cx='60' cy='300' r='1.1'/></g></svg>");
 }
 </style>
 """
@@ -588,7 +588,7 @@ html, body, [class*="css"], .stApp { font-family:'Lato', sans-serif; }
   background-image:
     radial-gradient(420px 300px at 85% 4%, rgba(238,108,77,.045), transparent 70%),
     radial-gradient(360px 260px at 8% 30%, rgba(61,90,128,.05), transparent 70%),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='560' height='560' viewBox='0 0 560 560'><g fill='none' stroke='%233D5A80' stroke-opacity='.06'><path d='M60 90 L200 60 L330 140'/><path d='M330 140 L470 90'/><path d='M120 300 L250 260 L390 330 L510 280'/><path d='M80 470 L230 430 L360 500'/></g><g fill='%233D5A80' fill-opacity='.12'><circle cx='60' cy='90' r='2'/><circle cx='200' cy='60' r='1.6'/><circle cx='330' cy='140' r='2.4'/><circle cx='470' cy='90' r='1.5'/><circle cx='120' cy='300' r='1.6'/><circle cx='250' cy='260' r='2'/><circle cx='390' cy='330' r='1.5'/><circle cx='510' cy='280' r='2.2'/><circle cx='80' cy='470' r='1.5'/><circle cx='230' cy='430' r='2.2'/><circle cx='360' cy='500' r='1.6'/></g><g fill='%23EE6C4D' fill-opacity='.12'><circle cx='330' cy='140' r='1.2'/><circle cx='230' cy='430' r='1.2'/></g></svg>");
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='780' height='780' viewBox='0 0 780 780'><g fill='none' stroke='%233D5A80' stroke-opacity='.06'><path d='M70 40 L150 130 L90 235'/><path d='M300 60 L430 30 L520 150 L610 120'/><path d='M700 260 L640 380 L720 470'/><path d='M120 380 L230 330 L260 460 L370 520'/><path d='M480 300 L560 420'/><path d='M40 600 L170 650 L240 590'/><path d='M400 640 L520 700 L650 620 L700 720'/><path d='M330 200 L300 320'/></g><g fill='%233D5A80' fill-opacity='.12'><circle cx='70' cy='40' r='1.8'/><circle cx='150' cy='130' r='2.4'/><circle cx='90' cy='235' r='1.5'/><circle cx='300' cy='60' r='2'/><circle cx='430' cy='30' r='1.5'/><circle cx='520' cy='150' r='2.6'/><circle cx='610' cy='120' r='1.6'/><circle cx='700' cy='260' r='1.5'/><circle cx='640' cy='380' r='2.2'/><circle cx='720' cy='470' r='1.6'/><circle cx='120' cy='380' r='1.5'/><circle cx='230' cy='330' r='2.4'/><circle cx='260' cy='460' r='1.6'/><circle cx='370' cy='520' r='2'/><circle cx='480' cy='300' r='1.5'/><circle cx='560' cy='420' r='2.2'/><circle cx='40' cy='600' r='1.6'/><circle cx='170' cy='650' r='2.4'/><circle cx='240' cy='590' r='1.5'/><circle cx='400' cy='640' r='1.6'/><circle cx='520' cy='700' r='2.2'/><circle cx='650' cy='620' r='1.5'/><circle cx='700' cy='720' r='1.8'/><circle cx='330' cy='200' r='1.6'/><circle cx='300' cy='320' r='2'/><circle cx='740' cy='60' r='1.4'/><circle cx='60' cy='300' r='2.2'/><circle cx='580' cy='560' r='1.5'/><circle cx='200' cy='740' r='1.8'/><circle cx='660' cy='40' r='1.5'/></g><g fill='%23EE6C4D' fill-opacity='.12'><circle cx='520' cy='150' r='1.3'/><circle cx='370' cy='520' r='1.2'/><circle cx='60' cy='300' r='1.1'/></g></svg>");
 }
 header[data-testid="stHeader"]{ display:none; }
 #MainMenu, footer, [data-testid="stToolbar"]{ display:none; }
@@ -695,7 +695,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 .dtable{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-card);
     box-shadow:var(--shadow-1); overflow-x:auto; margin:0 0 var(--s2); }
 .dtable table{ width:100%; border-collapse:collapse; font-size:13.5px; min-width:360px; }
-.dtable th, .dtable td{ padding:10px var(--s3); text-align:right; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; }
+.dtable th, .dtable td{ padding:10px var(--s3); text-align:right; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; color:var(--ink); }
 .dtable th:first-child, .dtable td:first-child{ text-align:left; }
 .dtable td:first-child{ font-weight:800; color:var(--heading); }
 .dtable thead th{ font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--mute); border-bottom:2px solid var(--line); }
@@ -785,13 +785,17 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 /* the finding: elevated accent surface (kept as the one brutal signature) */
 .hero{ margin:var(--s4) 0 0; background:linear-gradient(160deg,#243a63,#1F3050 60%,#16223d); color:#fff;
        border:1px solid #16223d; border-radius:var(--r-card); box-shadow:10px 10px 0 var(--coral);
-       padding:var(--s4) 28px; display:flex; align-items:center; gap:var(--s4); flex-wrap:wrap; }
+       padding:var(--s4) 28px; display:grid; grid-template-columns:1fr auto;
+       align-items:center; gap:var(--s4); }
+@media (max-width:640px){ .hero{ grid-template-columns:1fr; }
+  .hero .knum{ margin-left:0; text-align:left; } }
 .hero .klabel{ font-size:11px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; color:var(--amber); }
 .hero .kmain{ font-size:26px; font-weight:900; letter-spacing:-.5px; margin:6px 0 0; line-height:1.1; }
 .hero .kmain b{ color:var(--coral); }
 .hero .ksub{ font-size:14px; color:#B9C6DE; margin:var(--s2) 0 0; max-width:46ch; }
 .hero .knum{ margin-left:auto; text-align:right; }
-.hero .knum .big{ font-size:60px; font-weight:900; letter-spacing:-3px; line-height:.9; font-variant-numeric:tabular-nums;
+.hero .knum .big{ font-size:60px; font-weight:900; letter-spacing:-3px; line-height:1.05;
+                  padding-bottom:3px; font-variant-numeric:tabular-nums;
                   background:linear-gradient(90deg,#F4A261,#EE6C4D); -webkit-background-clip:text;
                   background-clip:text; -webkit-text-fill-color:transparent; }
 .hero .knum .cap{ font-size:11px; color:#9DB0D2; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
@@ -808,7 +812,8 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
     color:var(--slate); background:var(--surface-2); border-radius:var(--r-pill);
     padding:4px 11px; letter-spacing:1px; }
 .step .n .ico{ width:12px; height:12px; }
-.step h3{ font-size:16px; font-weight:900; margin:12px 0 6px; letter-spacing:-.2px; }
+.step h3{ font-size:16px; font-weight:900; margin:12px 0 6px; letter-spacing:-.2px;
+    color:var(--heading) !important; }
 .step p{ font-size:13px; color:var(--mute); line-height:1.55; margin:0; }
 .step.coral .n{ background:rgba(238,108,77,.12); color:var(--danger); }
 .step.coral h3{ color:var(--coral); }
@@ -868,7 +873,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 .anote{ font-size:12.5px; color:var(--mute); line-height:1.6; margin:var(--s3) 0 2px; max-width:none; }
 
 /* pipeline infographic */
-.pipe{ display:flex; align-items:stretch; gap:0; margin:var(--s4) 0 0; flex-wrap:nowrap; }
+.pipe{ display:flex; align-items:stretch; gap:0; margin:var(--s4) 0 var(--s4); flex-wrap:nowrap; }
 .pipe .pnode{ flex:1; display:flex; flex-direction:column; align-items:center; gap:8px;
     background:var(--surface); border:1px solid var(--line); border-radius:var(--r-card);
     padding:14px 8px; text-align:center; min-width:0; }
