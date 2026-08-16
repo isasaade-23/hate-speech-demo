@@ -90,18 +90,20 @@ T = {
                "protocol. Below runs the classifier it produced. Try it.",
         "skip": "Skip to the classifier",
         "find_label": "The finding",
-        "find_main": "Beta 2.0. A calibrated ensemble now answers, and Portuguese is its "
-                     "<b>strongest language</b>.",
+        "find_main": "Beta 2.0, phase 2. The ensemble now trains against adversarial examples, "
+                     "and <b>recall on hate jumped from 0.55 to 0.74</b>.",
         "find_sub": "Three TF-IDF models are stacked by a meta model fit on validation only. "
-                    "Test ROC-AUC 0.877 on the new corpus, with honest probabilities (ECE 0.04). "
-                    "In the first study the transformers led by four points; they await a re-run "
-                    "on this corpus.",
-        "find_num": "0.877", "find_cap": "ROC-AUC, strict",
+                    "The corpus doubled to 113,826 rows across eight sources, including 41k "
+                    "synthetic examples written to fool classifiers; a third of the test is "
+                    "adversarial, so scores are not comparable to earlier versions. "
+                    "In the first study the transformers led by four points; they await a re-run.",
+        "find_num": "0.887", "find_cap": "ROC-AUC, strict",
         "how": "How it was built",
         "steps": [
-            ("Harmonize", "Six sources become one binary schema. Tweets in English and Portuguese, "
-                          "web and Instagram comments in Portuguese. Meme text stays out as an "
-                          "external test. Labels follow two policies, strict and broad."),
+            ("Harmonize", "Eight sources become one binary schema. Tweets in English and Portuguese, "
+                          "web and Instagram comments in Portuguese, adversarial synthetic sentences in "
+                          "English. Meme text stays out as an external test. Labels follow two "
+                          "policies, strict and broad."),
             ("De-leak", "Exact and near-duplicate removal (MinHash/LSH) runs first. The group split "
                         "is frozen. No paraphrase crosses train and test."),
             ("Train", "Two regimes. The classical models learn from scratch on our labels, over "
@@ -109,7 +111,7 @@ T = {
                       "billions of words and we fine-tune them on our labels, on Colab GPU."),
             ("Evaluate", "Macro-F1, paired McNemar with Holm, calibration (ECE), an identity-term "
                          "bias probe, cross-lingual transfer."),
-            ("Ship", "Pareto picks a stacked ensemble of the three TF-IDF models. 15 MB, about "
+            ("Ship", "Pareto picks a stacked ensemble of the three TF-IDF models. 32 MB, about "
                      "35 ms on CPU. It answers you below."),
         ],
         "reads_label": "How it reads text",
@@ -129,12 +131,12 @@ T = {
         "techs": ["NLP", "multilingual EN/PT", "TF-IDF", "transformers", "McNemar + Holm",
                   "calibration", "bias probe"],
         "results": "Results",
-        "num1_v": "0.877", "num1_k": "this demo, strict<br>(stacked ensemble, ROC-AUC)",
-        "num2_v": "0.711", "num2_k": "this demo, strict<br>(stacked ensemble, macro-F1)",
-        "num3_v": "0.91", "num3_k": "Portuguese sources<br>(per-source ROC-AUC)",
+        "num1_v": "0.887", "num1_k": "this demo, strict<br>(stacked ensemble, ROC-AUC)",
+        "num2_v": "0.791", "num2_k": "this demo, strict<br>(stacked ensemble, macro-F1)",
+        "num3_v": "0.74", "num3_k": "recall on hate<br>(was 0.55 before phase 2)",
         "lb_model": "Model", "lb_demo": "Stacked ensemble (this demo)",
         "lb_cap": "Test macro-F1 per model. The transformer rows come from the v1 study on the "
-                  "earlier corpus; the ensemble rows are Beta 2.0 on corpus v4. The two corpora "
+                  "earlier corpus; the ensemble rows are Beta 2.0 phase 2 on corpus v5. The corpora "
                   "differ, so read them as two snapshots, not one race.",
         "diag_label": "Why the simple model holds up",
         "diag_body": "Hate detection here is largely lexical. The model's strongest cues are explicit "
@@ -188,7 +190,7 @@ T = {
         "disc_code": "Code", "disc_docs": "Docs",
         "theme_dark": "Dark", "theme_light": "Light",
         "abl_label": "Stop words",
-        "abl_sub": "We removed prepositions, pronouns and articles from the word features and "
+        "abl_sub": "Study on corpus v4. We removed prepositions, pronouns and articles from the word features and "
                    "retrained every classical model. Negations stayed. Hover a cell for the exact numbers.",
         "abl_foot": "Color is scaled within each metric so small gaps still show. Character n-grams "
                     "and IDF already down-weight function words. Removing stop words moves almost "
@@ -201,18 +203,20 @@ T = {
                "vazamento. Abaixo roda o classificador que ele produziu. Teste.",
         "skip": "Pular para o classificador",
         "find_label": "O achado",
-        "find_main": "Beta 2.0. Um ensemble calibrado agora responde, e o português é o "
-                     "<b>idioma mais forte</b> dele.",
+        "find_main": "Beta 2.0, fase 2. O ensemble agora treina contra exemplos adversariais, "
+                     "e o <b>recall de ódio saltou de 0,55 para 0,74</b>.",
         "find_sub": "Três modelos TF-IDF são empilhados por um meta-modelo ajustado só na "
-                    "validação. ROC-AUC 0,877 no teste do corpus novo, com probabilidades honestas "
-                    "(ECE 0,04). No primeiro estudo os transformers lideravam por quatro pontos; "
-                    "eles aguardam re-treino neste corpus.",
-        "find_num": "0,877", "find_cap": "ROC-AUC, strict",
+                    "validação. O corpus dobrou para 113.826 linhas em oito fontes, incluindo 41 mil "
+                    "frases sintéticas escritas para enganar classificadores; um terço do teste é "
+                    "adversarial, então as notas não se comparam com versões anteriores. "
+                    "No primeiro estudo os transformers lideravam por quatro pontos; aguardam re-treino.",
+        "find_num": "0,887", "find_cap": "ROC-AUC, strict",
         "how": "Como foi construído",
         "steps": [
-            ("Harmonizar", "Seis fontes viram um esquema binário. Tweets em inglês e português, "
-                           "comentários web e do Instagram em português. O texto de meme fica de fora "
-                           "como teste externo. Os rótulos seguem duas políticas, strict e broad."),
+            ("Harmonizar", "Oito fontes viram um esquema binário. Tweets em inglês e português, "
+                           "comentários web e do Instagram em português, frases sintéticas adversariais "
+                           "em inglês. O texto de meme fica de fora como teste externo. Os rótulos "
+                           "seguem duas políticas, strict e broad."),
             ("Anti-vazamento", "Primeiro remove duplicatas exatas e quase-duplicatas (MinHash/LSH). "
                                "O split por grupo é congelado. Nenhuma paráfrase cruza treino e teste."),
             ("Treinar", "Dois regimes. Os modelos clássicos aprendem do zero com os nossos rótulos, "
@@ -220,7 +224,7 @@ T = {
                         "em bilhões de palavras e nós os ajustamos com os nossos rótulos, na GPU do Colab."),
             ("Avaliar", "Macro-F1, McNemar pareado com Holm, calibração (ECE), sonda de viés por "
                         "termo de identidade, transferência entre idiomas."),
-            ("Publicar", "Pareto escolhe um ensemble empilhado dos três modelos TF-IDF. 15 MB, "
+            ("Publicar", "Pareto escolhe um ensemble empilhado dos três modelos TF-IDF. 32 MB, "
                          "cerca de 35 ms na CPU. É ele que responde abaixo."),
         ],
         "reads_label": "Como ela lê o texto",
@@ -240,12 +244,12 @@ T = {
         "techs": ["NLP", "multilíngue EN/PT", "TF-IDF", "transformers", "McNemar + Holm",
                   "calibração", "sonda de viés"],
         "results": "Resultados",
-        "num1_v": "0,877", "num1_k": "este demo, strict<br>(ensemble empilhado, ROC-AUC)",
-        "num2_v": "0,711", "num2_k": "este demo, strict<br>(ensemble empilhado, macro-F1)",
-        "num3_v": "0,91", "num3_k": "fontes em português<br>(ROC-AUC por fonte)",
+        "num1_v": "0,887", "num1_k": "este demo, strict<br>(ensemble empilhado, ROC-AUC)",
+        "num2_v": "0,791", "num2_k": "este demo, strict<br>(ensemble empilhado, macro-F1)",
+        "num3_v": "0,74", "num3_k": "recall de ódio<br>(era 0,55 antes da fase 2)",
         "lb_model": "Modelo", "lb_demo": "Ensemble empilhado (este demo)",
         "lb_cap": "Macro-F1 no teste, por modelo. As linhas de transformer vêm do estudo v1 no "
-                  "corpus anterior; as do ensemble são a Beta 2.0 no corpus v4. Os corpora "
+                  "corpus anterior; as do ensemble são a Beta 2.0 fase 2 no corpus v5. Os corpora "
                   "diferem, então leia como duas fotos, não uma corrida.",
         "diag_label": "Por que o modelo simples se segura",
         "diag_body": "Detectar ódio aqui é, em boa parte, léxico. As pistas mais fortes do modelo são "
@@ -299,7 +303,7 @@ T = {
         "disc_code": "Código", "disc_docs": "Docs",
         "theme_dark": "Escuro", "theme_light": "Claro",
         "abl_label": "Palavras vazias",
-        "abl_sub": "Removemos preposições, pronomes e artigos das features de palavra e retreinamos "
+        "abl_sub": "Estudo no corpus v4. Removemos preposições, pronomes e artigos das features de palavra e retreinamos "
                    "cada modelo clássico. As negações ficaram. Passe o mouse numa célula para ver os números.",
         "abl_foot": "A cor é escalada dentro de cada métrica para que diferenças pequenas apareçam. "
                     "Os n-gramas de caractere e o IDF já reduzem o peso das palavras funcionais. "
@@ -1123,7 +1127,7 @@ for i, (plabel, picon) in enumerate(t["pipe"]):
 _dec = (lambda s: s.replace(".", ",")) if lang == "pt" else (lambda s: s)
 _v1tag = " · v1"
 _lb_data = [
-    (t["lb_demo"], "0.711", "0.758", "lbdemo"),
+    (t["lb_demo"], "0.791", "0.756", "lbdemo"),
     (f"BERTimbau (PT){_v1tag}", "0.784", "0.835", "lbwin"),
     (f"twitter-XLM-R{_v1tag}", "0.749", "0.766", ""),
     (f"XLM-R multilingual{_v1tag}", "0.743", "0.764", ""),

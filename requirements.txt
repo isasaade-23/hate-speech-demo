@@ -15,3 +15,4 @@ joblib>=1.3
 streamlit>=1.40
 
 # Beta 2.0: comment change forces a full container rebuild (stale __pycache__ after file sync)
+# force rebuild 2026-08-16: corpus v5 stack (inference.py + bundle changed)
