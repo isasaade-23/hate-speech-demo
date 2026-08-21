@@ -5,8 +5,9 @@ widgets and reactivity; a token-based design system (color roles, spacing scale,
 surface levels, one icon family, firefly-constellation texture) turns the generated
 containers into a designed product: header > hero > method > results > tool > footer.
 
-Serves the CPU product model (tfidf_logreg_strict) directly. Self-contained: the `hsc`
-package is vendored under src/, the model bundle and configs travel with the repo.
+Serves the CPU product model (stack_strict_s42: calibrated stacked ensemble of three
+TF-IDF models) directly. Self-contained: the `hsc` package is vendored under src/, the
+model bundle and configs travel with the repo.
 
 Research demo. Not a moderation verdict.
 """
@@ -167,7 +168,7 @@ T = {
         "placeholder": "Type English or Portuguese text...",
         "classify": "Classify",
         "exp_label": "Under the hood",
-        "exp_model": "Model", "exp_model_v": "TF-IDF + Logistic Regression · strict · 3.8 MB",
+        "exp_model": "Model", "exp_model_v": "Stacked ensemble · 3× TF-IDF · strict · 32 MB",
         "exp_latency": "Latency", "exp_lang": "Detected language",
         "exp_thr": "Decision threshold", "exp_conf": "Confidence",
         "conf_high": "high", "conf_med": "medium", "conf_low": "low, near the threshold",
@@ -280,7 +281,7 @@ T = {
         "placeholder": "Digite um texto em inglês ou português...",
         "classify": "Classificar",
         "exp_label": "Por dentro da predição",
-        "exp_model": "Modelo", "exp_model_v": "TF-IDF + Regressão Logística · strict · 3,8 MB",
+        "exp_model": "Modelo", "exp_model_v": "Ensemble empilhado · 3× TF-IDF · strict · 32 MB",
         "exp_latency": "Latência", "exp_lang": "Idioma detectado",
         "exp_thr": "Limiar de decisão", "exp_conf": "Confiança",
         "conf_high": "alta", "conf_med": "média", "conf_low": "baixa, perto do limiar",

@@ -1,272 +1,282 @@
 {
- "tfidf_logreg_strict_s42": {
-  "path": "models/tfidf_logreg_strict_s42/model.joblib",
-  "config": "tfidf_logreg",
-  "policy": "strict",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.6132,
-  "val_macro_f1": 0.7145699052410527,
-  "test_macro_f1": 0.7021699105002308
- },
- "tfidf_svm_strict_s42": {
-  "path": "models/tfidf_svm_strict_s42/model.joblib",
-  "config": "tfidf_svm",
-  "policy": "strict",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.1454,
-  "val_macro_f1": 0.7058463858155742,
-  "test_macro_f1": 0.6948718305904557
- },
- "tfidf_lgbm_strict_s42": {
-  "path": "models/tfidf_lgbm_strict_s42/model.joblib",
-  "config": "tfidf_lgbm",
-  "policy": "strict",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.6243,
-  "val_macro_f1": 0.6987753545429292,
-  "test_macro_f1": 0.7064887602867111
- },
- "tfidf_logreg_broad_s42": {
-  "path": "models/tfidf_logreg_broad_s42/model.joblib",
-  "config": "tfidf_logreg",
-  "policy": "broad",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.5183,
-  "val_macro_f1": 0.7590188006384481,
-  "test_macro_f1": 0.7576970452679137
- },
- "tfidf_svm_broad_s42": {
-  "path": "models/tfidf_svm_broad_s42/model.joblib",
-  "config": "tfidf_svm",
-  "policy": "broad",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.397,
-  "val_macro_f1": 0.738433877977523,
-  "test_macro_f1": 0.7268997094303074
- },
- "tfidf_lgbm_broad_s42": {
-  "path": "models/tfidf_lgbm_broad_s42/model.joblib",
-  "config": "tfidf_lgbm",
-  "policy": "broad",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.5225,
-  "val_macro_f1": 0.7574558079593761,
-  "test_macro_f1": 0.7463458982664041
- },
- "sbert_logreg_strict_s42": {
-  "path": "models/sbert_logreg_strict_s42/model.joblib",
-  "config": "sbert_logreg",
-  "policy": "strict",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.719,
-  "val_macro_f1": 0.6392068130470663,
-  "test_macro_f1": 0.6233877600156239
- },
- "sbert_lgbm_strict_s42": {
-  "path": "models/sbert_lgbm_strict_s42/model.joblib",
-  "config": "sbert_lgbm",
-  "policy": "strict",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.2718,
-  "val_macro_f1": 0.656390078479938,
-  "test_macro_f1": 0.6440708649421496
- },
- "sbert_logreg_broad_s42": {
-  "path": "models/sbert_logreg_broad_s42/model.joblib",
-  "config": "sbert_logreg",
-  "policy": "broad",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.5973,
-  "val_macro_f1": 0.7113884760010905,
-  "test_macro_f1": 0.6943348946576806
- },
- "sbert_lgbm_broad_s42": {
-  "path": "models/sbert_lgbm_broad_s42/model.joblib",
-  "config": "sbert_lgbm",
-  "policy": "broad",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.4791,
-  "val_macro_f1": 0.7297282681193644,
-  "test_macro_f1": 0.7116720944277382
- },
- "xlmr_multilingual_strict_s42": {
-  "path": "models/xlmr_multilingual_strict_s42/hf",
-  "config": "xlmr_multilingual",
-  "family": "neural",
-  "policy": "strict",
-  "seed": 42,
-  "hf_checkpoint": "FacebookAI/xlm-roberta-base",
-  "threshold": 0.8428,
-  "val_macro_f1": 0.7265343326834199,
-  "test_macro_f1": 0.742468910896682
- },
- "xlmr_multilingual_broad_s42": {
-  "path": "models/xlmr_multilingual_broad_s42/hf",
-  "config": "xlmr_multilingual",
-  "family": "neural",
-  "policy": "broad",
-  "seed": 42,
-  "hf_checkpoint": "FacebookAI/xlm-roberta-base",
-  "threshold": 0.6542,
-  "val_macro_f1": 0.7701688478029016,
-  "test_macro_f1": 0.7635238278207437
- },
- "bertimbau_pt_strict_s42": {
-  "path": "models/bertimbau_pt_strict_s42/hf",
-  "config": "bertimbau_pt",
-  "family": "neural",
-  "policy": "strict",
-  "seed": 42,
-  "hf_checkpoint": "neuralmind/bert-base-portuguese-cased",
-  "threshold": 0.5235,
-  "val_macro_f1": 0.7659438005404176,
-  "test_macro_f1": 0.7840894261015134
- },
- "bertimbau_pt_broad_s42": {
-  "path": "models/bertimbau_pt_broad_s42/hf",
-  "config": "bertimbau_pt",
-  "family": "neural",
-  "policy": "broad",
-  "seed": 42,
-  "hf_checkpoint": "neuralmind/bert-base-portuguese-cased",
-  "threshold": 0.347,
-  "val_macro_f1": 0.8425972584188273,
-  "test_macro_f1": 0.8349916344243438
- },
- "bertweet_en_strict_s42": {
-  "path": "models/bertweet_en_strict_s42/hf",
-  "config": "bertweet_en",
-  "family": "neural",
-  "policy": "strict",
-  "seed": 42,
-  "hf_checkpoint": "vinai/bertweet-base",
-  "threshold": 0.3007,
-  "val_macro_f1": 0.7361038165266107,
-  "test_macro_f1": 0.707675785262487
- },
- "bertweet_en_broad_s42": {
-  "path": "models/bertweet_en_broad_s42/hf",
-  "config": "bertweet_en",
-  "family": "neural",
-  "policy": "broad",
-  "seed": 42,
-  "hf_checkpoint": "vinai/bertweet-base",
-  "threshold": 0.8651,
-  "val_macro_f1": 0.7430160921621438,
-  "test_macro_f1": 0.7528567539493959
- },
- "tfidf_logreg_nostop_strict_s42": {
-  "path": "models/tfidf_logreg_nostop_strict_s42/model.joblib",
-  "config": "tfidf_logreg_nostop",
-  "policy": "strict",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.6858,
-  "val_macro_f1": 0.7069232086604303,
-  "test_macro_f1": 0.7062324018447599
- },
- "tfidf_logreg_nostop_broad_s42": {
-  "path": "models/tfidf_logreg_nostop_broad_s42/model.joblib",
-  "config": "tfidf_logreg_nostop",
-  "policy": "broad",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.5262,
-  "val_macro_f1": 0.7586491373175095,
-  "test_macro_f1": 0.7548322683463242
- },
- "tfidf_lgbm_nostop_strict_s42": {
-  "path": "models/tfidf_lgbm_nostop_strict_s42/model.joblib",
-  "config": "tfidf_lgbm_nostop",
-  "policy": "strict",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.5851,
-  "val_macro_f1": 0.7010241954191082,
-  "test_macro_f1": 0.6978524978756002
- },
- "tfidf_lgbm_nostop_broad_s42": {
-  "path": "models/tfidf_lgbm_nostop_broad_s42/model.joblib",
-  "config": "tfidf_lgbm_nostop",
-  "policy": "broad",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.5115,
-  "val_macro_f1": 0.7566518889197342,
-  "test_macro_f1": 0.746381236200848
- },
- "tfidf_svm_nostop_strict_s42": {
-  "path": "models/tfidf_svm_nostop_strict_s42/model.joblib",
-  "config": "tfidf_svm_nostop",
-  "policy": "strict",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.151,
-  "val_macro_f1": 0.6988598698540255,
-  "test_macro_f1": 0.6882366408675689
- },
- "tfidf_svm_nostop_broad_s42": {
-  "path": "models/tfidf_svm_nostop_broad_s42/model.joblib",
-  "config": "tfidf_svm_nostop",
-  "policy": "broad",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.3611,
-  "val_macro_f1": 0.733589220796707,
-  "test_macro_f1": 0.7360111833759244
- },
- "twitter_xlmr_strict_s42": {
-  "path": "models/twitter_xlmr_strict_s42/hf",
-  "config": "twitter_xlmr",
-  "family": "neural",
-  "policy": "strict",
-  "seed": 42,
-  "hf_checkpoint": "cardiffnlp/twitter-xlm-roberta-base",
-  "threshold": 0.6771,
-  "val_macro_f1": 0.7395152979041436,
-  "test_macro_f1": 0.7487334104268832
- },
- "twitter_xlmr_broad_s42": {
-  "path": "models/twitter_xlmr_broad_s42/hf",
-  "config": "twitter_xlmr",
-  "family": "neural",
-  "policy": "broad",
-  "seed": 42,
-  "hf_checkpoint": "cardiffnlp/twitter-xlm-roberta-base",
-  "threshold": 0.6973,
-  "val_macro_f1": 0.772888743095175,
-  "test_macro_f1": 0.7657782013143098
- },
- "stack_strict_s42": {
-  "path": "models/stack_strict_s42/model.joblib",
-  "config": "stack_tfidf3",
-  "policy": "strict",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.13141616456670072,
-  "val_macro_f1": 0.7145,
-  "test_macro_f1": 0.7105,
-  "test_roc_auc": 0.8772
- },
- "stack_broad_s42": {
-  "path": "models/stack_broad_s42/model.joblib",
-  "config": "stack_tfidf3",
-  "policy": "broad",
-  "seed": 42,
-  "git_sha": "cac1065",
-  "threshold": 0.33212257378068605,
-  "val_macro_f1": 0.7654,
-  "test_macro_f1": 0.7584,
-  "test_roc_auc": 0.8482
- }
+  "tfidf_logreg_strict_s42": {
+    "path": "models/tfidf_logreg_strict_s42/model.joblib",
+    "config": "tfidf_logreg",
+    "policy": "strict",
+    "seed": 42,
+    "git_sha": "c182003",
+    "threshold": 0.5787,
+    "val_macro_f1": 0.7883447530869965,
+    "test_macro_f1": 0.7878131630282545
+  },
+  "tfidf_svm_strict_s42": {
+    "path": "models/tfidf_svm_strict_s42/model.joblib",
+    "config": "tfidf_svm",
+    "policy": "strict",
+    "seed": 42,
+    "git_sha": "c182003",
+    "threshold": 0.3149,
+    "val_macro_f1": 0.7687679087054438,
+    "test_macro_f1": 0.7681313681143557
+  },
+  "tfidf_lgbm_strict_s42": {
+    "path": "models/tfidf_lgbm_strict_s42/model.joblib",
+    "config": "tfidf_lgbm",
+    "policy": "strict",
+    "seed": 42,
+    "git_sha": "c182003",
+    "threshold": 0.581,
+    "val_macro_f1": 0.7702998187455272,
+    "test_macro_f1": 0.773160366514335
+  },
+  "tfidf_logreg_broad_s42": {
+    "path": "models/tfidf_logreg_broad_s42/model.joblib",
+    "config": "tfidf_logreg",
+    "policy": "broad",
+    "seed": 42,
+    "git_sha": "f854e84",
+    "threshold": 0.5125,
+    "val_macro_f1": 0.7585738648694887,
+    "test_macro_f1": 0.7521088936943742
+  },
+  "tfidf_svm_broad_s42": {
+    "path": "models/tfidf_svm_broad_s42/model.joblib",
+    "config": "tfidf_svm",
+    "policy": "broad",
+    "seed": 42,
+    "git_sha": "f854e84",
+    "threshold": 0.4157,
+    "val_macro_f1": 0.6576981889015392,
+    "test_macro_f1": 0.6511530291441835
+  },
+  "tfidf_lgbm_broad_s42": {
+    "path": "models/tfidf_lgbm_broad_s42/model.joblib",
+    "config": "tfidf_lgbm",
+    "policy": "broad",
+    "seed": 42,
+    "git_sha": "f854e84",
+    "threshold": 0.5056,
+    "val_macro_f1": 0.7430770396095814,
+    "test_macro_f1": 0.7438269041412552
+  },
+  "sbert_logreg_strict_s42": {
+    "path": "models/sbert_logreg_strict_s42/model.joblib",
+    "config": "sbert_logreg",
+    "policy": "strict",
+    "seed": 42,
+    "git_sha": "cac1065",
+    "threshold": 0.719,
+    "val_macro_f1": 0.6392068130470663,
+    "test_macro_f1": 0.6233877600156239
+  },
+  "sbert_lgbm_strict_s42": {
+    "path": "models/sbert_lgbm_strict_s42/model.joblib",
+    "config": "sbert_lgbm",
+    "policy": "strict",
+    "seed": 42,
+    "git_sha": "cac1065",
+    "threshold": 0.2718,
+    "val_macro_f1": 0.656390078479938,
+    "test_macro_f1": 0.6440708649421496
+  },
+  "sbert_logreg_broad_s42": {
+    "path": "models/sbert_logreg_broad_s42/model.joblib",
+    "config": "sbert_logreg",
+    "policy": "broad",
+    "seed": 42,
+    "git_sha": "cac1065",
+    "threshold": 0.5973,
+    "val_macro_f1": 0.7113884760010905,
+    "test_macro_f1": 0.6943348946576806
+  },
+  "sbert_lgbm_broad_s42": {
+    "path": "models/sbert_lgbm_broad_s42/model.joblib",
+    "config": "sbert_lgbm",
+    "policy": "broad",
+    "seed": 42,
+    "git_sha": "cac1065",
+    "threshold": 0.4791,
+    "val_macro_f1": 0.7297282681193644,
+    "test_macro_f1": 0.7116720944277382
+  },
+  "xlmr_multilingual_strict_s42": {
+    "path": "models/xlmr_multilingual_strict_s42/hf",
+    "config": "xlmr_multilingual",
+    "family": "neural",
+    "policy": "strict",
+    "seed": 42,
+    "hf_checkpoint": "FacebookAI/xlm-roberta-base",
+    "threshold": 0.8428,
+    "val_macro_f1": 0.7265343326834199,
+    "test_macro_f1": 0.742468910896682
+  },
+  "xlmr_multilingual_broad_s42": {
+    "path": "models/xlmr_multilingual_broad_s42/hf",
+    "config": "xlmr_multilingual",
+    "family": "neural",
+    "policy": "broad",
+    "seed": 42,
+    "hf_checkpoint": "FacebookAI/xlm-roberta-base",
+    "threshold": 0.6542,
+    "val_macro_f1": 0.7701688478029016,
+    "test_macro_f1": 0.7635238278207437
+  },
+  "bertimbau_pt_strict_s42": {
+    "path": "models/bertimbau_pt_strict_s42/hf",
+    "config": "bertimbau_pt",
+    "family": "neural",
+    "policy": "strict",
+    "seed": 42,
+    "hf_checkpoint": "neuralmind/bert-base-portuguese-cased",
+    "threshold": 0.5235,
+    "val_macro_f1": 0.7659438005404176,
+    "test_macro_f1": 0.7840894261015134
+  },
+  "bertimbau_pt_broad_s42": {
+    "path": "models/bertimbau_pt_broad_s42/hf",
+    "config": "bertimbau_pt",
+    "family": "neural",
+    "policy": "broad",
+    "seed": 42,
+    "hf_checkpoint": "neuralmind/bert-base-portuguese-cased",
+    "threshold": 0.347,
+    "val_macro_f1": 0.8425972584188273,
+    "test_macro_f1": 0.8349916344243438
+  },
+  "bertweet_en_strict_s42": {
+    "path": "models/bertweet_en_strict_s42/hf",
+    "config": "bertweet_en",
+    "family": "neural",
+    "policy": "strict",
+    "seed": 42,
+    "hf_checkpoint": "vinai/bertweet-base",
+    "threshold": 0.3007,
+    "val_macro_f1": 0.7361038165266107,
+    "test_macro_f1": 0.707675785262487
+  },
+  "bertweet_en_broad_s42": {
+    "path": "models/bertweet_en_broad_s42/hf",
+    "config": "bertweet_en",
+    "family": "neural",
+    "policy": "broad",
+    "seed": 42,
+    "hf_checkpoint": "vinai/bertweet-base",
+    "threshold": 0.8651,
+    "val_macro_f1": 0.7430160921621438,
+    "test_macro_f1": 0.7528567539493959
+  },
+  "tfidf_logreg_nostop_strict_s42": {
+    "path": "models/tfidf_logreg_nostop_strict_s42/model.joblib",
+    "config": "tfidf_logreg_nostop",
+    "policy": "strict",
+    "seed": 42,
+    "git_sha": "cac1065",
+    "threshold": 0.6858,
+    "val_macro_f1": 0.7069232086604303,
+    "test_macro_f1": 0.7062324018447599
+  },
+  "tfidf_logreg_nostop_broad_s42": {
+    "path": "models/tfidf_logreg_nostop_broad_s42/model.joblib",
+    "config": "tfidf_logreg_nostop",
+    "policy": "broad",
+    "seed": 42,
+    "git_sha": "cac1065",
+    "threshold": 0.5262,
+    "val_macro_f1": 0.7586491373175095,
+    "test_macro_f1": 0.7548322683463242
+  },
+  "tfidf_lgbm_nostop_strict_s42": {
+    "path": "models/tfidf_lgbm_nostop_strict_s42/model.joblib",
+    "config": "tfidf_lgbm_nostop",
+    "policy": "strict",
+    "seed": 42,
+    "git_sha": "cac1065",
+    "threshold": 0.5851,
+    "val_macro_f1": 0.7010241954191082,
+    "test_macro_f1": 0.6978524978756002
+  },
+  "tfidf_lgbm_nostop_broad_s42": {
+    "path": "models/tfidf_lgbm_nostop_broad_s42/model.joblib",
+    "config": "tfidf_lgbm_nostop",
+    "policy": "broad",
+    "seed": 42,
+    "git_sha": "cac1065",
+    "threshold": 0.5115,
+    "val_macro_f1": 0.7566518889197342,
+    "test_macro_f1": 0.746381236200848
+  },
+  "tfidf_svm_nostop_strict_s42": {
+    "path": "models/tfidf_svm_nostop_strict_s42/model.joblib",
+    "config": "tfidf_svm_nostop",
+    "policy": "strict",
+    "seed": 42,
+    "git_sha": "cac1065",
+    "threshold": 0.151,
+    "val_macro_f1": 0.6988598698540255,
+    "test_macro_f1": 0.6882366408675689
+  },
+  "tfidf_svm_nostop_broad_s42": {
+    "path": "models/tfidf_svm_nostop_broad_s42/model.joblib",
+    "config": "tfidf_svm_nostop",
+    "policy": "broad",
+    "seed": 42,
+    "git_sha": "cac1065",
+    "threshold": 0.3611,
+    "val_macro_f1": 0.733589220796707,
+    "test_macro_f1": 0.7360111833759244
+  },
+  "twitter_xlmr_strict_s42": {
+    "path": "models/twitter_xlmr_strict_s42/hf",
+    "config": "twitter_xlmr",
+    "family": "neural",
+    "policy": "strict",
+    "seed": 42,
+    "hf_checkpoint": "cardiffnlp/twitter-xlm-roberta-base",
+    "threshold": 0.6771,
+    "val_macro_f1": 0.7395152979041436,
+    "test_macro_f1": 0.7487334104268832
+  },
+  "twitter_xlmr_broad_s42": {
+    "path": "models/twitter_xlmr_broad_s42/hf",
+    "config": "twitter_xlmr",
+    "family": "neural",
+    "policy": "broad",
+    "seed": 42,
+    "hf_checkpoint": "cardiffnlp/twitter-xlm-roberta-base",
+    "threshold": 0.6973,
+    "val_macro_f1": 0.772888743095175,
+    "test_macro_f1": 0.7657782013143098
+  },
+  "stack_strict_s42": {
+    "path": "models/stack_strict_s42/model.joblib",
+    "config": "stack_tfidf3",
+    "policy": "strict",
+    "seed": 42,
+    "git_sha": "c182003",
+    "threshold": 0.3371778039000763,
+    "val_macro_f1": 0.7911,
+    "test_macro_f1": 0.7906,
+    "test_roc_auc": 0.8875
+  },
+  "stack_broad_s42": {
+    "path": "models/stack_broad_s42/model.joblib",
+    "config": "stack_tfidf3",
+    "policy": "broad",
+    "seed": 42,
+    "git_sha": "f854e84",
+    "threshold": 0.45669276372868356,
+    "val_macro_f1": 0.7628,
+    "test_macro_f1": 0.7561,
+    "test_roc_auc": 0.8396
+  },
+  "tfidf_logreg_hurtlex_strict_s42": {
+    "path": "models/tfidf_logreg_hurtlex_strict_s42/model.joblib",
+    "config": "tfidf_logreg_hurtlex",
+    "policy": "strict",
+    "seed": 42,
+    "git_sha": "20932f6",
+    "threshold": 0.5681,
+    "val_macro_f1": 0.7872427654699108,
+    "test_macro_f1": 0.7859143939521913
+  }
 }
