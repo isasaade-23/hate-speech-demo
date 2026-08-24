@@ -189,6 +189,8 @@ T = {
                 "should support human review, not replace it. Implicit hate without slurs is where "
                 "it fails most. Research and educational use only.",
         "disc_code": "Code", "disc_docs": "Docs",
+        "lic": "Free software under the AGPL-3.0; the model weights are for research use only.",
+        "lic_src": "Source of this app",
         "theme_dark": "Dark", "theme_light": "Light",
         "abl_label": "Stop words",
         "abl_sub": "Study on corpus v4. We removed prepositions, pronouns and articles from the word features and "
@@ -302,6 +304,8 @@ T = {
                 "Serve para apoiar a revisão humana, não para substituí-la. Falha mais no ódio "
                 "implícito, sem palavrão. Uso apenas para pesquisa e educação.",
         "disc_code": "Código", "disc_docs": "Docs",
+        "lic": "Software livre sob a AGPL-3.0; os pesos do modelo são para uso em pesquisa.",
+        "lic_src": "Código deste app",
         "theme_dark": "Escuro", "theme_light": "Claro",
         "abl_label": "Palavras vazias",
         "abl_sub": "Estudo no corpus v4. Removemos preposições, pronomes e artigos das features de palavra e retreinamos "
@@ -1474,7 +1478,8 @@ if result is not None:
 # --------------------------------------------------------------------------- footer
 st.markdown(
     f'<footer class="sitefoot" role="contentinfo">{ico("i-info")}<span>{t["disc"]} '
-    f'<a href="{REPO}">{t["disc_code"]}</a> · <a href="{DOCS}">{t["disc_docs"]}</a>.</span></footer>',
+    f'<a href="{REPO}">{t["disc_code"]}</a> · <a href="{DOCS}">{t["disc_docs"]}</a>. '
+    f'{t["lic"]} <a href="{DEMO_REPO}">{t["lic_src"]}</a>.</span></footer>',
     unsafe_allow_html=True,
 )
 

@@ -45,5 +45,10 @@ hate expressed without slurs is its main blind spot. Predictions are probabilist
 
 ## License
 
-Code is released under the MIT License. Training-data licenses vary by source and restrict
-commercial use; this demo is for research and educational purposes only.
+**Code**: [GNU Affero General Public License v3.0](LICENSE). This demo is a network service, so
+AGPL section 13 applies: anyone using the hosted app is entitled to the corresponding source,
+which is this repository. The footer of the app links here.
+
+**Served model bundle** (`models/stack_strict_s42/`): research and educational use only, no
+commercial use. Not under the AGPL, because the training-data licenses restrict what can be
+granted downstream. See [`LICENSE-MODEL.md`](LICENSE-MODEL.md).
