@@ -189,8 +189,13 @@ T = {
                 "should support human review, not replace it. Implicit hate without slurs is where "
                 "it fails most. Research and educational use only.",
         "disc_code": "Code", "disc_docs": "Docs",
-        "lic": "Free software under the AGPL-3.0; the model weights are for research use only.",
+        "lic_label": "License",
+        "lic_code": "<b>Code:</b> GNU AGPL-3.0. Free to use, study, modify and share. If you run a "
+                    "modified version as a network service, its users are entitled to the source.",
+        "lic_model": "<b>Model weights:</b> research and educational use only, not commercial. The "
+                     "training-data licenses do not allow granting commercial rights downstream.",
         "lic_src": "Source of this app",
+        "lic_terms": "Model terms",
         "theme_dark": "Dark", "theme_light": "Light",
         "abl_label": "Stop words",
         "abl_sub": "Study on corpus v4. We removed prepositions, pronouns and articles from the word features and "
@@ -304,8 +309,14 @@ T = {
                 "Serve para apoiar a revisão humana, não para substituí-la. Falha mais no ódio "
                 "implícito, sem palavrão. Uso apenas para pesquisa e educação.",
         "disc_code": "Código", "disc_docs": "Docs",
-        "lic": "Software livre sob a AGPL-3.0; os pesos do modelo são para uso em pesquisa.",
+        "lic_label": "Licença",
+        "lic_code": "<b>Código:</b> GNU AGPL-3.0. Livre para usar, estudar, modificar e "
+                    "compartilhar. Quem roda uma versão modificada como serviço de rede deve o "
+                    "código-fonte a quem usa esse serviço.",
+        "lic_model": "<b>Pesos do modelo:</b> uso em pesquisa e educação apenas, não comercial. As "
+                     "licenças dos dados de treino não permitem conceder uso comercial adiante.",
         "lic_src": "Código deste app",
+        "lic_terms": "Termos do modelo",
         "theme_dark": "Escuro", "theme_light": "Claro",
         "abl_label": "Palavras vazias",
         "abl_sub": "Estudo no corpus v4. Removemos preposições, pronomes e artigos das features de palavra e retreinamos "
@@ -1036,6 +1047,20 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
     padding:var(--s3) 18px; font-size:13.5px; color:var(--mute); margin-top:var(--s3); line-height:1.6; }
 .sitefoot .ico{ width:16px; height:16px; color:var(--coral); flex:none; margin-top:3px; }
 .sitefoot b{ color:var(--heading); } .sitefoot a{ color:var(--slate); font-weight:700; }
+
+/* license block: two grants, code and weights, stated apart because they differ */
+.licfoot{ display:flex; align-items:flex-start; gap:12px; background:var(--surface-2);
+    border:1px solid var(--line); border-left:4px solid var(--slate);
+    border-radius:var(--r-card); padding:var(--s3) 18px; font-size:12.5px;
+    color:var(--mute); margin-top:var(--s2); line-height:1.6; }
+.licfoot .ico{ width:16px; height:16px; color:var(--slate); flex:none; margin-top:3px; }
+.licfoot b{ color:var(--heading); }
+.licfoot .lictitle{ font-size:11px; font-weight:800; letter-spacing:2.5px;
+    text-transform:uppercase; color:var(--slate); display:block; margin-bottom:6px; }
+.licfoot p{ margin:0 0 5px; }
+.licfoot .liclinks{ margin-top:8px; }
+.licfoot .liclinks a{ color:var(--slate); font-weight:700; text-decoration:underline;
+    text-underline-offset:2px; margin-right:14px; }
 </style>
 """,
     unsafe_allow_html=True,
@@ -1478,8 +1503,24 @@ if result is not None:
 # --------------------------------------------------------------------------- footer
 st.markdown(
     f'<footer class="sitefoot" role="contentinfo">{ico("i-info")}<span>{t["disc"]} '
-    f'<a href="{REPO}">{t["disc_code"]}</a> · <a href="{DOCS}">{t["disc_docs"]}</a>. '
-    f'{t["lic"]} <a href="{DEMO_REPO}">{t["lic_src"]}</a>.</span></footer>',
+    f'<a href="{REPO}">{t["disc_code"]}</a> · <a href="{DOCS}">{t["disc_docs"]}</a>.</span></footer>',
+    unsafe_allow_html=True,
+)
+
+# AGPL section 13: a network service must offer its users the corresponding source.
+# The weights carry different terms, so the two grants are stated separately.
+st.markdown(
+    html_block(
+        f'<section class="licfoot" aria-label="{t["lic_label"]}">{ico("i-shield")}<div>'
+        f'<span class="lictitle">{t["lic_label"]}</span>'
+        f'<p>{t["lic_code"]}</p><p>{t["lic_model"]}</p>'
+        f'<div class="liclinks">'
+        f'<a href="{DEMO_REPO}" target="_blank" rel="noopener">{t["lic_src"]}</a>'
+        f'<a href="{DEMO_REPO}/blob/main/LICENSE" target="_blank" rel="noopener">AGPL-3.0</a>'
+        f'<a href="{DEMO_REPO}/blob/main/LICENSE-MODEL.md" target="_blank" rel="noopener">'
+        f'{t["lic_terms"]}</a>'
+        f'</div></div></section>'
+    ),
     unsafe_allow_html=True,
 )
 
