@@ -1,5 +1,9 @@
 # Luciola
 
+**Live at [luciola.65-108-90-215.sslip.io](https://luciola.65-108-90-215.sslip.io).**
+That instance runs on our own machine and does not sleep. The Streamlit Community Cloud
+deployment is kept as a mirror and hibernates when idle.
+
 **Live demo (EN / PT).** A [Streamlit](https://streamlit.io) demo for a probabilistic hate-speech
 classifier over English and Portuguese social-media text. It returns a hate or not-hate label with
 a confidence score and the detected language. The interface switches between English and Portuguese
@@ -29,6 +33,13 @@ streamlit run streamlit_app.py
 Point [share.streamlit.io](https://share.streamlit.io) at this repository, main file
 `streamlit_app.py`. In the app's advanced settings, select **Python 3.11** (the model bundle is
 pinned to scikit-learn 1.9.0, which needs Python >= 3.10).
+
+## Deploy (own server)
+
+The instance that backs the public address is a systemd unit running Streamlit on
+`127.0.0.1:8501`, behind Caddy, which obtains the certificate on its own. The unit caps memory
+(`MemoryMax`) and raises `OOMScoreAdjust`, so a runaway model is killed instead of whatever else
+shares the machine. Python 3.14 with scikit-learn 1.9.0 loads the bundle unchanged.
 
 ## How it works
 
