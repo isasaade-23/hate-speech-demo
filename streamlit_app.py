@@ -91,13 +91,16 @@ T = {
                "protocol. Below runs the classifier it produced. Try it.",
         "skip": "Skip to the classifier",
         "find_label": "The finding",
-        "find_main": "Beta 2.0, phase 2. The ensemble now trains against adversarial examples, "
-                     "and <b>recall on hate jumped from 0.55 to 0.74</b>.",
-        "find_sub": "Three TF-IDF models are stacked by a meta model fit on validation only. "
-                    "The corpus doubled to 113,826 rows across eight sources, including 41k "
-                    "synthetic examples written to fool classifiers; a third of the test is "
-                    "adversarial, so scores are not comparable to earlier versions. "
-                    "In the first study the transformers led by four points; they await a re-run.",
+        "find_main": "Beta 2.0, phase 2. Recall on hate rose from 0.55 to 0.74 overall, but "
+                     "<b>that average is carried by English: 0.78 in English against 0.32 in "
+                     "Portuguese</b>.",
+        "find_sub": "The cause is measured and it is not the method: there is too little "
+                    "licence-usable annotated data in Portuguese. Three TF-IDF models are stacked "
+                    "by a meta model fit on validation only. The corpus doubled to 113,826 rows "
+                    "across eight sources, including 41k synthetic examples written to fool "
+                    "classifiers; a third of the test is adversarial, so scores are not comparable "
+                    "to earlier versions. In the first study the transformers led by four points; "
+                    "they await a re-run.",
         "find_num": "0.887", "find_cap": "ROC-AUC, strict",
         "how": "How it was built",
         "steps": [
@@ -134,7 +137,7 @@ T = {
         "results": "Results",
         "num1_v": "0.887", "num1_k": "this demo, strict<br>(stacked ensemble, ROC-AUC)",
         "num2_v": "0.791", "num2_k": "this demo, strict<br>(stacked ensemble, macro-F1)",
-        "num3_v": "0.74", "num3_k": "recall on hate<br>(was 0.55 before phase 2)",
+        "num3_v": "0.32", "num3_k": "recall on hate, Portuguese<br>(0.78 in English)",
         "lb_model": "Model", "lb_demo": "Stacked ensemble (this demo)",
         "lb_cap": "Test macro-F1 per model. The transformer rows come from the v1 study on the "
                   "earlier corpus; the ensemble rows are Beta 2.0 phase 2 on corpus v5. The corpora "
@@ -211,13 +214,16 @@ T = {
                "vazamento. Abaixo roda o classificador que ele produziu. Teste.",
         "skip": "Pular para o classificador",
         "find_label": "O achado",
-        "find_main": "Beta 2.0, fase 2. O ensemble agora treina contra exemplos adversariais, "
-                     "e o <b>recall de ódio saltou de 0,55 para 0,74</b>.",
-        "find_sub": "Três modelos TF-IDF são empilhados por um meta-modelo ajustado só na "
-                    "validação. O corpus dobrou para 113.826 linhas em oito fontes, incluindo 41 mil "
-                    "frases sintéticas escritas para enganar classificadores; um terço do teste é "
-                    "adversarial, então as notas não se comparam com versões anteriores. "
-                    "No primeiro estudo os transformers lideravam por quatro pontos; aguardam re-treino.",
+        "find_main": "Beta 2.0, fase 2. O recall de ódio subiu de 0,55 para 0,74 no agregado, mas "
+                     "<b>essa média é puxada pelo inglês: 0,78 em inglês contra 0,32 em "
+                     "português</b>.",
+        "find_sub": "A causa foi medida e não é o método: falta dado anotado em português com "
+                    "licença utilizável. Três modelos TF-IDF são empilhados por um meta-modelo "
+                    "ajustado só na validação. O corpus dobrou para 113.826 linhas em oito fontes, "
+                    "incluindo 41 mil frases sintéticas escritas para enganar classificadores; um "
+                    "terço do teste é adversarial, então as notas não se comparam com versões "
+                    "anteriores. No primeiro estudo os transformers lideravam por quatro pontos; "
+                    "aguardam re-treino.",
         "find_num": "0,887", "find_cap": "ROC-AUC, strict",
         "how": "Como foi construído",
         "steps": [
@@ -254,7 +260,7 @@ T = {
         "results": "Resultados",
         "num1_v": "0,887", "num1_k": "este demo, strict<br>(ensemble empilhado, ROC-AUC)",
         "num2_v": "0,791", "num2_k": "este demo, strict<br>(ensemble empilhado, macro-F1)",
-        "num3_v": "0,74", "num3_k": "recall de ódio<br>(era 0,55 antes da fase 2)",
+        "num3_v": "0,32", "num3_k": "recall de ódio, português<br>(0,78 em inglês)",
         "lb_model": "Modelo", "lb_demo": "Ensemble empilhado (este demo)",
         "lb_cap": "Macro-F1 no teste, por modelo. As linhas de transformer vêm do estudo v1 no "
                   "corpus anterior; as do ensemble são a Beta 2.0 fase 2 no corpus v5. Os corpora "

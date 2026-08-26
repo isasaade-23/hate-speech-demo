@@ -43,6 +43,14 @@ This is not a moderation oracle. It reflects the biases of its training data. Th
 over-flagging of some identity terms. It should support, never replace, human review. Implicit
 hate expressed without slurs is its main blind spot. Predictions are probabilistic, not verdicts.
 
+**It works much worse in Portuguese, and the aggregate score hides it.** On the v5 test the served
+ensemble recovers **0.78 of hate in English (n=11,513) and 0.32 in Portuguese (n=4,748)**; the
+0.74 average is carried by English. The cause was measured and it is not the method: there is too
+little annotated Portuguese data with a licence that allows use. Anyone deploying this on
+Portuguese content should assume it misses roughly two thirds of what it is looking for. Numbers
+from
+[`reports/tables/stack_slices_v5_strict.csv`](https://github.com/isasaade-23/hate-speech-nlp-en-pt/blob/main/reports/tables/stack_slices_v5_strict.csv).
+
 ## License
 
 **Code**: [GNU Affero General Public License v3.0](LICENSE). This demo is a network service, so
