@@ -767,8 +767,8 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 .brandslogan{ font-size:11px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--coral); }
 .headrule{ height:0; border-bottom:1px solid var(--line); margin:var(--s2) 0 var(--s1); }
 
-/* section nav: anchors into the page, light enough not to compete with the masthead */
-.secnav{ display:flex; flex-wrap:wrap; gap:var(--s3); margin:var(--s1) 0 0; }
+/* section nav: sits above the masthead, light enough not to compete with it */
+.secnav{ display:flex; flex-wrap:wrap; gap:var(--s3); margin:0 0 var(--s2); }
 .secnav a{ text-decoration:none; font-size:12px; font-weight:800; letter-spacing:1.4px;
     text-transform:uppercase; color:var(--mute); padding-bottom:3px;
     border-bottom:2px solid transparent; transition:color .2s, border-color .2s; }
@@ -1181,6 +1181,15 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.markdown(
+    html_block(
+        '<nav class="secnav" aria-label="sections">'
+        + "".join(f'<a href="#{anchor}">{label}</a>' for label, anchor in t["nav"])
+        + "</nav>"
+    ),
+    unsafe_allow_html=True,
+)
+
 brand, controls = st.columns([0.58, 0.42], vertical_alignment="center")
 with brand:
     st.markdown(
@@ -1198,15 +1207,6 @@ with controls:
                  type="primary" if lang == "pt" else "secondary")
     cc[2].button(t["theme_light"] if st.session_state.dark else t["theme_dark"],
                  key="dark_toggle", on_click=toggle_dark, use_container_width=True)
-
-st.markdown(
-    html_block(
-        '<nav class="secnav" aria-label="sections">'
-        + "".join(f'<a href="#{anchor}">{label}</a>' for label, anchor in t["nav"])
-        + "</nav>"
-    ),
-    unsafe_allow_html=True,
-)
 
 st.markdown('<div class="headrule" role="presentation"></div>', unsafe_allow_html=True)
 
