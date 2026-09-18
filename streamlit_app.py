@@ -35,6 +35,7 @@ UNCERTAIN_MARGIN = 0.08  # |score - threshold| below this reads as "near the thr
 REPO = "https://github.com/isasaade-23/hate-speech-nlp-en-pt"
 DOCS = "https://isasaade-23.github.io/hate-speech-nlp-en-pt/"
 DEMO_REPO = "https://github.com/isasaade-23/hate-speech-demo"
+EXT_REPO = "https://github.com/isasaade-23/luciola-extension"
 INTERP_URL = "https://christophm.github.io/interpretable-ml-book/limo.html"
 
 CORAL = "#EE6C4D"
@@ -188,9 +189,34 @@ T = {
         "exp_more_book": "linear models in Interpretable ML (Molnar)",
         "exp_more_docs": "the study behind this demo",
         "disc": "<b>Responsible use.</b> This is not a moderation oracle. It carries the biases of "
-                "its training data; the study measures over-flagging of some identity terms. It "
-                "should support human review, not replace it. Implicit hate without slurs is where "
-                "it fails most. Research and educational use only.",
+                "its training data. An <a href=\"" + REPO + "/blob/main/methodology/pt_recall_x_vies.md\">"
+                "identity-disclosure probe</a> (2026-08-24) found a Portuguese-only model variant "
+                "over-flagging real non-hateful identity sentences by 34.0%, versus 13.7% for this "
+                "model; that variant was blocked from release. It should support human review, not "
+                "replace it. Implicit hate without slurs is where it fails most. Research and "
+                "educational use only.",
+        "seed_note": "This finding also seeds an independent evaluation of how AI assistants "
+                     "respond to identity disclosure, proposed separately to external funders.",
+        "road_label": "Where this is going",
+        "road": [
+            ("Portuguese recall",
+             "In progress. The served model recovers 0.32 of the hate it is shown in Portuguese, "
+             "against 0.78 in English. The replacement is already measured: twitter-XLM-R takes "
+             "Portuguese recall to 0.51 and over-flags identity less than what runs today, 11.9% "
+             "against 13.7%. What blocks it is size, 1.1 GB against the memory of this machine, "
+             "not quality. The path is int8 quantisation."),
+            ("Audio and video",
+             "Direction, not a promise. Livestreams, podcasts and campaign broadcasts are the "
+             "blind spot of a tool that only reads text. Caption and transcript turn part of it "
+             "back into text; what the image and the voice carry stays out of reach for now."),
+            ("From extension to agent",
+             "Direction. A browser extension already runs the linear member of the ensemble "
+             "inside the browser, with no network access: "
+             "<a href=\"" + EXT_REPO + "\" target=\"_blank\" rel=\"noopener\">try the beta</a>. "
+             "Beyond it, an agentic form that protects the people most exposed instead of waiting "
+             "to be asked, and that learns from the patterns it sees. Learning from use and "
+             "keeping everything on the device pull against each other, and that choice is open."),
+        ],
         "disc_code": "Code", "disc_docs": "Docs",
         "lic_label": "License",
         "lic_code": "<b>Code:</b> GNU AGPL-3.0. Free to use, study, modify and share. If you run a "
@@ -311,9 +337,35 @@ T = {
         "exp_more_book": "modelos lineares em Interpretable ML (Molnar)",
         "exp_more_docs": "o estudo por trás deste demo",
         "disc": "<b>Uso responsável.</b> Isto não é um oráculo de moderação. Carrega os vieses dos "
-                "dados de treino; o estudo mede a super-marcação de alguns termos de identidade. "
-                "Serve para apoiar a revisão humana, não para substituí-la. Falha mais no ódio "
-                "implícito, sem palavrão. Uso apenas para pesquisa e educação.",
+                "dados de treino. Uma <a href=\"" + REPO + "/blob/main/methodology/pt_recall_x_vies.md\">"
+                "sonda de divulgação de identidade</a> (24/08/2026) achou uma variante só em "
+                "português super-marcando frases reais e não odiosas de identidade em 34,0%, contra "
+                "13,7% deste modelo; essa variante foi barrada antes de ir ao ar. Serve para apoiar a "
+                "revisão humana, não para substituí-la. Falha mais no ódio implícito, sem palavrão. "
+                "Uso apenas para pesquisa e educação.",
+        "seed_note": "Esse achado também é a semente de uma avaliação independente de como "
+                     "assistentes de IA respondem à divulgação de identidade, proposta "
+                     "separadamente a financiadoras externas.",
+        "road_label": "Para onde isto vai",
+        "road": [
+            ("Recall em português",
+             "Em andamento. O modelo servido recupera 0,32 do ódio que vê em português, contra "
+             "0,78 em inglês. A troca já está medida: o twitter-XLM-R leva o recall em português "
+             "a 0,51 e super-marca identidade menos que o que está no ar, 11,9% contra 13,7%. O "
+             "que trava é tamanho, 1,1 GB contra a memória desta máquina, não qualidade. O "
+             "caminho é quantização int8."),
+            ("Áudio e vídeo",
+             "Direção, não promessa. Live, podcast e transmissão de campanha são o ponto cego de "
+             "uma ferramenta que só lê texto. Legenda e transcrição devolvem parte disso a texto; "
+             "o que a imagem e a voz carregam fica fora de alcance por enquanto."),
+            ("Da extensão ao agente",
+             "Direção. Uma extensão de navegador já roda o membro linear do ensemble dentro do "
+             "navegador, sem acesso à rede: "
+             "<a href=\"" + EXT_REPO + "\" target=\"_blank\" rel=\"noopener\">teste a beta</a>. "
+             "Além dela, um formato agêntico que protege quem está mais exposto em vez de esperar "
+             "ser chamado, e que aprende com os padrões que vê. Aprender com o uso e manter tudo "
+             "no dispositivo puxam para lados opostos, e essa escolha está em aberto."),
+        ],
         "disc_code": "Código", "disc_docs": "Docs",
         "lic_label": "Licença",
         "lic_code": "<b>Código:</b> GNU AGPL-3.0. Livre para usar, estudar, modificar e "
@@ -830,6 +882,9 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s3); }
 @media (max-width:760px){ .steps{ grid-template-columns:repeat(2,1fr); } }
 @media (max-width:460px){ .steps{ grid-template-columns:1fr; } }
+.steps.three{ grid-template-columns:repeat(3,1fr); }
+@media (max-width:760px){ .steps.three{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:460px){ .steps.three{ grid-template-columns:1fr; } }
 .step{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-card);
     box-shadow:var(--shadow-1); padding:var(--s3) var(--s3) 18px;
     transition:transform .2s, box-shadow .2s; }
@@ -1506,9 +1561,27 @@ with col_result:
 if result is not None:
     st.markdown(explain_html(result, t), unsafe_allow_html=True)
 
+# --------------------------------------------------------------------------- roadmap
+_road_icons = ["i-target", "i-globe", "i-shield"]
+_road_html = "".join(
+    f'<article class="step reveal"><span class="n">{ico(_road_icons[i])} 0{i + 1}</span>'
+    f"<h3>{title}</h3><p>{body}</p></article>"
+    for i, (title, body) in enumerate(t["road"])
+)
+st.markdown(
+    html_block(
+        f'<div class="land">'
+        f'<h2 class="seclabel reveal">{ico("i-send")} {t["road_label"]}</h2>'
+        f'<div class="steps three">{_road_html}</div>'
+        f"</div>"
+    ),
+    unsafe_allow_html=True,
+)
+
 # --------------------------------------------------------------------------- footer
 st.markdown(
     f'<footer class="sitefoot" role="contentinfo">{ico("i-info")}<span>{t["disc"]} '
+    f'<br>{t["seed_note"]} '
     f'<a href="{REPO}">{t["disc_code"]}</a> · <a href="{DOCS}">{t["disc_docs"]}</a>.</span></footer>',
     unsafe_allow_html=True,
 )

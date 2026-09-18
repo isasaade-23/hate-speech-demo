@@ -50,8 +50,12 @@ under `src/`; the model bundle and configs ship with the repo, so nothing is fet
 
 ## Responsible use
 
-This is not a moderation oracle. It reflects the biases of its training data. The study measures
-over-flagging of some identity terms. It should support, never replace, human review. Implicit
+This is not a moderation oracle. It reflects the biases of its training data. An identity-disclosure
+probe (2026-08-24) found a Portuguese-only model variant over-flagging real non-hateful identity
+sentences by 34.0%, against 13.7% for the model served here; that variant was blocked from release.
+The full record is in
+[`methodology/pt_recall_x_vies.md`](https://github.com/isasaade-23/hate-speech-nlp-en-pt/blob/main/methodology/pt_recall_x_vies.md).
+It should support, never replace, human review. Implicit
 hate expressed without slurs is its main blind spot. Predictions are probabilistic, not verdicts.
 
 **It works much worse in Portuguese, and the aggregate score hides it.** On the v5 test the served
