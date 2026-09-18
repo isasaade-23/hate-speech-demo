@@ -88,9 +88,12 @@ T = {
     "en": {
         "eyebrow": "Research demo · EN / PT",
         "title": "Bilingual Hate-Speech Detection",
-        "tag": "Knowing there is metal changes nothing. Knowing whether it is a paperclip or a "
-               "knife changes the decision. A binary detector answers only the first question. "
-               "Below is that detector, what it misses, and where the work goes next.",
+        "tag": "Knowing there is metal <b>changes nothing</b>. Knowing whether it is <b>a "
+               "paperclip or a knife</b> changes the decision. A binary detector answers "
+               "<b>only the first question</b>. Below is that detector, what it misses, and "
+               "where the work goes next.",
+        "nav": [("Method", "how"), ("How it reads", "reads"), ("Results", "results"),
+                ("Classifier", "tool"), ("What's next", "road")],
         "skip": "Skip to the classifier",
         "find_label": "The finding",
         "find_main": "Beta 2.0, phase 2. Recall on hate rose from 0.55 to 0.74 overall, but "
@@ -237,9 +240,11 @@ T = {
     "pt": {
         "eyebrow": "Demo de pesquisa · EN / PT",
         "title": "Detecção Bilíngue de Discurso de Ódio",
-        "tag": "Saber que há metal não muda nada. Saber se é um clipe ou uma faca muda a "
-               "decisão. Um detector binário responde só à primeira pergunta. Abaixo está esse "
-               "detector, o que ele deixa passar, e para onde o trabalho vai.",
+        "tag": "Saber que há metal <b>não muda nada</b>. Saber se é <b>um clipe ou uma faca</b> "
+               "muda a decisão. Um detector binário responde <b>só à primeira pergunta</b>. "
+               "Abaixo está esse detector, o que ele deixa passar, e para onde o trabalho vai.",
+        "nav": [("Método", "how"), ("Como lê", "reads"), ("Resultados", "results"),
+                ("Classificador", "tool"), ("O que vem", "road")],
         "skip": "Pular para o classificador",
         "find_label": "O achado",
         "find_main": "Beta 2.0, fase 2. O recall de ódio subiu de 0,55 para 0,74 no agregado, mas "
@@ -762,6 +767,14 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 .brandslogan{ font-size:11px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--coral); }
 .headrule{ height:0; border-bottom:1px solid var(--line); margin:var(--s2) 0 var(--s1); }
 
+/* section nav: anchors into the page, light enough not to compete with the masthead */
+.secnav{ display:flex; flex-wrap:wrap; gap:var(--s3); margin:var(--s1) 0 0; }
+.secnav a{ text-decoration:none; font-size:12px; font-weight:800; letter-spacing:1.4px;
+    text-transform:uppercase; color:var(--mute); padding-bottom:3px;
+    border-bottom:2px solid transparent; transition:color .2s, border-color .2s; }
+.secnav a:hover, .secnav a:focus-visible{ color:var(--heading); border-bottom-color:var(--coral); }
+@media (max-width:460px){ .secnav{ gap:var(--s2); } .secnav a{ font-size:11px; letter-spacing:1px; } }
+
 /* back to top (anchor; no JS) */
 .totop{ position:fixed; left:var(--s3); bottom:var(--s3); z-index:60; text-decoration:none; display:inline-flex;
         align-items:center; gap:7px; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;
@@ -810,6 +823,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
        letter-spacing:2px; text-transform:uppercase; color:#fff; background:var(--coral);
        border-radius:var(--r-pill); padding:4px 12px; box-shadow:0 0 16px rgba(238,108,77,.35); }
 .land .tag{ font-size:17px; color:var(--mute); font-weight:400; max-width:52ch; margin:var(--s3) 0 0; line-height:1.6; }
+.land .tag b{ color:var(--heading); font-weight:700; }
 .land > section > p.tag{ max-width:none; }
 .land .tick{ width:64px; height:5px; background:var(--coral); border-radius:var(--r-pill); margin:var(--s4) 0 0; }
 
@@ -1185,6 +1199,15 @@ with controls:
     cc[2].button(t["theme_light"] if st.session_state.dark else t["theme_dark"],
                  key="dark_toggle", on_click=toggle_dark, use_container_width=True)
 
+st.markdown(
+    html_block(
+        '<nav class="secnav" aria-label="sections">'
+        + "".join(f'<a href="#{anchor}">{label}</a>' for label, anchor in t["nav"])
+        + "</nav>"
+    ),
+    unsafe_allow_html=True,
+)
+
 st.markdown('<div class="headrule" role="presentation"></div>', unsafe_allow_html=True)
 
 # --------------------------------------------------------------------------- landing
@@ -1287,12 +1310,12 @@ st.markdown(
     </article>
   </section>
 
-  <section aria-label="{t["how"]}">
+  <section id="how" aria-label="{t["how"]}">
     <h2 class="seclabel reveal">{ico("i-book")} {t["how"]}</h2>
     <div class="steps">{_steps_html}</div>
   </section>
 
-  <section aria-label="{t["reads_label"]}">
+  <section id="reads" aria-label="{t["reads_label"]}">
     <h2 class="seclabel reveal">{ico("i-type")} {t["reads_label"]}</h2>
     <div class="reads">
       <article class="readc reveal"><p class="rlab">{t["read1_sub"]}</p><h3>{t["read1_title"]}</h3>
@@ -1303,7 +1326,7 @@ st.markdown(
     <div class="techs reveal"><span class="tl">{t["tech_label"]}</span>{_techs}</div>
   </section>
 
-  <section aria-label="{t["results"]}">
+  <section id="results" aria-label="{t["results"]}">
     <h2 class="seclabel reveal">{ico("i-chart")} {t["results"]}</h2>
     <div class="nums">
       <article class="numc reveal"><div class="v">{t["num1_v"]}</div><div class="k">{t["num1_k"]}</div></article>
@@ -1572,7 +1595,7 @@ _road_html = "".join(
 )
 st.markdown(
     html_block(
-        f'<div class="land">'
+        f'<div class="land" id="road">'
         f'<h2 class="seclabel reveal">{ico("i-send")} {t["road_label"]}</h2>'
         f'<div class="steps three">{_road_html}</div>'
         f"</div>"
