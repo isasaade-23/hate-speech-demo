@@ -88,8 +88,9 @@ T = {
     "en": {
         "eyebrow": "Research demo · EN / PT",
         "title": "Bilingual Hate-Speech Detection",
-        "tag": "A study compares classical models with transformers under one leakage-safe "
-               "protocol. Below runs the classifier it produced. Try it.",
+        "tag": "Knowing there is metal changes nothing. Knowing whether it is a paperclip or a "
+               "knife changes the decision. A binary detector answers only the first question. "
+               "Below is that detector, what it misses, and where the work goes next.",
         "skip": "Skip to the classifier",
         "find_label": "The finding",
         "find_main": "Beta 2.0, phase 2. Recall on hate rose from 0.55 to 0.74 overall, but "
@@ -236,8 +237,9 @@ T = {
     "pt": {
         "eyebrow": "Demo de pesquisa · EN / PT",
         "title": "Detecção Bilíngue de Discurso de Ódio",
-        "tag": "Um estudo compara modelos clássicos e transformers sob um protocolo à prova de "
-               "vazamento. Abaixo roda o classificador que ele produziu. Teste.",
+        "tag": "Saber que há metal não muda nada. Saber se é um clipe ou uma faca muda a "
+               "decisão. Um detector binário responde só à primeira pergunta. Abaixo está esse "
+               "detector, o que ele deixa passar, e para onde o trabalho vai.",
         "skip": "Pular para o classificador",
         "find_label": "O achado",
         "find_main": "Beta 2.0, fase 2. O recall de ódio subiu de 0,55 para 0,74 no agregado, mas "
