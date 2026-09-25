@@ -95,6 +95,7 @@ T = {
         "nav": [("Method", "how"), ("How it reads", "reads"), ("Results", "results"),
                 ("Classifier", "tool"), ("What's next", "road")],
         "skip": "Skip to the classifier",
+        "repo_btn": "Code",
         "find_label": "The finding",
         "find_main": "Beta 2.0, phase 2. Recall on hate rose from 0.55 to 0.74 overall, but "
                      "<b>that average is carried by English: 0.78 in English against 0.32 in "
@@ -246,6 +247,7 @@ T = {
         "nav": [("Método", "how"), ("Como lê", "reads"), ("Resultados", "results"),
                 ("Classificador", "tool"), ("O que vem", "road")],
         "skip": "Pular para o classificador",
+        "repo_btn": "Código",
         "find_label": "O achado",
         "find_main": "Beta 2.0, fase 2. O recall de ódio subiu de 0,55 para 0,74 no agregado, mas "
                      "<b>essa média é puxada pelo inglês: 0,78 em inglês contra 0,32 em "
@@ -773,7 +775,8 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
     text-transform:uppercase; color:var(--mute); padding-bottom:3px;
     border-bottom:2px solid transparent; transition:color .2s, border-color .2s; }
 .secnav a:hover, .secnav a:focus-visible{ color:var(--heading); border-bottom-color:var(--coral); }
-@media (max-width:460px){ .secnav{ gap:var(--s2); } .secnav a{ font-size:11px; letter-spacing:1px; } }
+@media (max-width:460px){ .secnav{ gap:var(--s2); } .secnav a{ font-size:11px; letter-spacing:1px; }
+    .repobtn .lbl{ display:none; } .repobtn{ padding:6px 10px; } }
 
 /* back to top (anchor; no JS) */
 .totop{ position:fixed; left:var(--s3); bottom:var(--s3); z-index:60; text-decoration:none; display:inline-flex;
@@ -812,6 +815,14 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
     border-radius:var(--r-pill) !important;
     background:var(--surface) !important; color:var(--heading) !important; font-size:13px !important;
     font-weight:800 !important; padding:6px 4px !important; min-height:0 !important; }
+a.repobtn, a.repobtn:link, a.repobtn:visited{ display:flex; align-items:center; justify-content:center;
+    gap:7px; height:100%; min-height:34px; text-decoration:none !important; font-size:13px;
+    font-weight:800; letter-spacing:.5px; color:#fff !important; border-radius:var(--r-pill); padding:6px 14px;
+    background:linear-gradient(90deg,var(--amber),var(--coral));
+    box-shadow:0 0 14px rgba(238,108,77,.35); transition:box-shadow .2s, transform .2s; }
+.repobtn:hover{ box-shadow:0 0 0 3px rgba(238,108,77,.18), 0 0 16px rgba(238,108,77,.4);
+    transform:translateY(-1px); }
+.repobtn .ico{ width:14px; height:14px; }
 
 /* hero: two columns, message left + luciola art right */
 .land{ margin:2px 0 var(--s2); }
@@ -1200,13 +1211,18 @@ with brand:
         unsafe_allow_html=True,
     )
 with controls:
-    cc = st.columns([1, 1, 1.3], gap="small")
+    cc = st.columns([1, 1, 1.3, 1.5], gap="small")
     cc[0].button("EN", key="lang_en", on_click=set_lang, args=("en",), use_container_width=True,
                  type="primary" if lang == "en" else "secondary")
     cc[1].button("PT", key="lang_pt", on_click=set_lang, args=("pt",), use_container_width=True,
                  type="primary" if lang == "pt" else "secondary")
     cc[2].button(t["theme_light"] if st.session_state.dark else t["theme_dark"],
                  key="dark_toggle", on_click=toggle_dark, use_container_width=True)
+    cc[3].markdown(
+        f'<a class="repobtn" href="{REPO}" target="_blank" rel="noopener">'
+        f'{ico("i-code")}<span class="lbl">{t["repo_btn"]}</span></a>',
+        unsafe_allow_html=True,
+    )
 
 st.markdown('<div class="headrule" role="presentation"></div>', unsafe_allow_html=True)
 

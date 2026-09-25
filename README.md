@@ -66,6 +66,11 @@ Portuguese content should assume it misses roughly two thirds of what it is look
 from
 [`reports/tables/stack_slices_v5_strict.csv`](https://github.com/isasaade-23/hate-speech-nlp-en-pt/blob/main/reports/tables/stack_slices_v5_strict.csv).
 
+## Support
+
+This is independent research, self-funded and unpaid outside the author's stipend.
+One-off donations: [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/ailuciola)
+
 ## License
 
 **Code**: [GNU Affero General Public License v3.0](LICENSE). This demo is a network service, so
