@@ -96,6 +96,8 @@ T = {
                 ("Classifier", "tool"), ("What's next", "road")],
         "skip": "Skip to the classifier",
         "repo_btn": "Code",
+        "support_label": "Support",
+        "support_text": "Like what we're building? Help us keep it going.",
         "find_label": "The finding",
         "find_main": "Beta 2.0, phase 2. Recall on hate rose from 0.55 to 0.74 overall, but "
                      "<b>that average is carried by English: 0.78 in English against 0.32 in "
@@ -230,6 +232,7 @@ T = {
                      "training-data licenses do not allow granting commercial rights downstream.",
         "lic_src": "Source of this app",
         "lic_terms": "Model terms",
+        "contact_label": "Contact",
         "theme_dark": "Dark", "theme_light": "Light",
         "abl_label": "Stop words",
         "abl_sub": "Study on corpus v4. We removed prepositions, pronouns and articles from the word features and "
@@ -248,6 +251,8 @@ T = {
                 ("Classificador", "tool"), ("O que vem", "road")],
         "skip": "Pular para o classificador",
         "repo_btn": "Código",
+        "support_label": "Apoie",
+        "support_text": "Gostou do nosso projeto? Nos ajude a continuar.",
         "find_label": "O achado",
         "find_main": "Beta 2.0, fase 2. O recall de ódio subiu de 0,55 para 0,74 no agregado, mas "
                      "<b>essa média é puxada pelo inglês: 0,78 em inglês contra 0,32 em "
@@ -384,6 +389,7 @@ T = {
                      "licenças dos dados de treino não permitem conceder uso comercial adiante.",
         "lic_src": "Código deste app",
         "lic_terms": "Termos do modelo",
+        "contact_label": "Contato",
         "theme_dark": "Escuro", "theme_light": "Claro",
         "abl_label": "Palavras vazias",
         "abl_sub": "Estudo no corpus v4. Removemos preposições, pronomes e artigos das features de palavra e retreinamos "
@@ -701,6 +707,8 @@ header[data-testid="stHeader"]{ display:none; }
 .i-chart{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><path d='M12 20V10M18 20V4M6 20v-4'/></svg>");}
 .i-info{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><path d='M12 16v-4M12 8h.01'/></svg>");}
 .i-code{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M16 18l6-6-6-6M8 6l-6 6 6 6'/></svg>");}
+.i-github{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='black'><path d='M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z'/></svg>");}
+.i-heart{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z'/></svg>");}
 .i-doc{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/><path d='M14 2v6h6M16 13H8M16 17H8'/></svg>");}
 .i-layers{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M12 2L2 7l10 5 10-5-10-5z'/><path d='M2 17l10 5 10-5M2 12l10 5 10-5'/></svg>");}
 .i-shield{--i:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>");}
@@ -825,6 +833,21 @@ a.repobtn, a.repobtn:link, a.repobtn:visited{ display:flex; align-items:center; 
 .repobtn:hover{ box-shadow:0 0 0 1px rgba(255,255,255,.35) inset, 0 0 0 3px rgba(238,108,77,.2),
     0 4px 22px rgba(238,108,77,.6); transform:translateY(-1px) scale(1.02); }
 .repobtn .ico{ width:14px; height:14px; }
+
+/* support / donation box: sits after the roadmap, before the footer */
+.supportbox{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:16px;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r-card);
+    box-shadow:var(--shadow-1); padding:var(--s5) var(--s4); margin-top:var(--s4); }
+.supportbox .ico{ width:28px; height:28px; color:var(--coral); }
+.supportbox p{ margin:0; font-size:17px; font-weight:700; color:var(--heading); max-width:42ch; line-height:1.5; }
+a.kofibtn, a.kofibtn:link, a.kofibtn:visited{ display:inline-flex; align-items:center; gap:8px;
+    text-decoration:none !important; font-size:14px; font-weight:800; letter-spacing:.8px;
+    text-transform:uppercase; color:#fff !important; border-radius:999px; padding:10px 28px;
+    background:linear-gradient(90deg,var(--amber),var(--coral));
+    box-shadow:0 0 0 1px rgba(255,255,255,.25) inset, 0 4px 18px rgba(238,108,77,.5);
+    transition:box-shadow .2s, transform .2s; }
+a.kofibtn:hover{ box-shadow:0 0 0 1px rgba(255,255,255,.35) inset, 0 0 0 3px rgba(238,108,77,.2),
+    0 4px 22px rgba(238,108,77,.6); transform:translateY(-1px) scale(1.02); }
 
 /* hero: two columns, message left + luciola art right */
 .land{ margin:var(--s2) 0 var(--s2); }
@@ -1138,18 +1161,16 @@ a.repobtn, a.repobtn:link, a.repobtn:visited{ display:flex; align-items:center; 
 .sitefoot .ico{ width:16px; height:16px; color:var(--coral); flex:none; margin-top:3px; }
 .sitefoot b{ color:var(--heading); } .sitefoot a{ color:var(--slate); font-weight:700; }
 
-/* license block: two grants, code and weights, stated apart because they differ */
-.licfoot{ display:flex; align-items:flex-start; gap:12px; background:var(--surface-2);
-    border:1px solid var(--line); border-left:4px solid var(--slate);
-    border-radius:var(--r-card); padding:var(--s3) 18px; font-size:12.5px;
+/* license footer: plain text under the page, not a card (two grants, code and
+   weights, stated apart because they differ) */
+.licplain{ display:block; border-top:1px solid var(--line); padding:var(--s4) 2px 0; font-size:12.5px;
     color:var(--mute); margin-top:var(--s5); line-height:1.6; }
-.licfoot .ico{ width:16px; height:16px; color:var(--slate); flex:none; margin-top:3px; }
-.licfoot b{ color:var(--heading); }
-.licfoot .lictitle{ font-size:11px; font-weight:800; letter-spacing:2.5px;
+.licplain b{ color:var(--heading); }
+.licplain .lictitle{ font-size:11px; font-weight:800; letter-spacing:2.5px;
     text-transform:uppercase; color:var(--slate); display:block; margin-bottom:6px; }
-.licfoot p{ margin:0 0 5px; }
-.licfoot .liclinks{ margin-top:8px; }
-.licfoot .liclinks a{ color:var(--slate); font-weight:700; text-decoration:underline;
+.licplain p{ margin:0 0 5px; }
+.licplain .liclinks{ margin-top:8px; }
+.licplain .liclinks a{ color:var(--slate); font-weight:700; text-decoration:underline;
     text-underline-offset:2px; margin-right:14px; }
 </style>
 """,
@@ -1222,7 +1243,7 @@ with controls:
                  key="dark_toggle", on_click=toggle_dark, use_container_width=True)
     cc[3].markdown(
         f'<a class="repobtn" href="{REPO}" target="_blank" rel="noopener">'
-        f'{ico("i-code")}<span class="lbl">{t["repo_btn"]}</span></a>',
+        f'{ico("i-github")}<span class="lbl">{t["repo_btn"]}</span></a>',
         unsafe_allow_html=True,
     )
 
@@ -1621,6 +1642,19 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# --------------------------------------------------------------------------- support
+st.markdown(
+    html_block(
+        f'<section class="supportbox reveal" aria-label="{t["support_label"]}">'
+        f'{ico("i-heart")}'
+        f'<p>{t["support_text"]}</p>'
+        f'<a class="kofibtn" href="https://ko-fi.com/ailuciola" target="_blank" rel="noopener">'
+        f'Ko-fi.com/ailuciola</a>'
+        f'</section>'
+    ),
+    unsafe_allow_html=True,
+)
+
 # --------------------------------------------------------------------------- footer
 st.markdown(
     f'<footer class="sitefoot" role="contentinfo">{ico("i-info")}<span>{t["disc"]} '
@@ -1631,9 +1665,11 @@ st.markdown(
 
 # AGPL section 13: a network service must offer its users the corresponding source.
 # The weights carry different terms, so the two grants are stated separately.
+# Plain footer, not boxed: license text + contact, sitting under the page rather
+# than inside a card (the Responsible-use box above stays boxed on purpose).
 st.markdown(
     html_block(
-        f'<section class="licfoot" aria-label="{t["lic_label"]}">{ico("i-shield")}<div>'
+        f'<footer class="licplain" aria-label="{t["lic_label"]}">'
         f'<span class="lictitle">{t["lic_label"]}</span>'
         f'<p>{t["lic_code"]}</p><p>{t["lic_model"]}</p>'
         f'<div class="liclinks">'
@@ -1641,7 +1677,8 @@ st.markdown(
         f'<a href="{DEMO_REPO}/blob/main/LICENSE" target="_blank" rel="noopener">AGPL-3.0</a>'
         f'<a href="{DEMO_REPO}/blob/main/LICENSE-MODEL.md" target="_blank" rel="noopener">'
         f'{t["lic_terms"]}</a>'
-        f'</div></div></section>'
+        f'<a href="mailto:ai.luciola@gmail.com">{t["contact_label"]}: ai.luciola@gmail.com</a>'
+        f'</div></footer>'
     ),
     unsafe_allow_html=True,
 )
