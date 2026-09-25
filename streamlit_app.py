@@ -767,7 +767,7 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
 .brandname{ font-family:'Century Gothic','Questrial','Josefin Sans','Futura','Trebuchet MS',sans-serif;
             font-weight:300; font-size:31px; letter-spacing:1.5px; color:var(--heading); line-height:1; }
 .brandslogan{ font-size:11px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--coral); }
-.headrule{ height:0; border-bottom:1px solid var(--line); margin:var(--s2) 0 var(--s1); }
+.headrule{ height:0; border-bottom:1px solid var(--line); margin:var(--s4) 0 var(--s4); }
 
 /* section nav: sits above the masthead, light enough not to compete with it */
 .secnav{ display:flex; flex-wrap:wrap; gap:var(--s3); margin:0 0 var(--s2); }
@@ -816,16 +816,18 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, [role="button"]:f
     background:var(--surface) !important; color:var(--heading) !important; font-size:13px !important;
     font-weight:800 !important; padding:6px 4px !important; min-height:0 !important; }
 a.repobtn, a.repobtn:link, a.repobtn:visited{ display:flex; align-items:center; justify-content:center;
-    gap:7px; height:100%; min-height:34px; text-decoration:none !important; font-size:13px;
-    font-weight:800; letter-spacing:.5px; color:#fff !important; border-radius:var(--r-pill); padding:6px 14px;
+    gap:8px; height:100%; min-height:38px; text-decoration:none !important; font-size:13.5px;
+    font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#fff !important;
+    border-radius:999px; padding:8px 26px; white-space:nowrap;
     background:linear-gradient(90deg,var(--amber),var(--coral));
-    box-shadow:0 0 14px rgba(238,108,77,.35); transition:box-shadow .2s, transform .2s; }
-.repobtn:hover{ box-shadow:0 0 0 3px rgba(238,108,77,.18), 0 0 16px rgba(238,108,77,.4);
-    transform:translateY(-1px); }
+    box-shadow:0 0 0 1px rgba(255,255,255,.25) inset, 0 4px 18px rgba(238,108,77,.5);
+    transition:box-shadow .2s, transform .2s; }
+.repobtn:hover{ box-shadow:0 0 0 1px rgba(255,255,255,.35) inset, 0 0 0 3px rgba(238,108,77,.2),
+    0 4px 22px rgba(238,108,77,.6); transform:translateY(-1px) scale(1.02); }
 .repobtn .ico{ width:14px; height:14px; }
 
 /* hero: two columns, message left + luciola art right */
-.land{ margin:2px 0 var(--s2); }
+.land{ margin:var(--s2) 0 var(--s2); }
 .heroband{ display:grid; grid-template-columns:1.15fr .85fr; gap:var(--s4); align-items:center; }
 @media (max-width:760px){ .heroband{ grid-template-columns:1fr; } }
 .land .brow{ font-size:12px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--coral); }
@@ -1140,7 +1142,7 @@ a.repobtn, a.repobtn:link, a.repobtn:visited{ display:flex; align-items:center; 
 .licfoot{ display:flex; align-items:flex-start; gap:12px; background:var(--surface-2);
     border:1px solid var(--line); border-left:4px solid var(--slate);
     border-radius:var(--r-card); padding:var(--s3) 18px; font-size:12.5px;
-    color:var(--mute); margin-top:var(--s2); line-height:1.6; }
+    color:var(--mute); margin-top:var(--s5); line-height:1.6; }
 .licfoot .ico{ width:16px; height:16px; color:var(--slate); flex:none; margin-top:3px; }
 .licfoot b{ color:var(--heading); }
 .licfoot .lictitle{ font-size:11px; font-weight:800; letter-spacing:2.5px;
@@ -1211,7 +1213,7 @@ with brand:
         unsafe_allow_html=True,
     )
 with controls:
-    cc = st.columns([1, 1, 1.3, 1.5], gap="small")
+    cc = st.columns([0.8, 0.8, 1.1, 1.8], gap="small")
     cc[0].button("EN", key="lang_en", on_click=set_lang, args=("en",), use_container_width=True,
                  type="primary" if lang == "en" else "secondary")
     cc[1].button("PT", key="lang_pt", on_click=set_lang, args=("pt",), use_container_width=True,
