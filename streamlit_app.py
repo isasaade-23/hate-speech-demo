@@ -212,6 +212,14 @@ T = {
              "Portuguese recall to 0.51 and over-flags identity less than what runs today, 11.9% "
              "against 13.7%. What blocks it is size, 1.1 GB against the memory of this machine, "
              "not quality. The path is int8 quantisation."),
+            ("Portuguese data anyone can use",
+             "In progress. Trained only on sources that allow commercial use, Portuguese recall "
+             "falls from 0.32 to 0.01, because those sources are all in English. We are producing "
+             "the data in two ways. Translation: 500 permissive English texts retranslated with "
+             "Gemini, with 2.0% broken output against 4.8% for MarianMT and 14.7% for Qwen on the "
+             "same texts. Synthetic: 198 new Portuguese sentences, with a batch of 1,500 under way. "
+             "Nothing enters training before blind human validation and an agreement check. "
+             "<a href=\"" + REPO + "\" target=\"_blank\" rel=\"noopener\">The pipeline is public</a>."),
             ("Audio and video",
              "Direction, not a promise. Livestreams, podcasts and campaign broadcasts are the "
              "blind spot of a tool that only reads text. Caption and transcript turn part of it "
@@ -368,6 +376,15 @@ T = {
              "a 0,51 e super-marca identidade menos que o que está no ar, 11,9% contra 13,7%. O "
              "que trava é tamanho, 1,1 GB contra a memória desta máquina, não qualidade. O "
              "caminho é quantização int8."),
+            ("Dado em português que qualquer um possa usar",
+             "Em andamento. Treinado só com fontes que permitem uso comercial, o recall em "
+             "português cai de 0,32 para 0,01, porque essas fontes estão todas em inglês. Estamos "
+             "produzindo o dado de duas formas. Tradução: 500 textos em inglês de licença livre "
+             "retraduzidos com o Gemini, com 2,0% de saída quebrada, contra 4,8% do MarianMT e "
+             "14,7% do Qwen nos mesmos textos. Sintético: 198 frases novas em português, com um "
+             "lote de 1.500 em produção. Nada entra no treino antes da validação humana cega e "
+             "da checagem de concordância. "
+             "<a href=\"" + REPO + "\" target=\"_blank\" rel=\"noopener\">O pipeline é público</a>."),
             ("Áudio e vídeo",
              "Direção, não promessa. Live, podcast e transmissão de campanha são o ponto cego de "
              "uma ferramenta que só lê texto. Legenda e transcrição devolvem parte disso a texto; "
@@ -937,6 +954,8 @@ a.kofibtn:hover{ box-shadow:0 0 0 1px rgba(255,255,255,.35) inset, 0 0 0 3px rgb
 .steps.three{ grid-template-columns:repeat(3,1fr); }
 @media (max-width:760px){ .steps.three{ grid-template-columns:repeat(2,1fr); } }
 @media (max-width:460px){ .steps.three{ grid-template-columns:1fr; } }
+.steps.two{ grid-template-columns:repeat(2,1fr); }
+@media (max-width:460px){ .steps.two{ grid-template-columns:1fr; } }
 .step{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-card);
     box-shadow:var(--shadow-1); padding:var(--s3) var(--s3) 18px;
     transition:transform .2s, box-shadow .2s; }
@@ -1626,7 +1645,7 @@ if result is not None:
     st.markdown(explain_html(result, t), unsafe_allow_html=True)
 
 # --------------------------------------------------------------------------- roadmap
-_road_icons = ["i-target", "i-globe", "i-shield"]
+_road_icons = ["i-target", "i-layers", "i-globe", "i-shield"]
 _road_html = "".join(
     f'<article class="step reveal"><span class="n">{ico(_road_icons[i])} 0{i + 1}</span>'
     f"<h3>{title}</h3><p>{body}</p></article>"
@@ -1636,7 +1655,7 @@ st.markdown(
     html_block(
         f'<div class="land" id="road">'
         f'<h2 class="seclabel reveal">{ico("i-send")} {t["road_label"]}</h2>'
-        f'<div class="steps three">{_road_html}</div>'
+        f'<div class="steps two">{_road_html}</div>'
         f"</div>"
     ),
     unsafe_allow_html=True,
