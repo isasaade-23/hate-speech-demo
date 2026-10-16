@@ -215,9 +215,9 @@ T = {
             ("Portuguese data anyone can use",
              "In progress. Trained only on sources that allow commercial use, Portuguese recall "
              "falls from 0.32 to 0.01, because those sources are all in English. We are producing "
-             "the data in two ways. Translation: 500 permissive English texts retranslated with "
+             "the data in two ways. Translation: 499 of 500 permissive English texts retranslated with "
              "Gemini, with 2.0% broken output against 4.8% for MarianMT and 14.7% for Qwen on the "
-             "same texts. Synthetic: 198 new Portuguese sentences, with a batch of 1,500 under way. "
+             "same texts. Synthetic: 198 new Portuguese sentences, with a batch of 1,500 started and 498 done. "
              "Nothing enters training before blind human validation and an agreement check. "
              "<a href=\"" + REPO + "\" target=\"_blank\" rel=\"noopener\">The pipeline is public</a>."),
             ("Audio and video",
@@ -379,10 +379,10 @@ T = {
             ("Dado em português que qualquer um possa usar",
              "Em andamento. Treinado só com fontes que permitem uso comercial, o recall em "
              "português cai de 0,32 para 0,01, porque essas fontes estão todas em inglês. Estamos "
-             "produzindo o dado de duas formas. Tradução: 500 textos em inglês de licença livre "
+             "produzindo o dado de duas formas. Tradução: 499 de 500 textos em inglês de licença livre "
              "retraduzidos com o Gemini, com 2,0% de saída quebrada, contra 4,8% do MarianMT e "
              "14,7% do Qwen nos mesmos textos. Sintético: 198 frases novas em português, com um "
-             "lote de 1.500 em produção. Nada entra no treino antes da validação humana cega e "
+             "lote de 1.500 iniciado, com 498 prontos.Nada entra no treino antes da validação humana cega e "
              "da checagem de concordância. "
              "<a href=\"" + REPO + "\" target=\"_blank\" rel=\"noopener\">O pipeline é público</a>."),
             ("Áudio e vídeo",
