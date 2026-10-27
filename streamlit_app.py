@@ -219,7 +219,7 @@ T = {
              "Gemini, with 2.0% broken output against 4.8% for MarianMT and 14.7% for Qwen on the "
              "same texts. Synthetic: 198 new Portuguese sentences, with a batch of 1,500 started and 498 done. "
              "Nothing enters training before blind human validation and an agreement check. "
-             "<a href=\"" + REPO + "\" target=\"_blank\" rel=\"noopener\">The pipeline is public</a>."),
+             "<a href=\"" + DOCS + "\" target=\"_blank\" rel=\"noopener\">The pipeline is public</a>."),
             ("Audio and video",
              "Direction, not a promise. Livestreams, podcasts and campaign broadcasts are the "
              "blind spot of a tool that only reads text. Caption and transcript turn part of it "
@@ -384,7 +384,7 @@ T = {
              "14,7% do Qwen nos mesmos textos. Sintético: 198 frases novas em português, com um "
              "lote de 1.500 iniciado, com 498 prontos.Nada entra no treino antes da validação humana cega e "
              "da checagem de concordância. "
-             "<a href=\"" + REPO + "\" target=\"_blank\" rel=\"noopener\">O pipeline é público</a>."),
+             "<a href=\"" + DOCS + "\" target=\"_blank\" rel=\"noopener\">O pipeline é público</a>."),
             ("Áudio e vídeo",
              "Direção, não promessa. Live, podcast e transmissão de campanha são o ponto cego de "
              "uma ferramenta que só lê texto. Legenda e transcrição devolvem parte disso a texto; "
@@ -1261,7 +1261,7 @@ with controls:
     cc[2].button(t["theme_light"] if st.session_state.dark else t["theme_dark"],
                  key="dark_toggle", on_click=toggle_dark, use_container_width=True)
     cc[3].markdown(
-        f'<a class="repobtn" href="{REPO}" target="_blank" rel="noopener">'
+        f'<a class="repobtn" href="{DOCS}" target="_blank" rel="noopener">'
         f'{ico("i-github")}<span class="lbl">{t["repo_btn"]}</span></a>',
         unsafe_allow_html=True,
     )
@@ -1424,7 +1424,7 @@ st.markdown(
   <p class="anote reveal">{t["abl_foot"]}</p>
 
   <nav class="links reveal" aria-label="project links">
-    <a class="primary" href="{REPO}" target="_blank">{ico("i-code")} {t["link_code"]}</a>
+    <a class="primary" href="{DOCS}" target="_blank">{ico("i-code")} {t["link_code"]}</a>
     <a href="{DOCS}" target="_blank">{ico("i-doc")} {t["link_docs"]}</a>
     <a href="{DEMO_REPO}" target="_blank">{ico("i-code")} {t["link_demo"]}</a>
   </nav>
@@ -1678,7 +1678,7 @@ st.markdown(
 st.markdown(
     f'<footer class="sitefoot" role="contentinfo">{ico("i-info")}<span>{t["disc"]} '
     f'<br>{t["seed_note"]} '
-    f'<a href="{REPO}">{t["disc_code"]}</a> · <a href="{DOCS}">{t["disc_docs"]}</a>.</span></footer>',
+    f'<a href="{DOCS}">{t["disc_code"]}</a> · <a href="{DOCS}">{t["disc_docs"]}</a>.</span></footer>',
     unsafe_allow_html=True,
 )
 
